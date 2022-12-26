@@ -1,5 +1,6 @@
-use std::ops::{AddAssign, DivAssign, Index, IndexMut, MulAssign, Neg};
+use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
 
+#[derive(Debug, Clone, Copy)]
 pub struct Vec3 {
     pub e: [f64; 3],
 }
@@ -28,6 +29,22 @@ impl Vec3 {
     pub fn z(&self) -> f64 {
         self.e[2]
     }
+
+    pub fn dot(&self, rhs: &Vec3) -> f64 {
+        self.x() * rhs.x() + self.y() * rhs.y() + self.z() * rhs.z()
+    }
+
+    pub fn cross(&self, rhs: &Vec3) -> Vec3 {
+        Vec3::new(
+            self.e[1] * rhs.e[2] - self.e[2] * rhs.e[1],
+            self.e[2] * rhs.e[0] - self.e[0] * rhs.e[2],
+            self.e[0] * rhs.e[1] - self.e[1] * rhs.e[0],
+        )
+    }
+
+    pub fn unit_vector(&self) -> Vec3 {
+        *self / self.length()
+    }
 }
 
 impl AddAssign for Vec3 {
@@ -35,6 +52,7 @@ impl AddAssign for Vec3 {
         self.e[0] += rhs.e[0];
         self.e[1] += rhs.e[1];
         self.e[2] += rhs.e[2];
+        ()
     }
 }
 
@@ -71,5 +89,44 @@ impl Neg for Vec3 {
     type Output = Self;
     fn neg(self) -> Self::Output {
         Vec3::new(-self.e[0], -self.e[1], -self.e[2])
+    }
+}
+
+impl Add for Vec3 {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Vec3::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
+    }
+}
+
+impl Sub for Vec3 {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Vec3::new(self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z())
+    }
+}
+
+impl Mul for Vec3 {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Vec3::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
+    }
+}
+
+impl Mul<f64> for Vec3 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Vec3::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
+    }
+}
+
+impl Div<f64> for Vec3 {
+    type Output = Self;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        Vec3::new(self.x() / rhs, self.y() / rhs, self.z() / rhs)
     }
 }
