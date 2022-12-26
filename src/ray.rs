@@ -8,7 +8,7 @@ use std::clone::Clone;
 /// direction. The ray parameter *t* is a real number (`f64` in code). Plug in a different *t* and
 /// **P**(*t*) moves the point along the ray. Add in negative *t* values and you can go anywhere on
 /// the 3D line. For positive *t*, you get only the parts in front of **A**, and this is what is
-/// often called a half-line or ray.
+/// often called a half-line or ray.a
 pub struct Ray {
     origin: Point,
     direction: Vec3,
@@ -21,5 +21,13 @@ impl Ray {
 
     pub fn at(&self, t: f64) -> Point {
         self.origin + self.direction * t
+    }
+
+    pub fn direction(&self) -> Vec3 {
+        self.direction
+    }
+
+    pub fn origin(&self) -> Point {
+        self.origin
     }
 }

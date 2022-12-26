@@ -127,6 +127,15 @@ impl Div<f64> for Vec3 {
     type Output = Self;
 
     fn div(self, rhs: f64) -> Self::Output {
-        Vec3::new(self.x() / rhs, self.y() / rhs, self.z() / rhs)
+        let t = 1.0 / rhs;
+        self * t
+    }
+}
+
+// For an expression like 5.0 * Vec3
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        rhs * self
     }
 }

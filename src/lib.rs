@@ -5,6 +5,7 @@ use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
 use vec3::Color;
+use ray::Ray;
 
 pub fn write_color<T: Write>(out: &mut T, pixel_color: &vec3::Color) -> Result<usize> {
     let mut str = String::new();
@@ -41,4 +42,13 @@ pub fn write_image() {
         }
         eprintln!("\nDone.\n")
     }
+}
+
+/// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
+/// of those rays. The involved steps are (1) calculate the ray from the eye to the pixel, (2) determine
+/// which objects the ray intersects, and (3) compute a color for that intersection point.
+pub fn ray_color(r: &Ray) -> Color {
+    let unit_direction = r.direction().unit_vector();
+    let t = 0.5 * (unit_direction.y() + 1.0);
+    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
 }
