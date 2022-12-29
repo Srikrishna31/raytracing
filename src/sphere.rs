@@ -33,7 +33,8 @@ impl Hittable for Sphere {
 
         self.hit_rec.t = root;
         self.hit_rec.p = r.at(rec.t);
-        self.hit_rec.normal = (rec.p - self.center) / self.radius;
+        let outward_normal = (rec.p - self.center) / self.radius;
+        self.hit_rec.set_face_normal(r, &outward_normal);
 
         true
     }

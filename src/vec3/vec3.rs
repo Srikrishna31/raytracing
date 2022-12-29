@@ -92,6 +92,13 @@ impl Neg for Vec3 {
     }
 }
 
+impl Neg for &Vec3 {
+    type Output = Vec3;
+    fn neg(self) -> Self::Output {
+        Vec3::new(-self.e[0], -self.e[1], -self.e[2])
+    }
+}
+
 impl Add for Vec3 {
     type Output = Self;
 
