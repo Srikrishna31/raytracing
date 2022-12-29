@@ -59,6 +59,10 @@ pub fn write_image() {
 /// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
 /// of those rays. The involved steps are (1) calculate the ray from the eye to the pixel, (2) determine
 /// which objects the ray intersects, and (3) compute a color for that intersection point.
+///
+/// A common trick used for visualizing normals (because it's easy and somewhat intuitive to assume
+/// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
+/// to the interval from 0 to 1, and then map x/y/z to r/g/b.
 pub fn ray_color(r: &Ray) -> Color {
     let t = hit_sphere(Point::new(0.0, 0.0, -1.0), 0.5, r);
     if  t > 0.0 {
@@ -112,13 +116,13 @@ pub fn ray_color(r: &Ray) -> Color {
 pub fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.origin() - center;
     let a = ray.direction().dot(&ray.direction());
-    let b = 2.0 * oc.dot(&ray.direction());
-    let c = oc.dot(&oc) - radius * radius;
-    let discriminant = b*b - 4.0*a*c;
+    let half_b = oc.dot(&ray.direction());
+    let c = oc.length_squared() - radius * radius;
+    let discriminant = half_b*half_b - a*c;
 
     if discriminant < 0.0 {
         -1.0
     } else {
-        (-b - f64::sqrt(discriminant)) / (2.0 * a)
+        (-half_b - f64::sqrt(discriminant)) / a
     }
 }
