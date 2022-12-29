@@ -1,12 +1,14 @@
-mod vec3;
+mod hittable;
 mod ray;
+mod sphere;
+mod vec3;
 
+use crate::vec3::{Point, Vec3};
+use ray::Ray;
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
 use vec3::Color;
-use ray::Ray;
-use crate::vec3::{Point, Vec3};
 
 pub fn write_color<T: Write>(out: &mut T, pixel_color: &vec3::Color) -> Result<usize> {
     let mut str = String::new();
@@ -24,7 +26,7 @@ pub fn write_color<T: Write>(out: &mut T, pixel_color: &vec3::Color) -> Result<u
 
 pub fn write_image() {
     // Image
-    const ASPECT_RATIO : f64 = 16.0 / 9.0;
+    const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
     const IMAGE_HEIGHT: u32 = 400;
 
@@ -36,8 +38,8 @@ pub fn write_image() {
     let origin = Point::new(0.0, 0.0, 0.0);
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner = origin - horizontal/2.0 - vertical/2.0 - Vec3::new(0.0, 0.0, focal_length);
-
+    let lower_left_corner =
+        origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
 
     // Render
     println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);
@@ -45,9 +47,12 @@ pub fn write_image() {
     for j in (0..IMAGE_HEIGHT).rev() {
         eprintln!("\rScanlines remaining: {} ", &j);
         for i in 0..IMAGE_WIDTH {
-            let u = i as f64 / (IMAGE_WIDTH-1) as f64;
-            let v = j as f64 / (IMAGE_HEIGHT-1) as f64;
-            let r = Ray::new(&origin, &(lower_left_corner + u*horizontal + v*vertical - origin));
+            let u = i as f64 / (IMAGE_WIDTH - 1) as f64;
+            let v = j as f64 / (IMAGE_HEIGHT - 1) as f64;
+            let r = Ray::new(
+                &origin,
+                &(lower_left_corner + u * horizontal + v * vertical - origin),
+            );
             let pixel_color = ray_color(&r);
 
             write_color(&mut io::stdout(), &pixel_color).expect("Error writing to output");
@@ -65,7 +70,7 @@ pub fn write_image() {
 /// to the interval from 0 to 1, and then map x/y/z to r/g/b.
 pub fn ray_color(r: &Ray) -> Color {
     let t = hit_sphere(Point::new(0.0, 0.0, -1.0), 0.5, r);
-    if  t > 0.0 {
+    if t > 0.0 {
         let N = (r.at(t) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
         return Color::new(N.x() + 1.0, N.y() + 1.0, N.z() + 1.0) * 0.5;
     }
@@ -118,7 +123,7 @@ pub fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> f64 {
     let a = ray.direction().dot(&ray.direction());
     let half_b = oc.dot(&ray.direction());
     let c = oc.length_squared() - radius * radius;
-    let discriminant = half_b*half_b - a*c;
+    let discriminant = half_b * half_b - a * c;
 
     if discriminant < 0.0 {
         -1.0
