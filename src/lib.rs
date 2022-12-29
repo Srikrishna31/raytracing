@@ -60,8 +60,10 @@ pub fn write_image() {
 /// of those rays. The involved steps are (1) calculate the ray from the eye to the pixel, (2) determine
 /// which objects the ray intersects, and (3) compute a color for that intersection point.
 pub fn ray_color(r: &Ray) -> Color {
-    if hit_sphere(Point::new(0.0, 0.0, -1.0), 0.5, r) {
-        return Color::new(1.0, 0.0, 0.0);
+    let t = hit_sphere(Point::new(0.0, 0.0, -1.0), 0.5, r);
+    if  t > 0.0 {
+        let N = (r.at(t) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
+        return Color::new(N.x() + 1.0, N.y() + 1.0, N.z() + 1.0) * 0.5;
     }
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
@@ -107,12 +109,16 @@ pub fn ray_color(r: &Ray) -> Color {
 /// is a quadratic. You can solve for *t* and there is a square root part that is either positive
 /// (meaning two real solutions), negative (meaning no real solutions), or zero (meaning one real
 /// solution).
-pub fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> bool {
+pub fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.origin() - center;
     let a = ray.direction().dot(&ray.direction());
     let b = 2.0 * oc.dot(&ray.direction());
     let c = oc.dot(&oc) - radius * radius;
     let discriminant = b*b - 4.0*a*c;
 
-    discriminant > 0.0
+    if discriminant < 0.0 {
+        -1.0
+    } else {
+        (-b - f64::sqrt(discriminant)) / (2.0 * a)
+    }
 }
