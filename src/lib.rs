@@ -2,6 +2,7 @@ mod hittable;
 mod ray;
 mod sphere;
 mod vec3;
+mod hittablelist;
 
 use crate::vec3::{Point, Vec3};
 use ray::Ray;
