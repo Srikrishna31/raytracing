@@ -1,15 +1,19 @@
 mod hittable;
+mod hittablelist;
 mod ray;
+mod rtweekend;
 mod sphere;
 mod vec3;
-mod hittablelist;
 
-use crate::vec3::{Point, Vec3};
-use ray::Ray;
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
-use vec3::Color;
+
+// Export all the functions and constants to other crates.
+pub use ray::Ray;
+pub use rtweekend::*;
+pub use sphere::Sphere;
+pub use vec3::{Color, Point, Vec3};
 
 pub fn write_color<T: Write>(out: &mut T, pixel_color: &vec3::Color) -> Result<usize> {
     let mut str = String::new();
@@ -119,7 +123,7 @@ pub fn ray_color(r: &Ray) -> Color {
 /// is a quadratic. You can solve for *t* and there is a square root part that is either positive
 /// (meaning two real solutions), negative (meaning no real solutions), or zero (meaning one real
 /// solution).
-pub fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> f64 {
+fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.origin() - center;
     let a = ray.direction().dot(&ray.direction());
     let half_b = oc.dot(&ray.direction());

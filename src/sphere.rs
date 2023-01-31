@@ -1,15 +1,15 @@
-use crate::hittable::{HitRecord, Hittable};
+use crate::hittable::{HitRecord, Hittable, IntersectionInterval};
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
 
-struct Sphere {
+pub struct Sphere {
     center: Point,
     radius: f64,
     hit_rec: HitRecord,
 }
 
 impl Hittable for Sphere {
-    fn hit(mut self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&mut self, r: &Ray, t: &IntersectionInterval) -> Option<HitRecord> {
         let oc = r.origin() - self.center;
         let a = r.direction().length_squared();
         let half_b = oc.dot(&r.direction());
@@ -24,14 +24,19 @@ impl Hittable for Sphere {
 
         // Find the nearest root that lies in the acceptable range
         let mut root = (-half_b - sqrtd) / a;
-        if root < t_min || root > t_max {
+        if root < t.t_min || root > t.t_max {
             root = (-half_b + sqrtd) / a;
-            if root < t_min || root > t_max {
+            if root < t.t_min || root > t.t_max {
                 return None;
             }
         }
 
-        let mut hit_rec = HitRecord{t: root, p: r.at(rec.t), normal: Vec3::new(0.0,0.0,0.0), front_face: false };
+        let mut hit_rec = HitRecord {
+            t: root,
+            p: r.at(root),
+            normal: Vec3::new(0.0, 0.0, 0.0),
+            front_face: false,
+        };
         let outward_normal = (hit_rec.p - self.center) / self.radius;
         hit_rec.set_face_normal(r, &outward_normal);
 
