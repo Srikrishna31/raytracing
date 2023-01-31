@@ -1,5 +1,6 @@
 use crate::hittable::{HitRecord, Hittable, IntersectionInterval};
 use crate::ray::Ray;
+use crate::Vec3;
 use std::boxed::Box;
 use std::vec::Vec;
 
@@ -19,19 +20,20 @@ impl Hittable for HittableList {
         //     }
         // })
 
+        let mut temp_rec: HitRecord = HitRecord::new();
         let mut hit_anything = false;
         let mut closest_so_far = t.clone();
 
         for obj in self.objects.iter_mut() {
             if let Some(rec) = obj.hit(r, &closest_so_far) {
                 hit_anything = true;
-                closest_so_far.t = rec.t;
-                self.hit_rec = rec;
+                closest_so_far.t_max = rec.t;
+                temp_rec = rec;
             }
         }
 
         if hit_anything {
-            Some(self.hit_rec.clone())
+            Some(temp_rec)
         } else {
             None
         }
