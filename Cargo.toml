@@ -1,6 +1,7 @@
 [package]
 name = "raytracing"
 version = "0.1.0"
+authors = ["Krishna Addepalli <coolkrishna31@gmail.com>"]
 edition = "2021"
 
 [lib]
@@ -9,3 +10,8 @@ path = "src/lib.rs"
 [[bin]]
 path = "src/main.rs"
 name = "raytracer"
+
+[dependencies]
+rand = "0.8.1"
+mt19937 = "2.0.1"
+once_cell = "1.17.0"
