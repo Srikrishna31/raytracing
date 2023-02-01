@@ -52,7 +52,6 @@ impl AddAssign for Vec3 {
         self.e[0] += rhs.e[0];
         self.e[1] += rhs.e[1];
         self.e[2] += rhs.e[2];
-        ()
     }
 }
 

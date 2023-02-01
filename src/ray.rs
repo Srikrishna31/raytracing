@@ -1,5 +1,4 @@
 use crate::vec3::{Point, Vec3};
-use std::clone::Clone;
 
 /// The one thing that all ray tracers have is a ray class and a computation of what color is seen
 /// along a ray. We can think of a ray as a function: **P**(*t*) = **A** + *t***b**.
@@ -17,8 +16,8 @@ pub struct Ray {
 impl Ray {
     pub fn new(origin: &Point, direction: &Vec3) -> Ray {
         Ray {
-            origin: origin.clone(),
-            direction: direction.clone(),
+            origin: *origin,
+            direction: *direction,
         }
     }
 

@@ -51,3 +51,9 @@ impl HittableList {
         self.objects.clear();
     }
 }
+
+impl Default for HittableList {
+    fn default() -> Self {
+        Self::new()
+    }
+}
