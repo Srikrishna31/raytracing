@@ -5,8 +5,8 @@ mod rtweekend;
 mod sphere;
 mod vec3;
 
-// Export all the functions and constants to other crates.
-pub use hittable::{Hittable, IntersectionInterval};
+// Export all the functions structs and constants for use in other crates.
+pub use hittable::Hittable;
 pub use hittablelist::HittableList;
 pub use ray::Ray;
 pub use rtweekend::*;

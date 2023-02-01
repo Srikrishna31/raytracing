@@ -1,4 +1,4 @@
-use crate::hittable::{HitRecord, Hittable, IntersectionInterval};
+use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
 
@@ -47,7 +47,7 @@ impl Hittable for Sphere {
     /// is a quadratic. You can solve for *t* and there is a square root part that is either positive
     /// (meaning two real solutions), negative (meaning no real solutions), or zero (meaning one real
     /// solution).
-    fn hit(&self, r: &Ray, t: &IntersectionInterval) -> Option<HitRecord> {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let oc = r.origin() - self.center;
         let a = r.direction().length_squared();
         let half_b = oc.dot(&r.direction());
@@ -62,9 +62,9 @@ impl Hittable for Sphere {
 
         // Find the nearest root that lies in the acceptable range
         let mut root = (-half_b - sqrtd) / a;
-        if root < t.t_min || root > t.t_max {
+        if root < t_min || root > t_max {
             root = (-half_b + sqrtd) / a;
-            if root < t.t_min || root > t.t_max {
+            if root < t_min || root > t_max {
                 return None;
             }
         }
@@ -83,7 +83,7 @@ impl Hittable for Sphere {
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64) -> Box<Sphere> {
-        Box::<Sphere>::new(Sphere { center, radius })
+    pub fn new(center: Point, radius: f64) -> Sphere {
+        Sphere { center, radius }
     }
 }

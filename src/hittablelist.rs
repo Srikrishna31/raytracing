@@ -1,4 +1,4 @@
-use crate::hittable::{HitRecord, Hittable, IntersectionInterval};
+use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
 use std::boxed::Box;
 use std::vec::Vec;
@@ -8,7 +8,7 @@ pub struct HittableList {
 }
 
 impl Hittable for HittableList {
-    fn hit(&self, r: &Ray, t: &IntersectionInterval) -> Option<HitRecord> {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         // self.objects.iter().fold(None, |acc, val| {
         //     let h = val.hit(r, t);
         //     if h.is_some() {
@@ -20,12 +20,12 @@ impl Hittable for HittableList {
 
         let mut temp_rec: HitRecord = HitRecord::new();
         let mut hit_anything = false;
-        let mut closest_so_far = t.clone();
+        let mut closest_so_far = t_max;
 
         for obj in self.objects.iter() {
-            if let Some(rec) = obj.hit(r, &closest_so_far) {
+            if let Some(rec) = obj.hit(r, t_min, closest_so_far) {
                 hit_anything = true;
-                closest_so_far.t_max = rec.t;
+                closest_so_far = rec.t;
                 temp_rec = rec;
             }
         }

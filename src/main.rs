@@ -1,6 +1,4 @@
-use raytracing::{
-    Color, Hittable, HittableList, IntersectionInterval, Point, Ray, Sphere, Vec3, INFINITY,
-};
+use raytracing::{Color, Hittable, HittableList, Point, Ray, Sphere, Vec3, INFINITY};
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
@@ -31,8 +29,8 @@ fn write_image() {
 
     // World
     let mut world = HittableList::new();
-    world.add(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5));
-    world.add(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0));
+    world.add(Box::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Box::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
 
     // Camera
     let viewport_height = 2.0;
@@ -73,7 +71,7 @@ fn write_image() {
 /// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
 /// to the interval from 0 to 1, and then map x/y/z to r/g/b.
 fn ray_color(r: &Ray, world: &HittableList) -> Color {
-    if let Some(hit_rec) = world.hit(r, &IntersectionInterval::new(0.0, INFINITY).unwrap()) {
+    if let Some(hit_rec) = world.hit(r, 0.0, INFINITY) {
         return 0.5 * (hit_rec.normal + Color::new(1.0, 1.0, 1.0));
     }
     let unit_direction = r.direction().unit_vector();
