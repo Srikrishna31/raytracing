@@ -1,4 +1,7 @@
-use raytracing::{Color, Hittable, HittableList, Point, Ray, Sphere, INFINITY, clamp, Camera, random_in_unit_interval};
+use raytracing::{
+    clamp, random_in_unit_interval, Camera, Color, Hittable, HittableList, Point, Ray, Sphere,
+    INFINITY,
+};
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
@@ -7,7 +10,11 @@ fn main() {
     write_image()
 }
 
-fn write_color<T: Write>(out: &mut T, pixel_color: &Color, samples_per_pixel: i32) -> Result<usize> {
+fn write_color<T: Write>(
+    out: &mut T,
+    pixel_color: &Color,
+    samples_per_pixel: i32,
+) -> Result<usize> {
     let mut r = pixel_color.z();
     let mut g = pixel_color.y();
     let mut b = pixel_color.z();
@@ -37,7 +44,7 @@ fn write_image() {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
     const IMAGE_HEIGHT: u32 = 400;
-    const SAMPLES_PER_PIXEL : i32 = 100;
+    const SAMPLES_PER_PIXEL: i32 = 100;
 
     // World
     let mut world = HittableList::new();
@@ -61,7 +68,8 @@ fn write_image() {
                 pixel_color += ray_color(&r, &world);
             }
 
-            write_color(&mut io::stdout(), &pixel_color, SAMPLES_PER_PIXEL).expect("Error writing to output");
+            write_color(&mut io::stdout(), &pixel_color, SAMPLES_PER_PIXEL)
+                .expect("Error writing to output");
         }
         eprintln!("\nDone.\n")
     }

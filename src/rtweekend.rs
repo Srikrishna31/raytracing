@@ -1,5 +1,5 @@
-use rand::prelude::*;
 use once_cell::sync::Lazy;
+use rand::prelude::*;
 
 // As per the book's convention, this module will host all the constants needed.
 
@@ -11,20 +11,17 @@ pub fn degrees_to_radians(degrees: f64) -> f64 {
     degrees * PI / 180.0
 }
 
-
 /// Returns a random real in [0,1).
 #[inline]
 pub fn random_in_unit_interval() -> f64 {
-    static mut RNG_THREAD: Lazy<ThreadRng> =  Lazy::new(|| { thread_rng() });
+    static mut RNG_THREAD: Lazy<ThreadRng> = Lazy::new(thread_rng);
 
-    unsafe {
-        RNG_THREAD.gen()
-    }
+    unsafe { RNG_THREAD.gen() }
 }
 
 /// Returns a random real in the range [min, max).
 #[inline]
-pub fn random(min: f64, max:f64) -> f64 {
+pub fn random(min: f64, max: f64) -> f64 {
     random_in_unit_interval() * (max - min) + min
 }
 
