@@ -42,7 +42,7 @@ impl IntersectionInterval {
 }
 
 pub trait Hittable {
-    fn hit(&mut self, r: &Ray, t: &IntersectionInterval) -> Option<HitRecord>;
+    fn hit(&self, r: &Ray, t: &IntersectionInterval) -> Option<HitRecord>;
 }
 
 impl HitRecord {

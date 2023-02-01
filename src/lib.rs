@@ -10,6 +10,8 @@ use std::io;
 use std::io::{Result, Write};
 
 // Export all the functions and constants to other crates.
+use crate::hittable::{Hittable, IntersectionInterval};
+use crate::hittablelist::HittableList;
 pub use ray::Ray;
 pub use rtweekend::*;
 pub use sphere::Sphere;
@@ -35,6 +37,11 @@ pub fn write_image() {
     const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
     const IMAGE_HEIGHT: u32 = 400;
 
+    // World
+    let mut world = HittableList::new();
+    world.add(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5));
+    world.add(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0));
+
     // Camera
     let viewport_height = 2.0;
     let viewport_width = ASPECT_RATIO * viewport_height;
@@ -58,7 +65,7 @@ pub fn write_image() {
                 &origin,
                 &(lower_left_corner + u * horizontal + v * vertical - origin),
             );
-            let pixel_color = ray_color(&r);
+            let pixel_color = ray_color(&r, &world);
 
             write_color(&mut io::stdout(), &pixel_color).expect("Error writing to output");
         }
@@ -73,11 +80,9 @@ pub fn write_image() {
 /// A common trick used for visualizing normals (because it's easy and somewhat intuitive to assume
 /// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
 /// to the interval from 0 to 1, and then map x/y/z to r/g/b.
-pub fn ray_color(r: &Ray) -> Color {
-    let t = hit_sphere(Point::new(0.0, 0.0, -1.0), 0.5, r);
-    if t > 0.0 {
-        let N = (r.at(t) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
-        return Color::new(N.x() + 1.0, N.y() + 1.0, N.z() + 1.0) * 0.5;
+pub fn ray_color(r: &Ray, world: &HittableList) -> Color {
+    if let Some(hit_rec) = world.hit(r, &IntersectionInterval::new(0.0, INFINITY).unwrap()) {
+        return 0.5 * (hit_rec.normal + Color::new(1.0, 1.0, 1.0));
     }
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
