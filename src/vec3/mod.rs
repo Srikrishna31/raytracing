@@ -1,6 +1,6 @@
-mod vec3;
+mod vec3_impl;
 
-pub use vec3::*;
+pub use vec3_impl::*;
 
-pub type Point = vec3::Vec3;
-pub type Color = vec3::Vec3;
+pub type Point = Vec3;
+pub type Color = Vec3;
