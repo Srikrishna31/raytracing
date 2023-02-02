@@ -17,7 +17,6 @@ pub use vec3::{Color, Point, Vec3};
 
 use embed_doc_image::embed_doc_image;
 
-
 /// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
 /// of those rays. The involved steps are (1) calculate the ray from the eye to the pixel, (2) determine
 /// which objects the ray intersects, and (3) compute a color for that intersection point.

@@ -1,10 +1,10 @@
+use embed_doc_image::embed_doc_image;
 use raytracing::{
-    clamp, random_in_unit_interval, Camera, Color, HittableList, Point, Sphere, ray_color
+    clamp, random_in_unit_interval, ray_color, Camera, Color, HittableList, Point, Sphere,
 };
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
-use embed_doc_image::embed_doc_image;
 
 fn main() {
     write_image()
@@ -86,4 +86,3 @@ fn write_image() {
         eprintln!("\nDone.\n")
     }
 }
-

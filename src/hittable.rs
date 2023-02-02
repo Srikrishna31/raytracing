@@ -1,6 +1,6 @@
-use embed_doc_image::embed_doc_image;
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
+use embed_doc_image::embed_doc_image;
 
 #[derive(Debug, Clone)]
 pub struct HitRecord {
@@ -60,7 +60,10 @@ impl HitRecord {
     /// against the incident ray. This decision is determined by whether you want to determine the
     /// side of the surface at the time of geometry intersection or at the time of coloring.
     #[embed_doc_image("surfgeom", "doc_images/sphere_surface_normal_geometry.jpg")]
-    #[embed_doc_image("normsides", "doc_images/possible_directions_for_sphere_surface_normal_geometry.jpg")]
+    #[embed_doc_image(
+        "normsides",
+        "doc_images/possible_directions_for_sphere_surface_normal_geometry.jpg"
+    )]
     #[inline]
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vec3) {
         self.front_face = r.direction().dot(outward_normal) < 0.0;
