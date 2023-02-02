@@ -1,3 +1,5 @@
+use crate::rtweekend::{random, random_in_unit_interval};
+use embed_doc_image::embed_doc_image;
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
 
 #[derive(Debug, Clone, Copy)]
@@ -44,6 +46,55 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Vec3 {
         *self / self.length()
+    }
+
+    pub fn random_unit_vector() -> Vec3 {
+        Vec3 {
+            e: [
+                random_in_unit_interval(),
+                random_in_unit_interval(),
+                random_in_unit_interval(),
+            ],
+        }
+    }
+
+    pub fn random_vector(min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            e: [random(min, max), random(min, max), random(min, max)],
+        }
+    }
+
+    /// # A Simple Diffuse Material
+    /// Diffuse objects that don't emit light merely take on the color of their surroundings, but they
+    /// modulate that with their own intrinsic color. Light that reflects off a diffuse surface has
+    /// its direction randomized. So, if we send three rays into a crack between two diffuse surfaces
+    /// they will each have different random behavior:
+    ///
+    /// ![Light ray bounces][raybounces]
+    ///
+    /// There are two unit radius spheres tangent to the hit point ***p*** of a surface. These two
+    /// spheres have a center of **(P + n)** and **(P - n)**, where **n** is the normal of the
+    /// surface. The sphere with a center at **(P - n)** is considered *inside* the surface, whereas
+    /// the sphere with center **(P + n)** is considered *outside* the surface. Select the tangent
+    /// unit radius sphere that is on the same side of the surface as the ray origin. Pick a random
+    /// point **S** inside this unit radius sphere and send a ray from the hit point **P** to the
+    /// random point **S**(this is the vector **(S - P)**):
+    ///
+    /// ![Generating a random diffuse bounce ray][randomdiffuseray]
+    ///
+    /// We need a way to pick a random point in a unit radius sphere. We'll use a rejection algorithm:
+    /// First, pick a random point in the unit cube where x, y, and z all range from -1 to +1. Reject
+    /// this point and try again if the point is outside the sphere.
+    #[embed_doc_image("raybounces", "doc_images/light_ray_bounces.jpg")]
+    #[embed_doc_image("randomdiffuseray", "doc_images/generating_a_random_diffuse_ray.jpg")]
+    pub fn random_vector_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Self::random_vector(-1.0, 1.0);
+            if p.length_squared() >= 1.0 {
+                continue;
+            }
+            return p;
+        }
     }
 }
 

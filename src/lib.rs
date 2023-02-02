@@ -27,7 +27,7 @@ use embed_doc_image::embed_doc_image;
 /// units in height. We'll also set the distance between the projection plane and the projection point
 /// to be one unit. This is referred to as the "focal length"
 ///
-/// ![Camera Geomety][camgeom]
+/// ![Camera Geometry][camgeom]
 ///
 /// The "eye" (or camera center if you think of a camera) is at (0,0,0). The y-axis is pointing upwards,
 /// and the x-axis goes towards the right. In order to respect the convention of a right handed
@@ -39,9 +39,20 @@ use embed_doc_image::embed_doc_image;
 /// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
 /// to the interval from 0 to 1, and then map x/y/z to r/g/b.
 #[embed_doc_image("camgeom", "doc_images/camera_geometry.jpg")]
-pub fn ray_color(r: &Ray, world: &HittableList) -> Color {
+pub fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
+    // If we've exceeded the ray bounce limit, no more light is gathered.
+    if depth == 0 {
+        return Color::new(0.0, 0.0, 0.0);
+    }
+
     if let Some(hit_rec) = world.hit(r, 0.0, INFINITY) {
-        return 0.5 * (hit_rec.normal + Color::new(1.0, 1.0, 1.0));
+        let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
+        return 0.5
+            * ray_color(
+                &Ray::new(&hit_rec.p, &(target - hit_rec.p)),
+                world,
+                depth - 1,
+            );
     }
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);

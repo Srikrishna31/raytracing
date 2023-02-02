@@ -57,6 +57,7 @@ fn write_image() {
     const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
     const IMAGE_HEIGHT: u32 = 400;
     const SAMPLES_PER_PIXEL: i32 = 100;
+    const MAX_DEPTH: u32 = 50;
 
     // World
     let mut world = HittableList::new();
@@ -77,7 +78,7 @@ fn write_image() {
                 let u = (i as f64 + random_in_unit_interval()) / (IMAGE_WIDTH - 1) as f64;
                 let v = (j as f64 + random_in_unit_interval()) / (IMAGE_HEIGHT - 1) as f64;
                 let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &world);
+                pixel_color += ray_color(&r, &world, MAX_DEPTH);
             }
 
             write_color(&mut io::stdout(), &pixel_color, SAMPLES_PER_PIXEL)
