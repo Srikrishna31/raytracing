@@ -3,6 +3,8 @@ use crate::ray::Ray;
 use std::boxed::Box;
 use std::vec::Vec;
 
+/// This represents the world/scene which is composed of hittables (objects). This can be used to
+/// arbitrarily position a list of objects in the scene and render them.
 pub struct HittableList {
     objects: Vec<Box<dyn Hittable>>,
 }

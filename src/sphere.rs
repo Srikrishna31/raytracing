@@ -1,6 +1,7 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
+use embed_doc_image::embed_doc_image;
 
 pub struct Sphere {
     center: Point,
@@ -47,6 +48,9 @@ impl Hittable for Sphere {
     /// is a quadratic. You can solve for *t* and there is a square root part that is either positive
     /// (meaning two real solutions), negative (meaning no real solutions), or zero (meaning one real
     /// solution).
+    ///
+    /// ![Ray-Sphere intersection results][raysphere]
+    #[embed_doc_image("raysphere", "doc_images/ray_sphere_intersection_results.jpg")]
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let oc = r.origin() - self.center;
         let a = r.direction().length_squared();

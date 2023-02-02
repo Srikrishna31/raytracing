@@ -1,21 +1,24 @@
 use raytracing::{
-    clamp, random_in_unit_interval, Camera, Color, Hittable, HittableList, Point, Ray, Sphere,
-    INFINITY,
+    clamp, random_in_unit_interval, Camera, Color, HittableList, Point, Sphere, ray_color
 };
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
+use embed_doc_image::embed_doc_image;
 
 fn main() {
     write_image()
 }
 
+/// To handle the multi-sampled color computation - rather than adding in a fractional contribution
+/// each time we accumulate more light to the color, just add the full color each iteration, and
+/// then perform a single divide at the end (by the number of samples) when writing out the color.
 fn write_color<T: Write>(
     out: &mut T,
     pixel_color: &Color,
     samples_per_pixel: i32,
 ) -> Result<usize> {
-    let mut r = pixel_color.z();
+    let mut r = pixel_color.x();
     let mut g = pixel_color.y();
     let mut b = pixel_color.z();
 
@@ -39,6 +42,15 @@ fn write_color<T: Write>(
     out.write(str.as_bytes())
 }
 
+/// # Antialiasing
+/// When a real camera takes a picture, there are usually no jaggies along edges because the edge
+/// pixels are a blend of some foreground and some background. We can get the same effect by averaging
+/// a bunch of samples inside each pixel. We will not bother with stratification.
+///
+/// For a given pixel we have several samples within that pixel and send rays through each of the
+/// samples. The colors of these rays are then averaged:
+/// ![Pixel Samples][pixelsamples]
+#[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 fn write_image() {
     // Image
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
@@ -75,18 +87,3 @@ fn write_image() {
     }
 }
 
-/// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
-/// of those rays. The involved steps are (1) calculate the ray from the eye to the pixel, (2) determine
-/// which objects the ray intersects, and (3) compute a color for that intersection point.
-///
-/// A common trick used for visualizing normals (because it's easy and somewhat intuitive to assume
-/// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
-/// to the interval from 0 to 1, and then map x/y/z to r/g/b.
-fn ray_color(r: &Ray, world: &HittableList) -> Color {
-    if let Some(hit_rec) = world.hit(r, 0.0, INFINITY) {
-        return 0.5 * (hit_rec.normal + Color::new(1.0, 1.0, 1.0));
-    }
-    let unit_direction = r.direction().unit_vector();
-    let t = 0.5 * (unit_direction.y() + 1.0);
-    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
-}
