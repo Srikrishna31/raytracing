@@ -45,7 +45,12 @@ pub fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    if let Some(hit_rec) = world.hit(r, 0.0, INFINITY) {
+    // # Fixing the shadow Acne
+    // Some of the reflected rays hit the object they are reflecting off of not at exactly at
+    // **t = 0**, but instead at **t = -0.0000001** or **t = 0.0000001** or whatever floating
+    // point approximation the sphere intersector gives us. So we need to ignore hits very near zero:
+    // So pass the t_min as 0.001.
+    if let Some(hit_rec) = world.hit(r, 0.001, INFINITY) {
         let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
         return 0.5
             * ray_color(
