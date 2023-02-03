@@ -11,6 +11,7 @@ pub trait Material {
     /// returns none.
     /// # Arguments
     /// `r_in`: Incoming / Incident ray
+    ///
     /// `rec`: The object having this material property being hit.
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)>;
 }

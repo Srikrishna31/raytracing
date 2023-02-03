@@ -1,4 +1,5 @@
 mod camera;
+mod dielectric;
 mod hittable;
 mod hittablelist;
 mod lambertian;
@@ -13,6 +14,7 @@ use embed_doc_image::embed_doc_image;
 
 // Export all the functions structs and constants for use in other crates.
 pub use camera::Camera;
+pub use dielectric::Dielectric;
 pub use hittable::{HitRecord, Hittable};
 pub use hittablelist::HittableList;
 pub use lambertian::LambertianMaterial;
