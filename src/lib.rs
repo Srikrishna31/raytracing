@@ -51,7 +51,11 @@ pub fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
     // point approximation the sphere intersector gives us. So we need to ignore hits very near zero:
     // So pass the t_min as 0.001.
     if let Some(hit_rec) = world.hit(r, 0.001, INFINITY) {
-        let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
+        // todo!("Use a strategy pattern to choose between different diffusers");
+        //let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
+        // let target =
+        //     hit_rec.p + hit_rec.normal + Vec3::random_unit_vector_lambertian_distribution();
+        let target = hit_rec.p + Vec3::random_unit_vector_in_hemisphere(&hit_rec.normal);
         return 0.5
             * ray_color(
                 &Ray::new(&hit_rec.p, &(target - hit_rec.p)),

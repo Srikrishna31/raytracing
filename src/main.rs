@@ -49,7 +49,9 @@ fn write_color<T: Write>(
 ///
 /// For a given pixel we have several samples within that pixel and send rays through each of the
 /// samples. The colors of these rays are then averaged:
+///
 /// ![Pixel Samples][pixelsamples]
+///
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 fn write_image() {
     // Image

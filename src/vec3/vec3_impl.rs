@@ -96,6 +96,35 @@ impl Vec3 {
             return p;
         }
     }
+
+    /// # True Lambertian Reflection
+    /// The rejection method presented in `random_vector_in_unit_sphere` produces random points in
+    /// the unit ball offset along the surface normal. This corresponds to picking directions on the
+    /// hemisphere with high probability close to the normal, and a lower probability of scattering
+    /// rays at grazing angles. This distribution scales by the **cos<sub>3</sub>(*φ*)** where *φ* is
+    /// the angle from the normal. This is useful since light arriving at shallow angles spreads over
+    /// a larger area, and thus has a lower contribution to the final color.
+    ///
+    /// However, we are interested in a Lambertian Distribution, which has a distribution of **cos(*φ*)**.
+    /// True Lambertian has the probability higher for ray scattering close to the normal, but the
+    /// distribution is more uniform. This is achieved by picking random points on the surface of
+    /// the unit sphere, offset along the normal. Picking random points on the unit sphere can be
+    /// achieved by picking random points *in* the unit sphere, and normalizing those.
+    ///
+    /// ![Generating a random unit vector][randvec]
+    #[embed_doc_image("randvec", "doc_images/generating_a_random_unit_vector.png")]
+    pub fn random_unit_vector_lambertian_distribution() -> Vec3 {
+        Self::unit_vector(&Self::random_vector_in_unit_sphere())
+    }
+
+    pub fn random_unit_vector_in_hemisphere(normal: &Vec3) -> Vec3 {
+        let in_unit_sphere = Self::random_vector_in_unit_sphere();
+        if in_unit_sphere.dot(normal) > 0.0 {
+            in_unit_sphere
+        } else {
+            -in_unit_sphere
+        }
+    }
 }
 
 impl AddAssign for Vec3 {
