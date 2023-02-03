@@ -1,12 +1,14 @@
 use crate::hittable::{HitRecord, Hittable};
+use crate::lambertian::LambertianMaterial;
 use crate::ray::Ray;
-use std::boxed::Box;
+use crate::Color;
+use std::rc::Rc;
 use std::vec::Vec;
 
 /// This represents the world/scene which is composed of hittables (objects). This can be used to
 /// arbitrarily position a list of objects in the scene and render them.
 pub struct HittableList {
-    objects: Vec<Box<dyn Hittable>>,
+    objects: Vec<Rc<dyn Hittable>>,
 }
 
 impl Hittable for HittableList {
@@ -20,7 +22,8 @@ impl Hittable for HittableList {
         //     }
         // })
 
-        let mut temp_rec: HitRecord = HitRecord::new();
+        let mut temp_rec: HitRecord =
+            HitRecord::new(Rc::new(LambertianMaterial::new(Color::new(0.0, 0.0, 0.0))));
         let mut hit_anything = false;
         let mut closest_so_far = t_max;
 
@@ -45,7 +48,7 @@ impl HittableList {
         HittableList { objects: vec![] }
     }
 
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
+    pub fn add(&mut self, object: Rc<dyn Hittable>) {
         self.objects.push(object);
     }
 

@@ -1,10 +1,12 @@
 use embed_doc_image::embed_doc_image;
 use raytracing::{
-    clamp, random_in_unit_interval, ray_color, Camera, Color, HittableList, Point, Sphere,
+    clamp, random_in_unit_interval, ray_color, Camera, Color, HittableList, LambertianMaterial,
+    Metal, Point, Sphere,
 };
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
+use std::rc::Rc;
 
 fn main() {
     write_image()
@@ -62,10 +64,35 @@ fn write_image() {
     const MAX_DEPTH: u32 = 50;
 
     // World
-    let mut world = HittableList::new();
-    world.add(Box::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Box::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
+    // let mut world = HittableList::new();
+    // world.add(Box::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
+    // world.add(Box::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
+    let material_ground = Rc::new(LambertianMaterial::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Rc::new(LambertianMaterial::new(Color::new(0.7, 0.3, 0.3)));
+    let material_left = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
 
+    let mut world = HittableList::new();
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(1.0, 0.0, -1.0),
+        0.5,
+        material_right,
+    )));
     // Camera
     let camera = Camera::new();
 

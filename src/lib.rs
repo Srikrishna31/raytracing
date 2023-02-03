@@ -1,21 +1,27 @@
 mod camera;
 mod hittable;
 mod hittablelist;
+mod lambertian;
+mod material;
+mod metal;
 mod ray;
 mod rtweekend;
 mod sphere;
 mod vec3;
 
+use embed_doc_image::embed_doc_image;
+
 // Export all the functions structs and constants for use in other crates.
 pub use camera::Camera;
-pub use hittable::Hittable;
+pub use hittable::{HitRecord, Hittable};
 pub use hittablelist::HittableList;
+pub use lambertian::LambertianMaterial;
+pub use material::Material;
+pub use metal::Metal;
 pub use ray::Ray;
 pub use rtweekend::*;
 pub use sphere::Sphere;
 pub use vec3::{Color, Point, Vec3};
-
-use embed_doc_image::embed_doc_image;
 
 /// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
 /// of those rays. The involved steps are (1) calculate the ray from the eye to the pixel, (2) determine
@@ -55,13 +61,19 @@ pub fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
         //let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
         // let target =
         //     hit_rec.p + hit_rec.normal + Vec3::random_unit_vector_lambertian_distribution();
-        let target = hit_rec.p + Vec3::random_unit_vector_in_hemisphere(&hit_rec.normal);
-        return 0.5
-            * ray_color(
-                &Ray::new(&hit_rec.p, &(target - hit_rec.p)),
-                world,
-                depth - 1,
-            );
+        // let target = hit_rec.p + Vec3::random_unit_vector_in_hemisphere(&hit_rec.normal);
+        // return 0.5
+        //     * ray_color(
+        //         &Ray::new(&hit_rec.p, &(target - hit_rec.p)),
+        //         world,
+        //         depth - 1,
+        //     );
+
+        if let Some((scattered, attenuation)) = hit_rec.mat.scatter(r, &hit_rec) {
+            return attenuation * ray_color(&scattered, world, depth - 1);
+        }
+
+        return Color::new(0.0, 0.0, 0.0);
     }
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);

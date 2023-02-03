@@ -1,11 +1,14 @@
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
 use embed_doc_image::embed_doc_image;
+use std::rc::Rc;
 
 #[derive(Debug, Clone)]
 pub struct HitRecord {
     pub p: Point,
     pub normal: Vec3,
+    pub mat: Rc<dyn Material>,
     pub t: f64,
     pub front_face: bool,
 }
@@ -25,10 +28,11 @@ pub trait Hittable {
 }
 
 impl HitRecord {
-    pub fn new() -> HitRecord {
+    pub fn new(material: Rc<dyn Material>) -> HitRecord {
         HitRecord {
             p: Vec3 { e: [0.0, 0.0, 0.0] },
             normal: Vec3 { e: [0.0, 0.0, 0.0] },
+            mat: material,
             t: 0.0,
             front_face: false,
         }
@@ -74,11 +78,5 @@ impl HitRecord {
                 -outward_normal
             }
         }
-    }
-}
-
-impl Default for HitRecord {
-    fn default() -> Self {
-        Self::new()
     }
 }

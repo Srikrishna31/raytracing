@@ -48,6 +48,16 @@ impl Vec3 {
         *self / self.length()
     }
 
+    /// If the random unit vector generated is exactly opposite the normal vector, the two will
+    /// sum to zero, which will result in a zero scatter direction vector. This leads to bad
+    /// scenarios later on (infinities and NaNs), so we need to intercept the condition before we
+    /// pass it on.
+    pub fn near_zero(&self) -> bool {
+        // Return true if the vector is close to zero in all dimensions.
+        const S: f64 = 1e-8;
+        f64::abs(self.e[0]) < S && f64::abs(self.e[1]) < S && f64::abs(self.e[2]) < S
+    }
+
     pub fn random_unit_vector() -> Vec3 {
         Vec3 {
             e: [
@@ -124,6 +134,10 @@ impl Vec3 {
         } else {
             -in_unit_sphere
         }
+    }
+
+    pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
+        *v - 2.0 * v.dot(n) * n
     }
 }
 
@@ -223,5 +237,13 @@ impl Mul<Vec3> for f64 {
     type Output = Vec3;
     fn mul(self, rhs: Vec3) -> Self::Output {
         rhs * self
+    }
+}
+
+// For an expression accepting a Vector by reference
+impl Mul<&Vec3> for f64 {
+    type Output = Vec3;
+    fn mul(self, rhs: &Vec3) -> Self::Output {
+        *rhs * self
     }
 }
