@@ -69,8 +69,8 @@ fn write_image() {
     // world.add(Box::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
     let material_ground = Rc::new(LambertianMaterial::new(Color::new(0.8, 0.8, 0.0)));
     let material_center = Rc::new(LambertianMaterial::new(Color::new(0.7, 0.3, 0.3)));
-    let material_left = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
-    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
+    let material_left = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
+    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
 
     let mut world = HittableList::new();
     world.add(Rc::new(Sphere::new(
