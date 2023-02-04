@@ -11,11 +11,11 @@ path = "src/lib.rs"
 path = "src/main.rs"
 name = "raytracer"
 
-#[package.metadata.docs.rs]
-#rustdoc-args = [
-#        "--html-in-header",
-#        "./src/katex.html"
-#]
+[package.metadata.docs.rs]
+rustdoc-args = [
+        "--html-in-header",
+        "./katex.html"
+]
 
 [dependencies]
 rand = "0.8.1"

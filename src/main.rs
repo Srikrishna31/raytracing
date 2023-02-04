@@ -1,3 +1,5 @@
+mod scenes;
+
 use embed_doc_image::embed_doc_image;
 use raytracing::{
     clamp, random_in_unit_interval, ray_color, Camera, Color, Dielectric, HittableList,
@@ -74,27 +76,9 @@ fn write_image() {
     let material_left = Rc::new(Dielectric::new(1.5));
     let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
 
-    let mut world = HittableList::new();
-    world.add(Rc::new(Sphere::new(
-        Point::new(0.0, -100.5, -1.0),
-        100.0,
-        material_ground,
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point::new(0.0, 0.0, -1.0),
-        0.5,
-        material_center,
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point::new(-1.0, 0.0, -1.0),
-        0.5,
-        material_left,
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point::new(1.0, 0.0, -1.0),
-        0.5,
-        material_right,
-    )));
+    // let mut world = scenes::scene_with_dielectric_and_shiny_sphere();
+    let world = scenes::scene_with_hollow_glass_sphere();
+
     // Camera
     let camera = Camera::new();
 

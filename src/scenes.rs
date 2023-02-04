@@ -1,0 +1,74 @@
+use raytracing::{Color, Dielectric, HittableList, LambertianMaterial, Metal, Point, Sphere};
+use std::rc::Rc;
+
+pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> HittableList {
+    let mut world = HittableList::new();
+    let material_ground = Rc::new(LambertianMaterial::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Rc::new(LambertianMaterial::new(Color::new(0.1, 0.2, 0.5)));
+    let material_left = Rc::new(Dielectric::new(1.5));
+    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
+
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(1.0, 0.0, -1.0),
+        0.5,
+        material_right,
+    )));
+
+    world
+}
+
+/// An interesting and easy trick with dielectric spheres is to note that if you use a negative
+/// radius, the geometry is unaffected, but the surface normal points inward. This can be used as α
+/// bubble to make a hollow glass sphere:
+pub fn scene_with_hollow_glass_sphere() -> HittableList {
+    let mut world = HittableList::new();
+    let material_ground = Rc::new(LambertianMaterial::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Rc::new(LambertianMaterial::new(Color::new(0.1, 0.2, 0.5)));
+    let material_left = Rc::new(Dielectric::new(1.5));
+    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
+
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left.clone(),
+    )));
+
+    world.add(Rc::new(Sphere::new(
+        Point::new(-1.0, 0.0, -1.0),
+        -0.4,
+        material_left,
+    )));
+
+    world.add(Rc::new(Sphere::new(
+        Point::new(1.0, 0.0, -1.0),
+        0.5,
+        material_right,
+    )));
+
+    world
+}
