@@ -147,6 +147,16 @@ impl Vec3 {
 
         r_out_perpendicular + r_out_parallel
     }
+
+    pub fn random_vector_in_unit_disk() -> Vec3 {
+        loop {
+            let p = Vec3::new(random(-1.0, 1.0), random(-1.0, 1.0), 0.0);
+            if p.length_squared() >= 1.0 {
+                continue;
+            }
+            return p;
+        }
+    }
 }
 
 impl AddAssign for Vec3 {

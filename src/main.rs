@@ -2,7 +2,7 @@ mod scenes;
 
 use embed_doc_image::embed_doc_image;
 use raytracing::{
-    clamp, random_in_unit_interval, ray_color, Camera, Color, Dielectric, LambertianMaterial, Metal,
+    clamp, random_in_unit_interval, ray_color, Color, Dielectric, LambertianMaterial, Metal,
 };
 use std::fmt::Write as FmtWrite;
 use std::io;
@@ -81,7 +81,7 @@ fn write_image() {
     // // Camera
     // let camera = Camera::new();
 
-    let (world, camera) = scenes::scene_with_alternate_viewpoint();
+    let (world, camera) = scenes::scene_with_depth_of_field_camera();
 
     // Render
     println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);
