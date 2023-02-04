@@ -2,8 +2,7 @@ mod scenes;
 
 use embed_doc_image::embed_doc_image;
 use raytracing::{
-    clamp, random_in_unit_interval, ray_color, Camera, Color, Dielectric, HittableList,
-    LambertianMaterial, Metal, Point, Sphere,
+    clamp, random_in_unit_interval, ray_color, Camera, Color, Dielectric, LambertianMaterial, Metal,
 };
 use std::fmt::Write as FmtWrite;
 use std::io;
@@ -77,10 +76,12 @@ fn write_image() {
     let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
 
     // let mut world = scenes::scene_with_dielectric_and_shiny_sphere();
-    let world = scenes::scene_with_hollow_glass_sphere();
+    // let world = scenes::scene_with_hollow_glass_sphere();
+    //
+    // // Camera
+    // let camera = Camera::new();
 
-    // Camera
-    let camera = Camera::new();
+    let (world, camera) = scenes::scene_for_wide_angle_camera();
 
     // Render
     println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);

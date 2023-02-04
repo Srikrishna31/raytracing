@@ -1,4 +1,6 @@
-use raytracing::{Color, Dielectric, HittableList, LambertianMaterial, Metal, Point, Sphere};
+use raytracing::{
+    Camera, Color, Dielectric, HittableList, LambertianMaterial, Metal, Point, Sphere, PI,
+};
 use std::rc::Rc;
 
 pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> HittableList {
@@ -71,4 +73,27 @@ pub fn scene_with_hollow_glass_sphere() -> HittableList {
     )));
 
     world
+}
+
+pub fn scene_for_wide_angle_camera() -> (HittableList, Camera) {
+    let R = (PI / 4.0).cos();
+    let mut world = HittableList::new();
+
+    let material_left = Rc::new(LambertianMaterial::new(Color::new(0.0, 0.0, 1.0)));
+    let material_right = Rc::new(LambertianMaterial::new(Color::new(1.0, 0.0, 0.0)));
+
+    world.add(Rc::new(Sphere::new(
+        Point::new(-R, 0.0, -1.0),
+        R,
+        material_left,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(R, 0.0, -1.0),
+        R,
+        material_right,
+    )));
+
+    let camera = Camera::new(90.0, 16.0 / 9.0);
+
+    (world, camera)
 }
