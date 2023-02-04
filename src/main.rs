@@ -81,7 +81,7 @@ fn write_image() {
     // // Camera
     // let camera = Camera::new();
 
-    let (world, camera) = scenes::scene_for_wide_angle_camera();
+    let (world, camera) = scenes::scene_with_alternate_viewpoint();
 
     // Render
     println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);

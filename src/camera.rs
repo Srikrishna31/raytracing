@@ -11,8 +11,36 @@ use embed_doc_image::embed_doc_image;
 ///
 /// ![Camera Viewing Geometry][camgeometry]
 ///
-/// This implies $ h = tan(θ / 2) $.
+/// This implies $h = tan(θ / 2)$.
+///
+/// # Positioning and Orienting the Camera
+///
+/// To get an arbitrary viewpoint, let's first name the points we care about. The position where the
+/// camera is placed is called as *lookfrom*, and the point it looks at *lookat*. (Later, it can be
+/// changed to a direction to look in instead of a point to look at.)
+///
+/// We also need a way to specify the roll, or sideways tilt, of the camera: the rotation around the
+/// lookat-lookfrom axis. Another way to think about it is that even if you keep `lookfrom` and
+/// `lookat` constant, you can still rotate your head around your nose. What we need is a way to
+/// specify an "up" vector for the camera. This up vector should lie in the plane orthogonal to the
+/// view direction.
+///
+/// ![Camera view direction][camviewdirection]
+///
+/// We can actually use any up vector we want, and simply project it onto this plane to get an up
+/// vector for the camera. The common convention is to name "view up" (vup) vector. A couple of cross
+/// products, and we now have a complete orthonormal basis ***(u,v,w)*** to describe our camera's
+/// orientation.
+///
+/// ![Camera view up direction][camupdirection]
+///
+/// Remember that `vup`, `v`, and `w` are all in the same plane. Note that like before when our fixed
+/// camera faced -Z, our arbitrary view camera faces -w. And  keep in mind that we can - but we don't
+/// have to - use world up (0,1,0) to specify vup. This is convenient and will naturally keep your
+/// camera horizontally level until you decide to experiment with crazy camera angles.
 #[embed_doc_image("camgeometry", "doc_images/camera_viewing_geometry.jpg")]
+#[embed_doc_image("camviewdirection", "doc_images/camera_view_direction.jpg")]
+#[embed_doc_image("camupdirection", "doc_images/camera_view_up_direction.jpg")]
 pub struct Camera {
     origin: Point,
     lower_left_corner: Point,
@@ -27,33 +55,32 @@ impl Camera {
     /// todo: Encapsulate fov into a degrees type, to make the code more readable.
     /// * `aspect_ratio`: Aspect Ratio determines the width/length of the viewport.
     ///
-    pub fn new(vfov: f64, aspect_ratio: f64) -> Camera {
+    pub fn new(lookfrom: Point, lookat: Point, vup: Vec3, vfov: f64, aspect_ratio: f64) -> Camera {
         let theta = degrees_to_radians(vfov);
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h;
         let viewport_width = aspect_ratio * viewport_height;
 
-        let focal_length = 1.0;
+        let w = (lookfrom - lookat).unit_vector();
+        let u = vup.cross(&w).unit_vector();
+        let v = w.cross(&u);
 
-        let origin = Point::new(0.0, 0.0, 0.0);
-        let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-        let vertical = Vec3::new(0.0, viewport_height, 0.0);
+        let origin = lookfrom;
+        let horizontal = viewport_width * u;
+        let vertical = viewport_height * v;
 
         Camera {
             origin,
             horizontal,
             vertical,
-            lower_left_corner: origin
-                - horizontal / 2.0
-                - vertical / 2.0
-                - Vec3::new(0.0, 0.0, focal_length),
+            lower_left_corner: origin - horizontal / 2.0 - vertical / 2.0 - w,
         }
     }
 
-    pub fn get_ray(&self, u: f64, v: f64) -> Ray {
+    pub fn get_ray(&self, s: f64, t: f64) -> Ray {
         Ray::new(
             &self.origin,
-            &(self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin),
+            &(self.lower_left_corner + s * self.horizontal + t * self.vertical - self.origin),
         )
     }
 }
