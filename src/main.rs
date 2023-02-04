@@ -1,13 +1,10 @@
 mod scenes;
 
 use embed_doc_image::embed_doc_image;
-use raytracing::{
-    clamp, random_in_unit_interval, ray_color, Color, Dielectric, LambertianMaterial, Metal,
-};
+use raytracing::{clamp, random_in_unit_interval, ray_color, Color};
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
-use std::rc::Rc;
 
 fn main() {
     write_image()
@@ -58,30 +55,20 @@ fn write_color<T: Write>(
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 fn write_image() {
     // Image
-    const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
-    const IMAGE_HEIGHT: u32 = 400;
-    const SAMPLES_PER_PIXEL: i32 = 100;
+    // const ASPECT_RATIO: f64 = 16.0 / 9.0;
+    // const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
+    // const IMAGE_HEIGHT: u32 = 400;
+    // const SAMPLES_PER_PIXEL: i32 = 100;
+    // const MAX_DEPTH: u32 = 50;
+
+    const ASPECT_RATIO: f64 = 3.0 / 2.0;
+    const IMAGE_WIDTH: u32 = 1200;
+    const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
+    const SAMPLES_PER_PIXEL: i32 = 500;
     const MAX_DEPTH: u32 = 50;
 
-    // World
-    // let mut world = HittableList::new();
-    // world.add(Box::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
-    // world.add(Box::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
-    let material_ground = Rc::new(LambertianMaterial::new(Color::new(0.8, 0.8, 0.0)));
-    // let material_center = Rc::new(LambertianMaterial::new(Color::new(0.7, 0.3, 0.3)));
-    // let material_left = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
-    let material_center = Rc::new(Dielectric::new(1.5));
-    let material_left = Rc::new(Dielectric::new(1.5));
-    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
-
-    // let mut world = scenes::scene_with_dielectric_and_shiny_sphere();
-    // let world = scenes::scene_with_hollow_glass_sphere();
-    //
-    // // Camera
-    // let camera = Camera::new();
-
-    let (world, camera) = scenes::scene_with_depth_of_field_camera();
+    // World and Camera
+    let (world, camera) = scenes::rtweekend_one_final_scene();
 
     // Render
     println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);

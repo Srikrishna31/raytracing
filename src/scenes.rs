@@ -1,5 +1,6 @@
 use raytracing::{
-    Camera, Color, Dielectric, HittableList, LambertianMaterial, Metal, Point, Sphere, Vec3, PI,
+    random, random_in_unit_interval, Camera, Color, Dielectric, HittableList, LambertianMaterial,
+    Metal, Point, Sphere, Vec3, PI,
 };
 use std::rc::Rc;
 
@@ -205,6 +206,87 @@ pub fn scene_with_depth_of_field_camera() -> (HittableList, Camera) {
         vup,
         20.0,
         16.0 / 9.0,
+        aperture,
+        dist_to_focus,
+    );
+
+    (world, camera)
+}
+
+pub fn rtweekend_one_final_scene() -> (HittableList, Camera) {
+    let mut world = HittableList::new();
+
+    let ground_material = Rc::new(LambertianMaterial::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    )));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_material = random_in_unit_interval();
+            let center = Point::new(
+                a as f64 + 0.9 * random_in_unit_interval(),
+                0.2,
+                b as f64 + 0.9 * random_in_unit_interval(),
+            );
+
+            if (center - Point::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                if choose_material < 0.8 {
+                    // diffuse
+                    let albedo = Color::random_unit_vector() * Color::random_unit_vector();
+                    let sphere_material = Rc::new(LambertianMaterial::new(albedo));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                } else if choose_material < 0.95 {
+                    // metal
+                    let albedo = Color::random_vector(0.5, 1.0);
+                    let fuzz = random(0.0, 0.5);
+                    let sphere_material = Rc::new(Metal::new(albedo, fuzz));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                } else {
+                    // glass
+                    let sphere_material = Rc::new(Dielectric::new(1.5));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                }
+            }
+        }
+    }
+
+    let material1 = Rc::new(Dielectric::new(1.5));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    )));
+
+    let material2 = Rc::new(LambertianMaterial::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Rc::new(Sphere::new(
+        Point::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    )));
+
+    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Rc::new(Sphere::new(
+        Point::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    )));
+
+    let lookfrom = Point::new(13.0, 2.0, 3.0);
+    let lookat = Point::new(0.0, 0.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.1;
+    let aspect_ratio = 3.0 / 2.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        aspect_ratio,
         aperture,
         dist_to_focus,
     );

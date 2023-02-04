@@ -146,3 +146,27 @@ impl Camera {
         )
     }
 }
+
+impl Default for Camera {
+    /// This function returns a camera positioned at (0,0,0), looking at (0,0,-1), with up vector
+    /// (0,1,0), 90 degree field of view, 16:9 aspect raio and aperture 0 (no blur).
+    fn default() -> Self {
+        let lookfrom = Vec3::new(0.0, 0.0, 0.0);
+        let lookat = Vec3::new(0.0, 0.0, -1.0);
+        let vup = Vec3::new(0.0, 1.0, 0.0);
+        let dist_to_focus = (lookfrom - lookat).length();
+        let aperture = 0.0;
+        let aspect_ratio = 16.0 / 9.0;
+        let fov = 90.0;
+
+        Camera::new(
+            lookfrom,
+            lookat,
+            vup,
+            fov,
+            aspect_ratio,
+            aperture,
+            dist_to_focus,
+        )
+    }
+}
