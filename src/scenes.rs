@@ -1,6 +1,9 @@
 use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
 use raytracing::objects::{Hittable, HittableList, Sphere};
-use raytracing::{random, random_in_unit_interval, Camera, Color, Point, Vec3, PI};
+use raytracing::{
+    utils::{random, random_in_unit_interval, PI},
+    Camera, Color, Point, Vec3,
+};
 use std::rc::Rc;
 
 pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> HittableList {
