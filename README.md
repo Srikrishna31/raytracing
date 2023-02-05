@@ -5,3 +5,5 @@ It is a rust implementation of the concepts explained.
 Below is the image rendered after finishing the book:
 
 ![](./generated_images/image_rtweekend_one_final_scene.jpg)
+
+Images in the doc_images folder are extracted from the booksite.
