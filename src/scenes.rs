@@ -1,6 +1,7 @@
+use raytracing::objects::{Hittable, HittableList, Sphere};
 use raytracing::{
-    random, random_in_unit_interval, Camera, Color, Dielectric, HittableList, LambertianMaterial,
-    Metal, Point, Sphere, Vec3, PI,
+    random, random_in_unit_interval, Camera, Color, Dielectric, LambertianMaterial, Metal, Point,
+    Vec3, PI,
 };
 use std::rc::Rc;
 
