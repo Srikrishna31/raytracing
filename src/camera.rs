@@ -130,7 +130,7 @@ impl Camera {
             lens_radius: aperture / 2.0,
             u,
             v,
-            _w:w,
+            _w: w,
         }
     }
 
