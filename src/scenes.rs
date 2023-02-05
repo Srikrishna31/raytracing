@@ -1,5 +1,5 @@
 use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
-use raytracing::objects::{Hittable, HittableList, Sphere};
+use raytracing::objects::{HittableList, Sphere};
 use raytracing::{
     utils::{random, random_in_unit_interval, PI},
     Camera, Color, Point, Vec3,

@@ -1,6 +1,5 @@
 use crate::objects::{HitRecord, Hittable};
 use crate::ray::Ray;
-use crate::Color;
 use std::rc::Rc;
 use std::vec::Vec;
 
