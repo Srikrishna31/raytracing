@@ -1,4 +1,5 @@
-use crate::{Color, HitRecord, Material, Ray, Vec3};
+use crate::objects::HitRecord;
+use crate::{Color, Material, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
 
 /// # Mirrored Light Reflection

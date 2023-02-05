@@ -1,5 +1,5 @@
-use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
+use crate::objects::{HitRecord, Hittable};
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
 use embed_doc_image::embed_doc_image;

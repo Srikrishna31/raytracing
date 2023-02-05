@@ -1,4 +1,4 @@
-use crate::HitRecord;
+use crate::objects::HitRecord;
 use crate::{Color, Ray};
 use core::fmt::Debug;
 use std::fmt::Formatter;

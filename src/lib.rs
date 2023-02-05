@@ -1,28 +1,23 @@
 mod camera;
 mod dielectric;
-mod hittable;
-mod hittablelist;
 mod lambertian;
 mod material;
 mod metal;
+pub mod objects;
 mod ray;
 mod rtweekend;
-mod sphere;
 mod vec3;
 
 use embed_doc_image::embed_doc_image;
-
+use objects::{Hittable, HittableList};
 // Export all the functions structs and constants for use in other crates.
 pub use camera::Camera;
 pub use dielectric::Dielectric;
-pub use hittable::{HitRecord, Hittable};
-pub use hittablelist::HittableList;
 pub use lambertian::LambertianMaterial;
 pub use material::Material;
 pub use metal::Metal;
 pub use ray::Ray;
 pub use rtweekend::*;
-pub use sphere::Sphere;
 pub use vec3::{Color, Point, Vec3};
 
 /// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
