@@ -1,5 +1,7 @@
+use crate::materials::material;
 use crate::objects::HitRecord;
-use crate::{Color, Material, Ray, Vec3};
+use crate::{Color, Ray, Vec3};
+use material::Material;
 
 /// The Lambertian material, it can either scatter always and attenuate by its reflectance **R**, or
 /// it can scatter with no attenuation but absorb the fraction **1 - R** of the rays, or it could be

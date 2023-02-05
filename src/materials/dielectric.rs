@@ -1,5 +1,5 @@
-use crate::objects::HitRecord;
-use crate::{random_in_unit_interval, Color, Material, Ray, Vec3};
+use crate::{materials::Material, objects::HitRecord};
+use crate::{random_in_unit_interval, Color, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
 
 /// # Dielectrics

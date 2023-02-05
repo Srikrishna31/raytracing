@@ -1,4 +1,3 @@
-use crate::lambertian::LambertianMaterial;
 use crate::objects::{HitRecord, Hittable};
 use crate::ray::Ray;
 use crate::Color;
@@ -22,8 +21,7 @@ impl Hittable for HittableList {
         //     }
         // })
 
-        let mut temp_rec: HitRecord =
-            HitRecord::new(Rc::new(LambertianMaterial::new(Color::new(0.0, 0.0, 0.0))));
+        let mut temp_rec: HitRecord = HitRecord::default();
         let mut hit_anything = false;
         let mut closest_so_far = t_max;
 

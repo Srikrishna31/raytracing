@@ -1,6 +1,7 @@
-use crate::material::Material;
+use crate::materials::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
+use crate::{materials, Color};
 use embed_doc_image::embed_doc_image;
 use std::rc::Rc;
 
@@ -78,5 +79,14 @@ impl HitRecord {
                 -outward_normal
             }
         }
+    }
+}
+
+impl Default for HitRecord {
+    fn default() -> Self {
+        let lambertian = Rc::new(materials::LambertianMaterial::new(Color::new(
+            1.0, 1.0, 1.0,
+        )));
+        HitRecord::new(lambertian)
     }
 }
