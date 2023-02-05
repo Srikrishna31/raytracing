@@ -1,7 +1,11 @@
 mod scenes;
 
 use embed_doc_image::embed_doc_image;
-use raytracing::{clamp, random_in_unit_interval, ray_color, Color};
+use raytracing::{
+    ray_color,
+    utils::{clamp, random_in_unit_interval},
+    Color,
+};
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
@@ -55,20 +59,20 @@ fn write_color<T: Write>(
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 fn write_image() {
     // Image
-    const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
-    const IMAGE_HEIGHT: u32 = 400;
-    const SAMPLES_PER_PIXEL: i32 = 100;
-    const MAX_DEPTH: u32 = 50;
-
-    // const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    // const IMAGE_WIDTH: u32 = 1200;
-    // const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    // const SAMPLES_PER_PIXEL: i32 = 500;
+    // const ASPECT_RATIO: f64 = 16.0 / 9.0;
+    // const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
+    // const IMAGE_HEIGHT: u32 = 400;
+    // const SAMPLES_PER_PIXEL: i32 = 100;
     // const MAX_DEPTH: u32 = 50;
 
+    const ASPECT_RATIO: f64 = 3.0 / 2.0;
+    const IMAGE_WIDTH: u32 = 1200;
+    const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
+    const SAMPLES_PER_PIXEL: i32 = 500;
+    const MAX_DEPTH: u32 = 50;
+
     // World and Camera
-    let (world, camera) = scenes::scene_with_alternate_viewpoint();
+    let (world, camera) = scenes::rtweekend_one_final_scene();
 
     // Render
     println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);

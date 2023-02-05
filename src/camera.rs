@@ -1,5 +1,5 @@
-use crate::degrees_to_radians;
 use crate::ray::Ray;
+use crate::utils::degrees_to_radians;
 use crate::vec3::{Point, Vec3};
 use embed_doc_image::embed_doc_image;
 

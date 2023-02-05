@@ -10,7 +10,10 @@ pub mod materials;
 pub mod objects;
 pub use camera::Camera;
 pub use ray::Ray;
-pub use rtweekend::*;
+// Reexport rtweekend symbols encapsulated in utils, for better naming.
+pub mod utils {
+    pub use crate::rtweekend::*;
+}
 pub use vec3::{Color, Point, Vec3};
 
 /// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
@@ -46,7 +49,7 @@ pub fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
     // **t = 0**, but instead at **t = -0.0000001** or **t = 0.0000001** or whatever floating
     // point approximation the sphere intersector gives us. So we need to ignore hits very near zero:
     // So pass the t_min as 0.001.
-    if let Some(hit_rec) = world.hit(r, 0.001, INFINITY) {
+    if let Some(hit_rec) = world.hit(r, 0.001, utils::INFINITY) {
         // todo!("Use a strategy pattern to choose between different diffusers");
         //let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
         // let target =
