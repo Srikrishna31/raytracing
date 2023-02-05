@@ -14,14 +14,15 @@ impl Hittable for HittableList {
         let mut closest_so_far = t_max;
 
         // TODO: Investigate a way to parallelize this function.
-        self.objects.iter().fold(None, |acc, val| {
-            if let Some(rec) = val.hit(r, t_min, closest_so_far) {
-                closest_so_far = rec.t;
-                Some(rec)
-            } else {
-                acc
-            }
-        })
+        self.objects
+            .iter()
+            .fold(None, |acc, val| match val.hit(r, t_min, closest_so_far) {
+                Some(rec) => {
+                    closest_so_far = rec.t;
+                    Some(rec)
+                }
+                None => acc,
+            })
     }
 }
 
