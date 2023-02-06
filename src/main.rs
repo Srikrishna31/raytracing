@@ -9,9 +9,13 @@ use raytracing::{
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
+use std::rc::Rc;
+
+pub type ProgressCallback = Rc<dyn Fn(f64) -> ()>;
 
 fn main() {
-    write_image()
+    let cb: ProgressCallback = Rc::new(|i: f64| eprintln!("{i:.2} % completed"));
+    write_image(cb)
 }
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
@@ -57,28 +61,28 @@ fn write_color<T: Write>(
 /// ![Pixel Samples][pixelsamples]
 ///
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
-fn write_image() {
+fn write_image(cb: ProgressCallback) {
     // Image
-    // const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    // const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
-    // const IMAGE_HEIGHT: u32 = 400;
-    // const SAMPLES_PER_PIXEL: i32 = 100;
-    // const MAX_DEPTH: u32 = 50;
-
-    const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 1200;
-    const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    const SAMPLES_PER_PIXEL: i32 = 500;
+    const ASPECT_RATIO: f64 = 16.0 / 9.0;
+    const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
+    const IMAGE_HEIGHT: u32 = 400;
+    const SAMPLES_PER_PIXEL: i32 = 100;
     const MAX_DEPTH: u32 = 50;
 
+    // const ASPECT_RATIO: f64 = 3.0 / 2.0;
+    // const IMAGE_WIDTH: u32 = 1200;
+    // const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
+    // const SAMPLES_PER_PIXEL: i32 = 500;
+    // const MAX_DEPTH: u32 = 50;
+
     // World and Camera
-    let (world, camera) = scenes::rtweekend_one_final_scene();
+    let (world, camera) = scenes::scene_with_alternate_viewpoint();
 
     // Render
     println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);
 
     for j in (0..IMAGE_HEIGHT).rev() {
-        eprintln!("\rScanlines remaining: {} ", &j);
+        cb((1.0 - j as f64 / IMAGE_HEIGHT as f64) * 100.0);
         for i in 0..IMAGE_WIDTH {
             let mut pixel_color = Color::new(0.0, 0.0, 0.0);
             for _ in 0..SAMPLES_PER_PIXEL {
@@ -91,6 +95,6 @@ fn write_image() {
             write_color(&mut io::stdout(), &pixel_color, SAMPLES_PER_PIXEL)
                 .expect("Error writing to output");
         }
-        eprintln!("\nDone.\n")
     }
+    eprintln!("\nDone.\n")
 }

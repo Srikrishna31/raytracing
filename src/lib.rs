@@ -62,12 +62,12 @@ pub fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
         //         depth - 1,
         //     );
 
-        if let Some((scattered, attenuation)) = hit_rec.mat.scatter(r, &hit_rec) {
-            return attenuation * ray_color(&scattered, world, depth - 1);
-        }
-
-        return Color::new(0.0, 0.0, 0.0);
+        return match hit_rec.mat.scatter(r, &hit_rec) {
+            Some((scattered, attenuation)) => attenuation * ray_color(&scattered, world, depth - 1),
+            None => Color::new(0.0, 0.0, 0.0),
+        };
     }
+
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
     (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
