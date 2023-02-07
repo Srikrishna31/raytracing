@@ -2,12 +2,14 @@ mod camera;
 mod ray;
 mod rtweekend;
 mod vec3;
+mod configuration;
 
 use embed_doc_image::embed_doc_image;
 use objects::{Hittable, HittableList};
 // Export all the functions structs and constants for use in other crates.
 pub mod materials;
 pub mod objects;
+
 pub use camera::Camera;
 pub use ray::Ray;
 // Reexport rtweekend symbols encapsulated in utils, for better naming.
@@ -15,6 +17,7 @@ pub mod utils {
     pub use crate::rtweekend::*;
 }
 pub use vec3::{Color, Point, Vec3};
+pub use configuration::{load_configuration, ImageSettings};
 
 /// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
 /// of those rays. The involved steps are (1) calculate the ray from the eye to the pixel, (2) determine

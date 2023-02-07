@@ -6,6 +6,7 @@ edition = "2021"
 
 [lib]
 path = "src/lib.rs"
+#name = "raytracer"; this means we would have to import by this name.
 
 [[bin]]
 path = "src/main.rs"
@@ -21,3 +22,6 @@ rustdoc-args = [
 rand = "0.8.1"
 once_cell = "1.17.0"
 embed-doc-image = "0.1.4"
+config = "0.13"
+serde = {version = "1", features = ["derive"]}
+serde-aux = "4"

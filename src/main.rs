@@ -5,17 +5,25 @@ use raytracing::{
     ray_color,
     utils::{clamp, random_in_unit_interval},
     Color,
+    load_configuration,
+    ImageSettings
 };
+
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
 use std::rc::Rc;
 
+/// Callbacks are of different types for each one defined, which is why they are behind a 'dyn'.
+/// And since they have to be behind a dyn, it has to be encapsulated in a Box or an Rc.
+/// The alternative is to make the callback as part of the function signature, and make it generic
+/// over the callback type. That is an overkill for the rendering/write_image function.
 pub type ProgressCallback = Rc<dyn Fn(f64) -> ()>;
 
-fn main() {
-    let cb: ProgressCallback = Rc::new(|i: f64| eprintln!("{i:.2} % completed"));
-    write_image(cb)
+fn main(){
+    let cb: ProgressCallback = Rc::new(|i: f64| eprintln!("{i:.2}% completed"));
+    let settings = load_configuration().expect("Couldnot read settings");
+    write_image(settings, cb)
 }
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
@@ -61,7 +69,7 @@ fn write_color<T: Write>(
 /// ![Pixel Samples][pixelsamples]
 ///
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
-fn write_image(cb: ProgressCallback) {
+fn write_image(settings: ImageSettings, cb: ProgressCallback) {
     // Image
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
