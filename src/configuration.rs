@@ -1,4 +1,4 @@
-use config::{ConfigError, Source};
+use config::{ConfigError};
 use serde_aux::field_attributes::deserialize_number_from_string;
 
 #[derive(serde::Deserialize, Clone)]
@@ -25,7 +25,7 @@ pub struct ImageSettings {
 impl ImageSettings {
     fn new(settings: ImageSettingsImpl) -> ImageSettings {
         ImageSettings {
-            aspect_ratio: 16.0 / 9.0, //settings.aspect_ratio,
+            aspect_ratio: settings.aspect_ratio,
             width: (settings.height as f64 * 16.0 / 9.0) as u32,
             height: settings.height,
             samples_per_pixel: settings.samples_per_pixel,
@@ -39,7 +39,6 @@ pub fn load_configuration() -> Result<ImageSettings, ConfigError> {
     let configuration_directory = base_path.join("configuration");
 
     let f = config::File::from(configuration_directory.join("base.yaml"));
-    eprintln!("{:?}", f.clone().collect().expect("CouldnotRead"));
     let settings = config::Config::builder().add_source(f).build()?;
 
     settings
