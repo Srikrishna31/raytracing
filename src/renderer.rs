@@ -7,7 +7,7 @@ use std::rc::Rc;
 use crate::configuration::ImageSettings;
 use crate::scenes;
 use crate::{
-    objects::{Hittable, HittableList},
+    objects::{Hittable, World},
     Ray,
 };
 use crate::{
@@ -113,7 +113,7 @@ where
 /// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
 /// to the interval from 0 to 1, and then map x/y/z to r/g/b.
 #[embed_doc_image("camgeom", "doc_images/camera_geometry.jpg")]
-fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
+fn ray_color(r: &Ray, world: &World, depth: u32) -> Color {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
         return Color::new(0.0, 0.0, 0.0);

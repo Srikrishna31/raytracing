@@ -5,6 +5,7 @@ use std::vec::Vec;
 
 /// This represents the world/scene which is composed of hittables (objects). This can be used to
 /// arbitrarily position a list of objects in the scene and render them.
+#[derive(Clone)]
 pub struct HittableList {
     objects: Vec<Rc<dyn Hittable>>,
 }

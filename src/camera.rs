@@ -82,6 +82,7 @@ use embed_doc_image::embed_doc_image;
 #[embed_doc_image("camupdirection", "doc_images/camera_view_up_direction.jpg")]
 #[embed_doc_image("camlensmodel", "doc_images/camera_lens_model.jpg")]
 #[embed_doc_image("camfocusplane", "doc_images/camera_focus_plane.jpg")]
+#[derive(Clone)]
 pub struct Camera {
     origin: Point,
     lower_left_corner: Point,
