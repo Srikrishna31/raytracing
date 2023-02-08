@@ -3,13 +3,14 @@ use serde_aux::field_attributes::deserialize_number_from_string;
 
 #[derive(serde::Deserialize, Clone)]
 struct ImageSettingsImpl {
-    #[serde(deserialize_with="deserialize_number_from_string")]
-    //pub aspect_ratio: f64,
-    pub width: u32,
-    #[serde(deserialize_with="deserialize_number_from_string")]
-    pub samples_per_pixel: u32,
-    #[serde(deserialize_with="deserialize_number_from_string")]
-    pub max_depth: u32
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    aspect_ratio: f64,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    width: u32,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    samples_per_pixel: u32,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    max_depth: u32,
 }
 
 #[derive(Clone)]
@@ -28,7 +29,7 @@ impl ImageSettings {
             width: settings.width,
             height: (settings.width as f64 * 16.0 / 9.0) as u32,
             samples_per_pixel: settings.samples_per_pixel,
-            max_depth: settings.max_depth
+            max_depth: settings.max_depth,
         }
     }
 }
@@ -39,9 +40,9 @@ pub fn load_configuration() -> Result<ImageSettings, ConfigError> {
 
     let f = config::File::from(configuration_directory.join("base.yaml"));
     eprintln!("{:?}", f.clone().collect().expect("CouldnotRead"));
-    let settings = config::Config::builder()
-        .add_source(f)
-        .build()?;
+    let settings = config::Config::builder().add_source(f).build()?;
 
-    settings.try_deserialize::<ImageSettingsImpl>().map(ImageSettings::new)
+    settings
+        .try_deserialize::<ImageSettingsImpl>()
+        .map(ImageSettings::new)
 }
