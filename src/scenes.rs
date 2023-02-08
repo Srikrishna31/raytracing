@@ -1,10 +1,8 @@
+use crate::camera::Camera;
 use crate::materials::{Dielectric, LambertianMaterial, Metal};
 use crate::objects::{HittableList, Sphere};
-use crate::{
-    camera::Camera
-};
 use crate::utils::{random, random_in_unit_interval, PI};
-use crate::vec3::{Vec3, Color, Point};
+use crate::vec3::{Color, Point, Vec3};
 use std::rc::Rc;
 
 pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> HittableList {
