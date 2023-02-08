@@ -14,6 +14,7 @@ use embed_doc_image::embed_doc_image;
 pub struct Ray {
     origin: Point,
     direction: Vec3,
+    time: f64,
 }
 
 impl Ray {
@@ -21,6 +22,15 @@ impl Ray {
         Ray {
             origin: *origin,
             direction: *direction,
+            time: 0.0,
+        }
+    }
+
+    pub fn new_with_time(origin: &Point, direction: &Vec3, time: f64) -> Ray {
+        Ray {
+            origin: *origin,
+            direction: *direction,
+            time,
         }
     }
 

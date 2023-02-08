@@ -103,6 +103,8 @@ pub fn scene_for_wide_angle_camera() -> Scene {
         16.0 / 9.0,
         0.0,
         1.0,
+        0.0,
+        0.0,
     );
 
     Scene::new(world, camera)
@@ -154,6 +156,8 @@ pub fn scene_with_alternate_viewpoint() -> Scene {
         16.0 / 9.0,
         0.0,
         1.0,
+        0.0,
+        0.0,
     );
 
     Scene::new(world, camera)
@@ -209,6 +213,8 @@ pub fn scene_with_depth_of_field_camera() -> Scene {
         16.0 / 9.0,
         aperture,
         dist_to_focus,
+        0.0,
+        0.0,
     );
 
     Scene::new(world, camera)
@@ -290,6 +296,8 @@ pub fn rtweekend_one_final_scene() -> Scene {
         aspect_ratio,
         aperture,
         dist_to_focus,
+        0.0,
+        0.0,
     );
 
     Scene::new(world, camera)

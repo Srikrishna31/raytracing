@@ -1,5 +1,5 @@
 use crate::ray::Ray;
-use crate::utils::degrees_to_radians;
+use crate::utils::{degrees_to_radians, random};
 use crate::vec3::{Point, Vec3};
 use embed_doc_image::embed_doc_image;
 
@@ -77,6 +77,23 @@ use embed_doc_image::embed_doc_image;
 /// generate random scene rays originating from inside a disk centered at the `lookfrom` point. The
 /// larger the radius, the greater the defocus blur. You can think of our original camera as having α
 /// defocus disk of radius zero (no blur at all), so all rays originated at the disk center (`lookfrom`).
+///
+/// # Motion Blur
+/// In a real camera, the shutter opens and stays open for a time interval, and the camera and objects
+/// may move during that time. Its really an average of what the camera sees over that interval that
+/// we want.
+///
+/// ## Introduction to SpaceTime Ray Tracing
+/// We can get a random estimate by sending each ray at some random time when the shutter is open. As
+/// long as the objects are where they should be at that time, we can get the right average answer
+/// with a ray that is exactly a single time. This is fundamentally why random ray tracing tends to
+/// be simple.
+///
+/// The basic idea is to generate rays at random times while the shutter is open and intersect the
+/// model at that one time. The way it is usually done is to have the camera move and the objects
+/// move, but have each ray exist at exactly one time. This way the "engine" of the ray tracer can
+/// just make sure the objects are where they need to be for the ray, and the intersection guts don't
+/// change much.
 #[embed_doc_image("camgeometry", "doc_images/camera_viewing_geometry.jpg")]
 #[embed_doc_image("camviewdirection", "doc_images/camera_view_direction.jpg")]
 #[embed_doc_image("camupdirection", "doc_images/camera_view_up_direction.jpg")]
@@ -92,6 +109,8 @@ pub struct Camera {
     v: Vec3,
     _w: Vec3,
     lens_radius: f64,
+    time0: f64, // shutter open/close times
+    time1: f64,
 }
 
 impl Camera {
@@ -109,6 +128,8 @@ impl Camera {
         aspect_ratio: f64,
         aperture: f64,
         focus_dist: f64,
+        time0: f64,
+        time1: f64,
     ) -> Camera {
         let theta = degrees_to_radians(vfov);
         let h = (theta / 2.0).tan();
@@ -132,6 +153,8 @@ impl Camera {
             u,
             v,
             _w: w,
+            time0,
+            time1,
         }
     }
 
@@ -139,18 +162,20 @@ impl Camera {
         let rd = self.lens_radius * Vec3::random_vector_in_unit_disk();
         let offset = self.u * rd.x() + self.v * rd.y();
 
-        Ray::new(
+        Ray::new_with_time(
             &(self.origin + offset),
             &(self.lower_left_corner + s * self.horizontal + t * self.vertical
                 - self.origin
                 - offset),
+            random(self.time0, self.time1),
         )
     }
 }
 
 impl Default for Camera {
     /// This function returns a camera positioned at (0,0,0), looking at (0,0,-1), with up vector
-    /// (0,1,0), 90 degree field of view, 16:9 aspect raio and aperture 0 (no blur).
+    /// (0,1,0), 90 degree field of view, 16:9 aspect raio and aperture 0 (no blur), and with no
+    /// motion blur.
     fn default() -> Self {
         let lookfrom = Vec3::new(0.0, 0.0, 0.0);
         let lookat = Vec3::new(0.0, 0.0, -1.0);
@@ -168,6 +193,8 @@ impl Default for Camera {
             aspect_ratio,
             aperture,
             dist_to_focus,
+            0.0,
+            0.0,
         )
     }
 }
