@@ -15,7 +15,7 @@ struct ImageSettingsImpl {
 
 #[derive(Clone)]
 pub struct ImageSettings {
-    pub(crate) aspect_ratio: f64,
+    pub aspect_ratio: f64,
     pub(crate) width: u32,
     pub(crate) height: u32,
     pub(crate) samples_per_pixel: u32,
