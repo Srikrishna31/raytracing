@@ -1,7 +1,6 @@
 use crate::materials::Material;
 use crate::objects::{HitRecord, Hittable};
-use crate::ray::Ray;
-use crate::vec3::{Point, Vec3};
+use crate::{Point, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
 use std::rc::Rc;
 
