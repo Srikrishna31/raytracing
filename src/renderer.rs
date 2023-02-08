@@ -1,13 +1,20 @@
+use embed_doc_image::embed_doc_image;
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
 use std::rc::Rc;
-use embed_doc_image::embed_doc_image;
 
-use crate::{Color, utils::{clamp, random_in_unit_interval}, utils};
 use crate::configuration::ImageSettings;
-use crate::{Ray, objects::{HittableList, Hittable}};
 use crate::scenes;
+use crate::{
+    objects::{Hittable, HittableList},
+    Ray,
+};
+use crate::{
+    utils,
+    utils::{clamp, random_in_unit_interval},
+    Color,
+};
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
@@ -36,11 +43,10 @@ fn write_color<T: Write>(
         (256.0 * clamp(g, 0.0, 0.999)) as i32,
         (256.0 * clamp(b, 0.0, 0.999)) as i32,
     )
-        .expect("Error formatting write");
+    .expect("Error formatting write");
 
     out.write(str.as_bytes())
 }
-
 
 /// # Antialiasing
 /// When a real camera takes a picture, there are usually no jaggies along edges because the edge
@@ -58,17 +64,11 @@ fn write_color<T: Write>(
 /// over the callback type.
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 pub fn render<F>(settings: ImageSettings, progress_callback: F)
-    where F: Fn(f64) -> ()
+where
+    F: Fn(f64) -> (),
 {
-    // Image
-    // const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    // const IMAGE_WIDTH: u32 = 1200;
-    // const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    // const SAMPLES_PER_PIXEL: i32 = 500;
-    // const MAX_DEPTH: u32 = 50;
-
     // World and Camera
-    let (world, camera) = scenes::scene_with_alternate_viewpoint();
+    let (world, camera) = scenes::rtweekend_one_final_scene();
 
     // Render
     println!("P3\n{} {}\n255\n", &settings.width, &settings.height);
