@@ -3,5 +3,5 @@ mod hittablelist;
 mod sphere;
 
 pub use hittable::*;
-pub use hittablelist::*;
 pub use sphere::*;
+pub use hittablelist::HittableList as World;
