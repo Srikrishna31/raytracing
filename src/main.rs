@@ -2,11 +2,9 @@ mod scenes;
 
 use embed_doc_image::embed_doc_image;
 use raytracing::{
-    ray_color,
+    load_configuration, ray_color,
     utils::{clamp, random_in_unit_interval},
-    Color,
-    load_configuration,
-    ImageSettings
+    Color, ImageSettings,
 };
 
 use std::fmt::Write as FmtWrite;
@@ -20,7 +18,7 @@ use std::rc::Rc;
 /// over the callback type. That is an overkill for the rendering/write_image function.
 pub type ProgressCallback = Rc<dyn Fn(f64) -> ()>;
 
-fn main(){
+fn main() {
     let cb: ProgressCallback = Rc::new(|i: f64| eprintln!("{i:.2}% completed"));
     let settings = load_configuration().expect("Couldnot read settings");
     write_image(settings, cb)
