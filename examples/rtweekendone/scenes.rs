@@ -1,7 +1,7 @@
 use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
-use raytracing::objects::{Sphere, World};
+use raytracing::objects::{MovingSphere, Sphere, World};
 use raytracing::utils::{random, random_in_unit_interval, PI};
-use raytracing::{Camera, Color, Point, Scene, Vec3};
+use raytracing::{Camera, Color, ImageSettings, Point, Scene, Vec3};
 
 use std::rc::Rc;
 
@@ -298,6 +298,96 @@ pub fn rtweekend_one_final_scene() -> Scene {
         dist_to_focus,
         0.0,
         0.0,
+    );
+
+    Scene::new(world, camera)
+}
+
+/// The code below takes the example diffuse spheres from the scene at the end of the last book (Ray
+/// tracing in a weekend), and makes them move during the image render. (Think of a camera with
+/// shutter opening at time 0 and closing at time 1.) Each sphere moves from its center **C** at time
+/// ***t*** **= 0** to **C + (0, r/2, 0)** at time ***t*** **=1**, where *r* is a random number in
+/// **[0,1)**:
+pub fn rtweekend_one_final_scene_with_moving_spheres(settings: &ImageSettings) -> Scene {
+    let mut world = World::new();
+
+    let ground_material = Rc::new(LambertianMaterial::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    )));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_material = random_in_unit_interval();
+            let center = Point::new(
+                a as f64 + 0.9 * random_in_unit_interval(),
+                0.2,
+                b as f64 + 0.9 * random_in_unit_interval(),
+            );
+
+            if (center - Point::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                if choose_material < 0.8 {
+                    // diffuse
+                    let albedo = Color::random_unit_vector() * Color::random_unit_vector();
+                    let sphere_material = Rc::new(LambertianMaterial::new(albedo));
+                    let center2 = center + Vec3::new(0.0, random(0.0, 0.5), 0.0);
+                    world.add(Rc::new(
+                        MovingSphere::new(center, center2, 0.2, sphere_material, 0.0, 1.0).unwrap(),
+                    ));
+                } else if choose_material < 0.95 {
+                    // metal
+                    let albedo = Color::random_vector(0.5, 1.0);
+                    let fuzz = random(0.0, 0.5);
+                    let sphere_material = Rc::new(Metal::new(albedo, fuzz));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                } else {
+                    // glass
+                    let sphere_material = Rc::new(Dielectric::new(1.5));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                }
+            }
+        }
+    }
+
+    let material1 = Rc::new(Dielectric::new(1.5));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    )));
+
+    let material2 = Rc::new(LambertianMaterial::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Rc::new(Sphere::new(
+        Point::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    )));
+
+    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Rc::new(Sphere::new(
+        Point::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    )));
+
+    let lookfrom = Point::new(13.0, 2.0, 3.0);
+    let lookat = Point::new(0.0, 0.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.1;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
     );
 
     Scene::new(world, camera)
