@@ -1,14 +1,14 @@
-use crate::Camera;
 use crate::objects::World;
+use crate::Camera;
 
 #[derive(Clone)]
 pub struct Scene {
-    world: World,
-    camera: Camera
+    pub(crate) world: World,
+    pub(crate) camera: Camera,
 }
 
 impl Scene {
     pub fn new(world: World, camera: Camera) -> Scene {
-        Scene{world, camera}
+        Scene { world, camera }
     }
 }

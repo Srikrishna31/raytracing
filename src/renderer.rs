@@ -5,7 +5,7 @@ use std::io::{Result, Write};
 use std::rc::Rc;
 
 use crate::configuration::ImageSettings;
-use crate::scenes;
+use crate::Scene;
 use crate::{
     objects::{Hittable, World},
     Ray,
@@ -63,12 +63,12 @@ fn write_color<T: Write>(
 /// The alternative is to make the callback as part of the function signature, and make it generic
 /// over the callback type.
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
-pub fn render<F>(settings: ImageSettings, progress_callback: F)
+pub fn render<F>(settings: ImageSettings, scene: Scene, progress_callback: F)
 where
     F: Fn(f64) -> (),
 {
     // World and Camera
-    let (world, camera) = scenes::rtweekend_one_final_scene();
+    let Scene { world, camera } = scene;
 
     // Render
     println!("P3\n{} {}\n255\n", &settings.width, &settings.height);
