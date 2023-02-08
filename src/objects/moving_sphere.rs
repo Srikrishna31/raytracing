@@ -14,6 +14,7 @@ pub struct MovingSphere {
 
 impl Hittable for MovingSphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        //TODO: Figure out a way to unify this common code between Sphere and MovingSphere
         let oc = r.origin() - self.center(r.time());
         let a = r.direction().length_squared();
         let half_b = oc.dot(&r.direction());
