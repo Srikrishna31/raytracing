@@ -6,11 +6,10 @@ edition = "2021"
 
 [lib]
 path = "src/lib.rs"
-#name = "raytracer"; this means we would have to import by this name.
+#name = "rtweekendone"; this means we would have to import by this name.
 
-[[bin]]
-path = "src/main.rs"
-name = "raytracer"
+[[example]]
+name = "rtweekendone"
 
 [package.metadata.docs.rs]
 rustdoc-args = [

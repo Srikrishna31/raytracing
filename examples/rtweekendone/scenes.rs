@@ -1,8 +1,8 @@
-use crate::camera::Camera;
-use crate::materials::{Dielectric, LambertianMaterial, Metal};
-use crate::objects::{World, Sphere};
-use crate::utils::{random, random_in_unit_interval, PI};
-use crate::vec3::{Color, Point, Vec3};
+use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
+use raytracing::objects::{Sphere, World};
+use raytracing::utils::{random, random_in_unit_interval, PI};
+use raytracing::{Camera, Color, Point, Scene, Vec3};
+
 use std::rc::Rc;
 
 pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> World {
@@ -77,7 +77,7 @@ pub fn scene_with_hollow_glass_sphere() -> World {
     world
 }
 
-pub fn scene_for_wide_angle_camera() -> (World, Camera) {
+pub fn scene_for_wide_angle_camera() -> Scene {
     let R = (PI / 4.0).cos();
     let mut world = World::new();
 
@@ -105,10 +105,10 @@ pub fn scene_for_wide_angle_camera() -> (World, Camera) {
         1.0,
     );
 
-    (world, camera)
+    Scene::new(world, camera)
 }
 
-pub fn scene_with_alternate_viewpoint() -> (World, Camera) {
+pub fn scene_with_alternate_viewpoint() -> Scene {
     let mut world = World::new();
 
     let material_ground = Rc::new(LambertianMaterial::new(Color::new(0.8, 0.8, 0.0)));
@@ -156,10 +156,10 @@ pub fn scene_with_alternate_viewpoint() -> (World, Camera) {
         1.0,
     );
 
-    (world, camera)
+    Scene::new(world, camera)
 }
 
-pub fn scene_with_depth_of_field_camera() -> (World, Camera) {
+pub fn scene_with_depth_of_field_camera() -> Scene {
     let mut world = World::new();
 
     let material_ground = Rc::new(LambertianMaterial::new(Color::new(0.8, 0.8, 0.0)));
@@ -211,10 +211,10 @@ pub fn scene_with_depth_of_field_camera() -> (World, Camera) {
         dist_to_focus,
     );
 
-    (world, camera)
+    Scene::new(world, camera)
 }
 
-pub fn rtweekend_one_final_scene() -> (World, Camera) {
+pub fn rtweekend_one_final_scene() -> Scene {
     let mut world = World::new();
 
     let ground_material = Rc::new(LambertianMaterial::new(Color::new(0.5, 0.5, 0.5)));
@@ -292,5 +292,5 @@ pub fn rtweekend_one_final_scene() -> (World, Camera) {
         dist_to_focus,
     );
 
-    (world, camera)
+    Scene::new(world, camera)
 }
