@@ -45,4 +45,8 @@ impl Ray {
     pub fn origin(&self) -> Point {
         self.origin
     }
+
+    pub fn time(&self) -> f64 {
+        self.time
+    }
 }
