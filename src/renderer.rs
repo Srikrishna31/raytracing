@@ -9,19 +9,13 @@ use crate::configuration::ImageSettings;
 use crate::{Ray, objects::{HittableList, Hittable}};
 use crate::scenes;
 
-/// Callbacks are of different types for each one defined, which is why they are behind a 'dyn'.
-/// And since they have to be behind a dyn, it has to be encapsulated in a Box or an Rc.
-/// The alternative is to make the callback as part of the function signature, and make it generic
-/// over the callback type. That is an overkill for the rendering/write_image function.
-pub type ProgressCallback = Rc<dyn Fn(f64) -> ()>;
-
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
 /// then perform a single divide at the end (by the number of samples) when writing out the color.
 fn write_color<T: Write>(
     out: &mut T,
     pixel_color: &Color,
-    samples_per_pixel: i32,
+    samples_per_pixel: u32,
 ) -> Result<usize> {
     let mut r = pixel_color.x();
     let mut g = pixel_color.y();
@@ -58,15 +52,15 @@ fn write_color<T: Write>(
 ///
 /// ![Pixel Samples][pixelsamples]
 ///
+/// Callbacks are of different types for each one defined, which is why they are behind a 'dyn'.
+/// And since they have to be behind a dyn, it has to be encapsulated in a Box or an Rc.
+/// The alternative is to make the callback as part of the function signature, and make it generic
+/// over the callback type.
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
-pub fn write_image(settings: ImageSettings, cb: ProgressCallback) {
+pub fn render<F>(settings: ImageSettings, progress_callback: F)
+    where F: Fn(f64) -> ()
+{
     // Image
-    const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    const IMAGE_WIDTH: u32 = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as u32;
-    const IMAGE_HEIGHT: u32 = 400;
-    const SAMPLES_PER_PIXEL: i32 = 100;
-    const MAX_DEPTH: u32 = 50;
-
     // const ASPECT_RATIO: f64 = 3.0 / 2.0;
     // const IMAGE_WIDTH: u32 = 1200;
     // const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
@@ -77,20 +71,20 @@ pub fn write_image(settings: ImageSettings, cb: ProgressCallback) {
     let (world, camera) = scenes::scene_with_alternate_viewpoint();
 
     // Render
-    println!("P3\n{} {}\n255\n", &IMAGE_WIDTH, &IMAGE_HEIGHT);
+    println!("P3\n{} {}\n255\n", &settings.width, &settings.height);
 
-    for j in (0..IMAGE_HEIGHT).rev() {
-        cb((1.0 - j as f64 / IMAGE_HEIGHT as f64) * 100.0);
-        for i in 0..IMAGE_WIDTH {
+    for j in (0..settings.height).rev() {
+        progress_callback((1.0 - j as f64 / settings.height as f64) * 100.0);
+        for i in 0..settings.width {
             let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-            for _ in 0..SAMPLES_PER_PIXEL {
-                let u = (i as f64 + random_in_unit_interval()) / (IMAGE_WIDTH - 1) as f64;
-                let v = (j as f64 + random_in_unit_interval()) / (IMAGE_HEIGHT - 1) as f64;
+            for _ in 0..settings.samples_per_pixel {
+                let u = (i as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
+                let v = (j as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
                 let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &world, MAX_DEPTH);
+                pixel_color += ray_color(&r, &world, settings.max_depth);
             }
 
-            write_color(&mut io::stdout(), &pixel_color, SAMPLES_PER_PIXEL)
+            write_color(&mut io::stdout(), &pixel_color, settings.samples_per_pixel)
                 .expect("Error writing to output");
         }
     }

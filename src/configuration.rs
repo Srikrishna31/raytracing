@@ -6,7 +6,7 @@ struct ImageSettingsImpl {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     aspect_ratio: f64,
     #[serde(deserialize_with = "deserialize_number_from_string")]
-    width: u32,
+    height: u32,
     #[serde(deserialize_with = "deserialize_number_from_string")]
     samples_per_pixel: u32,
     #[serde(deserialize_with = "deserialize_number_from_string")]
@@ -26,8 +26,8 @@ impl ImageSettings {
     fn new(settings: ImageSettingsImpl) -> ImageSettings {
         ImageSettings {
             aspect_ratio: 16.0 / 9.0, //settings.aspect_ratio,
-            width: settings.width,
-            height: (settings.width as f64 * 16.0 / 9.0) as u32,
+            width: (settings.height as f64 * 16.0 / 9.0) as u32,
+            height: settings.height,
             samples_per_pixel: settings.samples_per_pixel,
             max_depth: settings.max_depth,
         }

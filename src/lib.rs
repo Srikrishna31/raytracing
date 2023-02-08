@@ -17,4 +17,4 @@ pub mod utils {
 }
 pub use configuration::{load_configuration, ImageSettings};
 pub use vec3::{Color, Point, Vec3};
-pub use renderer::{ProgressCallback, write_image};
+pub use renderer::render;
