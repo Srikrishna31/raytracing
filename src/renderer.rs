@@ -2,7 +2,6 @@ use embed_doc_image::embed_doc_image;
 use std::fmt::Write as FmtWrite;
 use std::io;
 use std::io::{Result, Write};
-use std::rc::Rc;
 
 use crate::configuration::ImageSettings;
 use crate::Scene;
@@ -65,7 +64,7 @@ fn write_color<T: Write>(
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 pub fn render<F>(settings: ImageSettings, scene: Scene, progress_callback: F)
 where
-    F: Fn(f64) -> (),
+    F: Fn(f64),
 {
     // World and Camera
     let Scene { world, camera } = scene;
@@ -73,8 +72,10 @@ where
     // Render
     println!("P3\n{} {}\n255\n", &settings.width, &settings.height);
 
+    let mut out = io::stdout();
     for j in (0..settings.height).rev() {
         progress_callback((1.0 - j as f64 / settings.height as f64) * 100.0);
+
         for i in 0..settings.width {
             let mut pixel_color = Color::new(0.0, 0.0, 0.0);
             for _ in 0..settings.samples_per_pixel {
@@ -84,7 +85,7 @@ where
                 pixel_color += ray_color(&r, &world, settings.max_depth);
             }
 
-            write_color(&mut io::stdout(), &pixel_color, settings.samples_per_pixel)
+            write_color(&mut out, &pixel_color, settings.samples_per_pixel)
                 .expect("Error writing to output");
         }
     }
