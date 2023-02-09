@@ -1,8 +1,8 @@
+mod bounding_box;
 mod hittable;
 mod hittablelist;
 mod moving_sphere;
 mod sphere;
-mod bounding_box;
 
 pub use hittable::*;
 pub use moving_sphere::*;
