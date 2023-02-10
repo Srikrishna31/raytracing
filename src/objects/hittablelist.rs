@@ -31,10 +31,21 @@ impl Hittable for HittableList {
             return None;
         }
 
+        let mut first_box = true;
+
+        // TODO: use fold that returns early from the collection.
         self.objects.iter().fold(None, |acc, val| {
             match (acc, val.bounding_box(time0, time1)) {
                 (_, None) => None, // Even if one object doesn't have a bounding box
-                (None, Some(bbox)) => Some(bbox),
+                (None, Some(bbox)) => {
+                    if first_box {
+                        first_box = false;
+                        Some(bbox)
+                    } else {
+                        // This means there was an object whose box is not hit.
+                        None
+                    }
+                }
                 (Some(bbox1), Some(bbox2)) => Some(AABB::surrounding_box(&bbox1, &bbox2)),
             }
         })
