@@ -26,7 +26,7 @@ use embed_doc_image::embed_doc_image;
 #[embed_doc_image("2daabb", "doc_images/2D_axis_aligned_bounding_box.jpg")]
 #[embed_doc_image("rayslab", "doc_images/ray_slab_intersection.jpg")]
 
-struct AABB {
+pub struct AABB {
     minimum: Point,
     maximum: Point,
 }
@@ -34,6 +34,24 @@ struct AABB {
 impl AABB {
     pub fn new(minimum: Point, maximum: Point) -> AABB {
         AABB { minimum, maximum }
+    }
+
+    /// Given two boxes, computes the union of two boxes and returns the box that
+    /// will contain the provided two boxes.
+    pub fn surrounding_box(box1: &AABB, box2: &AABB) -> AABB {
+        let small = Point::new(
+            box1.min().x().min(box2.min().x()),
+            box1.min().y().min(box2.min().y()),
+            box1.min().z().min(box2.min().z()),
+        );
+
+        let big = Point::new(
+            box1.max().x().max(box2.max().x()),
+            box1.max().y().max(box2.max().y()),
+            box1.max().z().max(box2.max().z()),
+        );
+
+        AABB::new(small, big)
     }
 
     pub fn min(&self) -> Point {
@@ -46,11 +64,11 @@ impl AABB {
 
     pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> bool {
         for a in 0..3 {
-            let invD = 1.0 / r.direction()[a];
-            let mut t0 = (self.min()[a] - r.origin()[a]) * invD;
-            let mut t1 = (self.max()[a] - r.origin()[a]) * invD;
+            let inv_d = 1.0 / r.direction()[a];
+            let mut t0 = (self.min()[a] - r.origin()[a]) * inv_d;
+            let mut t1 = (self.max()[a] - r.origin()[a]) * inv_d;
 
-            if invD < 0.0 {
+            if inv_d < 0.0 {
                 (t1, t0) = (t0, t1); // swap t0 and t1;
             }
 

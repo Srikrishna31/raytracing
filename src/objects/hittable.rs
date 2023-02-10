@@ -1,4 +1,5 @@
 use crate::materials::Material;
+use crate::objects::AABB;
 use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
 use crate::{materials, Color};
@@ -26,6 +27,8 @@ pub trait Hittable {
     /// * `t_min` - The minimum point of the ray
     /// * `t_max` - The maximum point of the ray
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AABB>;
 }
 
 impl HitRecord {

@@ -1,4 +1,4 @@
-use crate::objects::{HitRecord, Hittable};
+use crate::objects::{HitRecord, Hittable, AABB};
 use crate::ray::Ray;
 use std::rc::Rc;
 use std::vec::Vec;
@@ -24,6 +24,20 @@ impl Hittable for HittableList {
                 }
                 None => acc,
             })
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AABB> {
+        if self.objects.is_empty() {
+            return None;
+        }
+
+        self.objects.iter().fold(None, |acc, val| {
+            match (acc, val.bounding_box(time0, time1)) {
+                (_, None) => None, // Even if one object doesn't have a bounding box
+                (None, Some(bbox)) => Some(bbox),
+                (Some(bbox1), Some(bbox2)) => Some(AABB::surrounding_box(&bbox1, &bbox2)),
+            }
+        })
     }
 }
 
