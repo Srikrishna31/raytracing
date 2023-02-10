@@ -1,3 +1,4 @@
+use crate::objects::hittablelist::HittableList;
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::utils::random_int;
 use crate::Ray;
@@ -53,7 +54,7 @@ use std::rc::Rc;
 ///     return false
 /// ```
 #[embed_doc_image("bvh", "doc_images/bounding_volume_hierarchy.jpg")]
-pub(in crate::objects) struct BVHNode {
+pub struct BVHNode {
     left: Rc<dyn Hittable>,
     right: Rc<dyn Hittable>,
     bbox: AABB,
@@ -99,16 +100,18 @@ impl BVHNode {
     /// When the list coming in is two elements, we put one in each subtree and end the recursion. The
     /// traversal algorithm should be smooth and not have to check for null pointers, so if we get a
     /// list with just one element, we duplicate it in each subtree.
-    pub fn new(
-        src_objects: &mut Vec<Rc<dyn Hittable>>,
-        time0: f64,
-        time1: f64,
-    ) -> Result<BVHNode, String> {
-        Self::new_helper(src_objects, 0, src_objects.len(), time0, time1)
+    pub fn new(src_objects: &HittableList, time0: f64, time1: f64) -> Result<BVHNode, String> {
+        Self::new_helper(
+            &src_objects.objects.clone(),
+            0,
+            src_objects.objects.len(),
+            time0,
+            time1,
+        )
     }
 
     fn new_helper(
-        src_objects: &mut Vec<Rc<dyn Hittable>>,
+        src_objects: &Vec<Rc<dyn Hittable>>,
         start: usize,
         end: usize,
         time0: f64,

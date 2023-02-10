@@ -6,9 +6,10 @@ use std::io::{Result, Write};
 use crate::configuration::ImageSettings;
 use crate::Scene;
 use crate::{
-    objects::{Hittable, World},
+    objects::{BVHNode, Hittable, World},
     Ray,
 };
+
 use crate::{
     utils,
     utils::{clamp, random_in_unit_interval},
@@ -67,7 +68,8 @@ where
     F: Fn(f64),
 {
     // World and Camera
-    let Scene { world, camera } = scene;
+    let Scene { mut world, camera } = scene;
+    let bvh_world = BVHNode::new(&mut world, 0.0, 0.0).unwrap();
 
     // Render
     println!("P3\n{} {}\n255\n", &settings.width, &settings.height);
@@ -82,7 +84,7 @@ where
                 let u = (i as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
                 let v = (j as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
                 let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &world, settings.max_depth);
+                pixel_color += ray_color(&r, &bvh_world, settings.max_depth);
             }
 
             write_color(&mut out, &pixel_color, settings.samples_per_pixel)
@@ -114,7 +116,7 @@ where
 /// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
 /// to the interval from 0 to 1, and then map x/y/z to r/g/b.
 #[embed_doc_image("camgeom", "doc_images/camera_geometry.jpg")]
-fn ray_color(r: &Ray, world: &World, depth: u32) -> Color {
+fn ray_color(r: &Ray, world: &dyn Hittable, depth: u32) -> Color {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
         return Color::new(0.0, 0.0, 0.0);
