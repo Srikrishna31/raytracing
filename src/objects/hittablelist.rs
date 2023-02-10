@@ -7,7 +7,7 @@ use std::vec::Vec;
 /// arbitrarily position a list of objects in the scene and render them.
 #[derive(Clone)]
 pub struct HittableList {
-    objects: Vec<Rc<dyn Hittable>>,
+    pub(in crate::objects) objects: Vec<Rc<dyn Hittable>>,
 }
 
 impl Hittable for HittableList {
