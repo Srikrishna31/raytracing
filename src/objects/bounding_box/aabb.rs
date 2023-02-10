@@ -58,6 +58,7 @@ use embed_doc_image::embed_doc_image;
 #[embed_doc_image("2daabb", "doc_images/2D_axis_aligned_bounding_box.jpg")]
 #[embed_doc_image("rayslab", "doc_images/ray_slab_intersection.jpg")]
 #[embed_doc_image("rayslabinterval", "doc_images/ray_slab_t_interval_overlap.jpg")]
+#[derive(Clone)]
 pub struct AABB {
     minimum: Point,
     maximum: Point,

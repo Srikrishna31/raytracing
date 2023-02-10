@@ -26,6 +26,11 @@ pub fn random(min: f64, max: f64) -> f64 {
 }
 
 #[inline]
+pub fn random_int(min: i32, max: i32) -> i32 {
+    random(min as f64, max as f64 + 1.0) as i32
+}
+
+#[inline]
 pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     if x < min {
         return min;
