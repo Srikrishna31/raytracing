@@ -22,10 +22,42 @@ use embed_doc_image::embed_doc_image;
 ///
 /// !["Ray Slab Intersection"][rayslab]
 ///
-/// In 3D, those boundaries are planes. The equations for the planes are x = x0
+/// In 3D, those boundaries are planes. The equations for the planes are ***x = x<sub>0</sub>***, and
+/// ***x = x<sub>1</sub>***. Where does the ray hit that plane? Recall that the ray can be thought of
+/// as just a function that given a *t* returns a location **P(*t*)**:
+///
+/// ```math
+///     P(t) = A + tb
+/// ```
+///
+/// That equation applies to all three of the x/y/z coordinates.
+/// For example, x(t) = **A**<sub>x</sub> + *tb<sub>x</sub>*. This ray hits the plane ***x = x<sub>0</sub>***
+/// at the *t* that satisfies this equation:
+///
+/// ```math
+///     x_0 = A_x + t_0b_x
+/// ```
+///
+/// Thus *t* at that hitpoint is:
+///
+/// ```math
+///     t_0 = \frac{(x_0 - A_x)}{b_x}
+/// ```
+///
+/// We get the similar expression for *x<sub>1</sub>*:
+///
+/// ```math
+///     t_1 = \frac{(x1 - A_x)}{b_x}
+/// ```
+///
+/// The key observation to turn that 1D math into a hit test is that for a hit, the *t*-intervals
+/// need to overlap. For example, in 2D the green and blue overlapping only happens if there is a hit:
+///
+/// !["Ray-slab t-interval overlap"][rayslabinterval]
+///
 #[embed_doc_image("2daabb", "doc_images/2D_axis_aligned_bounding_box.jpg")]
 #[embed_doc_image("rayslab", "doc_images/ray_slab_intersection.jpg")]
-
+#[embed_doc_image("rayslabinterval", "doc_images/ray_slab_t_interval_overlap.jpg")]
 pub struct AABB {
     minimum: Point,
     maximum: Point,
