@@ -1,5 +1,5 @@
 use crate::materials::Material;
-use crate::objects::{HitRecord, Hittable};
+use crate::objects::{HitRecord, Hittable, AABB};
 use crate::{Point, Ray, Vec3};
 use std::rc::Rc;
 
@@ -47,6 +47,22 @@ impl Hittable for MovingSphere {
         hit_rec.set_face_normal(r, &outward_normal);
 
         Some(hit_rec)
+    }
+
+    /// For `MovingSphere`, we can take the box of the sphere at t<sub>0</sub>, and the box of the
+    /// sphere at t<sub>1</sub>, and compute the box of those two boxes
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AABB> {
+        let box1 = AABB::new(
+            self.center(time0) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time0) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+
+        let box2 = AABB::new(
+            self.center(time1) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time1) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+
+        Some(AABB::surrounding_box(&box1, &box2))
     }
 }
 

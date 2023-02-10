@@ -1,5 +1,5 @@
 use crate::materials::Material;
-use crate::objects::{HitRecord, Hittable};
+use crate::objects::{HitRecord, Hittable, AABB};
 use crate::{Point, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
 use std::rc::Rc;
@@ -86,6 +86,13 @@ impl Hittable for Sphere {
         hit_rec.set_face_normal(r, &outward_normal);
 
         Some(hit_rec)
+    }
+
+    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<AABB> {
+        Some(AABB::new(
+            self.center - Vec3::new(self.radius, self.radius, self.radius),
+            self.center + Vec3::new(self.radius, self.radius, self.radius),
+        ))
     }
 }
 
