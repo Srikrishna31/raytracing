@@ -1,3 +1,5 @@
+extern crate core;
+
 mod camera;
 mod configuration;
 mod ray;

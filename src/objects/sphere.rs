@@ -1,4 +1,4 @@
-use crate::materials::Material;
+use crate::materials::{Dielectric, Material};
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::{Point, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
@@ -102,6 +102,17 @@ impl Sphere {
             center,
             radius,
             material,
+        }
+    }
+}
+
+impl Default for Sphere {
+    /// Returns a sphere centered at origin, with  radius 1 and with a glass material.
+    fn default() -> Self {
+        Sphere {
+            center: Point::new(0.0, 0.0, 0.0),
+            radius: 1.0,
+            material: Rc::new(Dielectric::new(1.5)),
         }
     }
 }
