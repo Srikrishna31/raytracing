@@ -4,6 +4,7 @@ use crate::{Color, Point};
 /// A texture in graphics usually means a function that makes the colors on a surface procedural.
 /// This procedure can be synthesis code, or it could be an image lookup, or a combination of both.
 /// But we will model constant colors also as textures for simplicity and elegance.
+#[derive(Debug, Clone, Copy)]
 pub struct SolidColor {
     color: Color,
 }
