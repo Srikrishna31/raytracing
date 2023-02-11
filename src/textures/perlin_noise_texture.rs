@@ -1,4 +1,4 @@
-use super::perlin::Perlin;
+use super::perlin::{Perlin, PerlinNoiseOptions};
 use crate::textures::Texture;
 use crate::{Color, Point};
 use once_cell::sync::Lazy;
@@ -17,9 +17,17 @@ impl Texture for PerlinNoiseTexture {
 static COLOR: Lazy<Color> = Lazy::new(|| Color::new(1.0, 1.0, 1.0));
 
 impl PerlinNoiseTexture {
-    pub fn new() -> PerlinNoiseTexture {
+    pub fn new(opt: PerlinNoiseOptions) -> PerlinNoiseTexture {
         PerlinNoiseTexture {
-            noise: Perlin::new(),
+            noise: Perlin::new(opt),
+        }
+    }
+}
+
+impl Default for PerlinNoiseTexture {
+    fn default() -> Self {
+        PerlinNoiseTexture {
+            noise: Perlin::new(PerlinNoiseOptions::Default),
         }
     }
 }
