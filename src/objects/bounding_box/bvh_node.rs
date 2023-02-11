@@ -76,8 +76,9 @@ impl Hittable for BVHNode {
         match (left, right) {
             (None, None) => None,
             (Some(lbox), None) => Some(lbox),
-            (None, Some(rbox)) => Some(rbox),
-            (Some(_lbox), Some(rbox)) => Some(rbox),
+            (_, Some(rbox)) => Some(rbox)
+            // (None, Some(rbox)) => Some(rbox),
+            // (Some(_lbox), Some(rbox)) => Some(rbox),
         }
     }
 
@@ -153,7 +154,7 @@ impl BVHNode {
 
         let bbox = match (lbox, rbox) {
             (Some(lb), Some(rb)) => AABB::surrounding_box(&lb, &rb),
-            (_, _) => return Err("No bounding box in BVHNode constructor.\n".to_string()),
+            _ => return Err("No bounding box in BVHNode constructor.\n".to_string()),
         };
 
         Ok(BVHNode { left, right, bbox })
@@ -164,7 +165,7 @@ impl BVHNode {
         let axis = axis as usize;
         let (a_box, b_box) = match (a.bounding_box(0.0, 0.0), b.bounding_box(0.0, 0.0)) {
             (Some(ab), Some(bb)) => (ab, bb),
-            (_, _) => return Err("No bounding box in Hittable".to_string()),
+            _ => return Err("No bounding box in Hittable".to_string()),
         };
 
         if a_box.min().e[axis] <= b_box.min().e[axis] {
