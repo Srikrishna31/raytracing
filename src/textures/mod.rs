@@ -5,6 +5,6 @@ mod solid_color;
 mod texture;
 
 pub use checker_texture::CheckerTexture;
+pub use perlin_noise_texture::PerlinNoiseTexture;
 pub use solid_color::SolidColor;
 pub use texture::Texture;
-pub use perlin_noise_texture::PerlinNoiseTexture;

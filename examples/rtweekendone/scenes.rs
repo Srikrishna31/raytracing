@@ -3,7 +3,7 @@ use raytracing::objects::{MovingSphere, Sphere, World};
 use raytracing::utils::{random, random_in_unit_interval, PI};
 use raytracing::{Camera, Color, ImageSettings, Point, Scene, Vec3};
 
-use raytracing::textures::{CheckerTexture, SolidColor};
+use raytracing::textures::{CheckerTexture, PerlinNoiseTexture, SolidColor};
 use std::rc::Rc;
 
 pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> World {
@@ -502,6 +502,43 @@ pub fn two_checkered_spheres(settings: &ImageSettings) -> Scene {
         Point::new(0.0, 10.0, 0.0),
         10.0,
         Rc::new(LambertianMaterial::new_with_texture(checker)),
+    )));
+
+    let lookfrom = Point::new(13.0, 2.0, 3.0);
+    let lookat = Point::new(0.0, 0.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        40.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera)
+}
+
+pub fn perlin_textured_spheres(settings: &ImageSettings) -> Scene {
+    let pertext = Rc::new(PerlinNoiseTexture::new());
+
+    let mut world = World::new();
+
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Rc::new(LambertianMaterial::new_with_texture(pertext.clone())),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 2.0, 0.0),
+        2.0,
+        Rc::new(LambertianMaterial::new_with_texture(pertext)),
     )));
 
     let lookfrom = Point::new(13.0, 2.0, 3.0);
