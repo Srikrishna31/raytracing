@@ -1,5 +1,8 @@
+use crate::{
+    utils::{random_in_unit_interval, random_int},
+    Point,
+};
 use embed_doc_image::embed_doc_image;
-use crate::{utils::{random_int, random_in_unit_interval}, Point};
 
 /// To get cool looking solid textures most people use some form of Perlin noise. These are named
 /// after their inventor Ken Perlin. Perlin texture doesn't return white noise like this:
@@ -15,11 +18,11 @@ use crate::{utils::{random_int, random_in_unit_interval}, Point};
 /// noise is that it be simple and fast, so it's usually done as a hack.
 #[embed_doc_image("whitenoise", "doc_images/white_noise.jpg")]
 #[embed_doc_image("whitenoiseblurred", "doc_images/white_noise_blurred.jpg")]
-pub struct Perlin {
+pub(in crate::textures) struct Perlin {
     ranfloat: Vec<f64>,
     perm_x: Vec<i32>,
     perm_y: Vec<i32>,
-    perm_z: Vec<i32>
+    perm_z: Vec<i32>,
 }
 
 impl Perlin {
@@ -35,19 +38,24 @@ impl Perlin {
     fn permute(p: &mut [i32]) {
         for i in (0..p.len()).rev() {
             let target = random_int(0, i as i32) as usize;
-            let tmp = p[i];
-            p[i] = p[target];
-            p[target] = tmp;
+            p.swap(i, target);
         }
     }
 
     pub fn new() -> Perlin {
-        let ranfloat: Vec<f64> = (0..Self::POINT_COUNT).map(|_|random_in_unit_interval()).collect();
+        let ranfloat: Vec<f64> = (0..Self::POINT_COUNT)
+            .map(|_| random_in_unit_interval())
+            .collect();
         let perm_x = Self::perlin_generate_perm();
         let perm_y = Self::perlin_generate_perm();
         let perm_z = Self::perlin_generate_perm();
 
-        Perlin {ranfloat, perm_x, perm_y, perm_z}
+        Perlin {
+            ranfloat,
+            perm_x,
+            perm_y,
+            perm_z,
+        }
     }
 
     pub fn noise(&self, p: &Point) -> f64 {
