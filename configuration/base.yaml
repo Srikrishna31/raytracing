@@ -1,14 +1,14 @@
-# aspect_ratio: 1.77778
-# height: 400
-# samples_per_pixel: 100
-# max_depth: 50
+aspect_ratio: 1.77778
+height: 400
+samples_per_pixel: 100
+max_depth: 50
 
 # aspect_ratio: 1.5
 # height: 800
 # samples_per_pixel: 500
 # max_depth: 50
 
-aspect_ratio: 1.77778
-height: 225
-samples_per_pixel: 100
-max_depth: 50
+# aspect_ratio: 1.77778
+# height: 225
+# samples_per_pixel: 100
+# max_depth: 50
