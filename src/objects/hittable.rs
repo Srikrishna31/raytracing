@@ -8,10 +8,12 @@ use std::rc::Rc;
 
 #[derive(Debug, Clone)]
 pub struct HitRecord {
-    pub p: Point,
-    pub normal: Vec3,
-    pub mat: Rc<dyn Material>,
-    pub t: f64,
+    pub p: Point,              // Point where the ray hit the object.
+    pub normal: Vec3,          // Normal at the point of impact.
+    pub mat: Rc<dyn Material>, // Material of the object being hit.
+    pub t: f64,                // Time of impact.
+    pub u: f64,                // U,V texture coordinates for color mapping.
+    pub v: f64,
     pub front_face: bool,
 }
 
@@ -38,6 +40,8 @@ impl HitRecord {
             normal: Vec3 { e: [0.0, 0.0, 0.0] },
             mat: material,
             t: 0.0,
+            u: 0.0,
+            v: 0.0,
             front_face: false,
         }
     }

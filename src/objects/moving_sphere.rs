@@ -1,5 +1,6 @@
 use crate::materials::Material;
 use crate::objects::{HitRecord, Hittable, AABB};
+use crate::utils::PI;
 use crate::{Point, Ray, Vec3};
 use std::rc::Rc;
 
@@ -36,14 +37,19 @@ impl Hittable for MovingSphere {
             }
         }
 
+        let p = r.at(root);
+        let outward_normal = (p - self.center(r.time())) / self.radius;
+        let (u, v) = MovingSphere::get_sphere_uv(&outward_normal);
+
         let mut hit_rec = HitRecord {
             t: root,
-            p: r.at(root),
+            p,
             normal: Vec3::new(0.0, 0.0, 0.0),
             front_face: false,
             mat: self.material.clone(),
+            u,
+            v,
         };
-        let outward_normal = (hit_rec.p - self.center(r.time())) / self.radius;
         hit_rec.set_face_normal(r, &outward_normal);
 
         Some(hit_rec)
@@ -98,5 +104,19 @@ impl MovingSphere {
             time0,
             time1,
         })
+    }
+
+    //TODO: Move the common functions for Sphere and MovingSphere into a different module and share them.
+    fn get_sphere_uv(p: &Point) -> (f64, f64) {
+        // p: a given point on the sphere of radius one, centered at the origin.
+        // u: returned value [0,1] of angle around the Y axis from X=-1.
+        // v: returned value [0,1] of angle from Y=-1 to Y=+1.
+        //      <1 0 0> yields <0.50 0.50>      <-1 0 0> yields <0.00 0.50>
+        //      <0 1 0> yields <0.50 1.00>      <0 -1 0> yields <0.50 0.00>
+        //      <0 0 1> yields <0.25 0.50>      <0  0 -1> yields <0.75, 0.50>
+        let theta = (-p.y()).acos();
+        let phi = (-p.z()).atan2(p.x()) + PI;
+
+        (phi / (2.0 * PI), theta / PI)
     }
 }
