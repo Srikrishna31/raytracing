@@ -8,9 +8,9 @@ use std::rc::Rc;
 /// The Lambertian material, it can either scatter always and attenuate by its reflectance **R**, or
 /// it can scatter with no attenuation but absorb the fraction **1 - R** of the rays, or it could be
 /// a mixture of those strategies.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct LambertianMaterial {
-    albedo: Rc<SolidColor>,
+    albedo: Rc<dyn Texture>,
 }
 
 impl Material for LambertianMaterial {
@@ -34,5 +34,9 @@ impl LambertianMaterial {
         LambertianMaterial {
             albedo: Rc::new(SolidColor::new(a)),
         }
+    }
+
+    pub fn new_with_texture(a: Rc<dyn Texture>) -> LambertianMaterial {
+        LambertianMaterial { albedo: a }
     }
 }

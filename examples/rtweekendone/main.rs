@@ -11,7 +11,8 @@ fn main() {
         let settings = load_configuration().expect("Couldnot read settings");
         // let scene = scenes::rtweekend_one_final_scene();
         // let scene = scenes::scene_with_alternate_viewpoint();
-        let scene = scenes::rtweekend_one_final_scene_with_moving_spheres(&settings);
+        let scene =
+            scenes::rtweekend_one_final_scene_with_moving_spheres_checkered_texture(&settings);
 
         render(settings, scene, |i: f64| eprintln!("{i:.2}% completed"))
     });
