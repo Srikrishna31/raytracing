@@ -4,16 +4,11 @@ use std::io;
 use std::io::{Result, Write};
 
 use crate::configuration::ImageSettings;
-use crate::Scene;
 use crate::{
-    objects::{BVHNode, Hittable, World},
-    Ray,
-};
-
-use crate::{
+    objects::{BVHNode, Hittable},
     utils,
     utils::{clamp, random_in_unit_interval},
-    Color,
+    Color, Ray, Scene,
 };
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
@@ -68,8 +63,8 @@ where
     F: Fn(f64),
 {
     // World and Camera
-    let Scene { mut world, camera } = scene;
-    let bvh_world = BVHNode::new(&mut world, 0.0, 0.0).unwrap();
+    let Scene { world, camera } = scene;
+    let bvh_world = BVHNode::new(&world, 0.0, 0.0).unwrap();
 
     // Render
     println!("P3\n{} {}\n255\n", &settings.width, &settings.height);

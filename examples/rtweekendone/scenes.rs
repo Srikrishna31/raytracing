@@ -220,7 +220,7 @@ pub fn scene_with_depth_of_field_camera() -> Scene {
     Scene::new(world, camera)
 }
 
-pub fn rtweekend_one_final_scene() -> Scene {
+pub fn rtweekend_one_final_scene(settings: &ImageSettings) -> Scene {
     let mut world = World::new();
 
     let ground_material = Rc::new(LambertianMaterial::new(Color::new(0.5, 0.5, 0.5)));
@@ -286,7 +286,7 @@ pub fn rtweekend_one_final_scene() -> Scene {
     let vup = Point::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
     let aperture = 0.1;
-    let aspect_ratio = 3.0 / 2.0;
+    let aspect_ratio = settings.aspect_ratio;
 
     let camera = Camera::new(
         lookfrom,
