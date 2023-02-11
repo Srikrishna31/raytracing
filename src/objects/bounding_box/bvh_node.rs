@@ -110,6 +110,7 @@ impl BVHNode {
         )
     }
 
+    #[allow(clippy::ptr_arg)]
     fn new_helper(
         src_objects: &Vec<Rc<dyn Hittable>>,
         start: usize,
@@ -140,9 +141,9 @@ impl BVHNode {
             // Will need to specify the type here as dyn Hittable. Otherwise, Rust treats as Rc<BVHNode>
             // and complains that the types don't match. Probably in future it might not be needed to do this.
             let left: Rc<dyn Hittable> =
-                Rc::new(Self::new_helper(&mut objects, start, mid, time0, time1)?);
+                Rc::new(Self::new_helper(&objects, start, mid, time0, time1)?);
             let right: Rc<dyn Hittable> =
-                Rc::new(Self::new_helper(&mut objects, mid, end, time0, time1)?);
+                Rc::new(Self::new_helper(&objects, mid, end, time0, time1)?);
 
             (left, right)
         };

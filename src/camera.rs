@@ -120,6 +120,7 @@ impl Camera {
     /// todo: Encapsulate fov into a degrees type, to make the code more readable.
     /// * `aspect_ratio`: Aspect Ratio determines the width/length of the viewport.
     ///
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         lookfrom: Point,
         lookat: Point,
