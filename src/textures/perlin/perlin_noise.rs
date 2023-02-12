@@ -19,7 +19,32 @@ use embed_doc_image::embed_doc_image;
 #[embed_doc_image("whitenoise", "doc_images/white_noise.jpg")]
 #[embed_doc_image("whitenoiseblurred", "doc_images/white_noise_blurred.jpg")]
 pub(in crate::textures::perlin) trait Perlin {
-    fn noise(&self, p: &Point) -> f64;
+    fn noise(&self, p: &Point) -> f64 {
+        if self.use_turbulence() {
+            self.turbulence(p)
+        } else {
+            self.actual_noise(&p)
+        }
+    }
+
+    fn actual_noise(&self, p: &Point) -> f64;
+
+    fn use_turbulence(&self) -> bool;
+
+    fn turbulence(&self, p: &Point) -> f64 {
+        let mut accum = 0.0;
+        let mut temp_p = *p;
+        let mut weight = 1.0;
+        const TURBULENCE_DEPTH: u32 = 7;
+
+        for _ in 0..TURBULENCE_DEPTH {
+            accum += weight * self.actual_noise(&temp_p);
+            weight *= 0.5;
+            temp_p *= 2.0;
+        }
+
+        accum.abs()
+    }
 }
 
 struct PerlinCommon {
@@ -27,6 +52,7 @@ struct PerlinCommon {
     perm_y: Vec<i32>,
     perm_z: Vec<i32>,
     option: PerlinNoiseOptions,
+    useturbulence: bool,
 }
 
 pub(in crate::textures::perlin) struct PerlinNoiseFloat {
@@ -40,7 +66,7 @@ pub(in crate::textures::perlin) struct PerlinNoiseVectors {
 }
 
 impl Perlin for PerlinNoiseFloat {
-    fn noise(&self, p: &Point) -> f64 {
+    fn actual_noise(&self, p: &Point) -> f64 {
         match &self.common.option {
             PerlinNoiseOptions::Default => {
                 let i = ((4.0 * p.x()) as i32 & 255) as usize;
@@ -83,13 +109,17 @@ impl Perlin for PerlinNoiseFloat {
             _ => 0.0, // We will never hit this case
         }
     }
+
+    fn use_turbulence(&self) -> bool {
+        self.common.useturbulence
+    }
 }
 
 impl Perlin for PerlinNoiseVectors {
     /// The output of perlin interpolation can return negative values. These negative values will be
     /// passed to the `sqrt()` function of our gamma function and get turned into `NaN`s. We will
     /// cast the perlin output back to between 0 and 1.
-    fn noise(&self, p: &Point) -> f64 {
+    fn actual_noise(&self, p: &Point) -> f64 {
         let u = p.x() - p.x().floor();
         let v = p.y() - p.y().floor();
         let w = p.z() - p.z().floor();
@@ -109,7 +139,16 @@ impl Perlin for PerlinNoiseVectors {
             }
         }
 
-        0.5 * (1.0 + Self::perlin_interp(c, u, v, w))
+        let perlin_interp = Self::perlin_interp(c, u, v, w);
+        if self.common.useturbulence {
+            perlin_interp
+        } else {
+            0.5 * (1.0 + perlin_interp)
+        }
+    }
+
+    fn use_turbulence(&self) -> bool {
+        self.common.useturbulence
     }
 }
 
@@ -140,14 +179,14 @@ impl PerlinNoiseVectors {
         accum
     }
 
-    pub fn new(opt: PerlinNoiseOptions) -> PerlinNoiseVectors {
+    pub fn new(opt: PerlinNoiseOptions, useturbulence: bool) -> PerlinNoiseVectors {
         let ranvec: Vec<Vec3> = (0..PerlinCommon::POINT_COUNT)
             .map(|_| Vec3::random_vector(-1.0, 1.0).unit_vector())
             .collect();
 
         PerlinNoiseVectors {
             ranvec,
-            common: PerlinCommon::new(opt),
+            common: PerlinCommon::new(opt, useturbulence),
         }
     }
 }
@@ -170,13 +209,13 @@ impl PerlinNoiseFloat {
         accum
     }
 
-    pub fn new(opt: PerlinNoiseOptions) -> PerlinNoiseFloat {
+    pub fn new(opt: PerlinNoiseOptions, useturbulence: bool) -> PerlinNoiseFloat {
         let ranfloat: Vec<f64> = (0..PerlinCommon::POINT_COUNT)
             .map(|_| random_in_unit_interval())
             .collect();
         PerlinNoiseFloat {
             ranfloat,
-            common: PerlinCommon::new(opt),
+            common: PerlinCommon::new(opt, useturbulence),
         }
     }
 }
@@ -206,7 +245,7 @@ impl PerlinCommon {
         }
     }
 
-    pub fn new(option: PerlinNoiseOptions) -> PerlinCommon {
+    pub fn new(option: PerlinNoiseOptions, useturbulence: bool) -> PerlinCommon {
         let perm_x = Self::perlin_generate_perm();
         let perm_y = Self::perlin_generate_perm();
         let perm_z = Self::perlin_generate_perm();
@@ -216,6 +255,7 @@ impl PerlinCommon {
             perm_y,
             perm_z,
             option,
+            useturbulence,
         }
     }
 }
