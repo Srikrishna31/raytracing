@@ -86,6 +86,9 @@ impl Perlin for PerlinNoiseFloat {
 }
 
 impl Perlin for PerlinNoiseVectors {
+    /// The output of perlin interpolation can return negative values. These negative values will be
+    /// passed to the `sqrt()` function of our gamma function and get turned into `NaN`s. We will
+    /// cast the perlin output back to between 0 and 1.
     fn noise(&self, p: &Point) -> f64 {
         let u = p.x() - p.x().floor();
         let v = p.y() - p.y().floor();
@@ -106,7 +109,7 @@ impl Perlin for PerlinNoiseVectors {
             }
         }
 
-        Self::perlin_interp(c, u, v, w)
+        0.5 * (1.0 + Self::perlin_interp(c, u, v, w))
     }
 }
 
