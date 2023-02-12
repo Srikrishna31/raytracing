@@ -24,7 +24,7 @@ embed-doc-image = "0.1.4"
 config = "0.13"
 serde = {version = "1", features = ["derive"]}
 serde-aux = "4"
-
+image = "0.24"
 
 [dev-dependencies]
 timeit = "0.1"
