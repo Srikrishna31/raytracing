@@ -271,3 +271,11 @@ impl Default for Vec3 {
         Vec3::new(0.0, 0.0, 0.0)
     }
 }
+
+impl Mul<Vec3> for i32 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        (self as f64) * rhs
+    }
+}
