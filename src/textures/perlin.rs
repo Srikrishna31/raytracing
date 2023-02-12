@@ -76,10 +76,14 @@ impl Perlin {
                 let index = self.perm_x[i] ^ self.perm_y[j] ^ self.perm_z[k];
                 self.ranfloat[index as usize]
             }
-            PerlinNoiseOptions::TrilinearSmoothing => {
-                let u = p.x() - p.x().floor();
-                let v = p.y() - p.y().floor();
-                let w = p.z() - p.z().floor();
+            PerlinNoiseOptions::TrilinearSmoothing  | PerlinNoiseOptions::HermitianSmoothing => {
+                let mut u = p.x() - p.x().floor();
+                let mut v = p.y() - p.y().floor();
+                let mut w = p.z() - p.z().floor();
+
+                if self.option == PerlinNoiseOptions::HermitianSmoothing {
+
+                }
                 let i = p.x().floor() as i32;
                 let j = p.y().floor() as i32;
                 let k = p.z().floor() as i32;
