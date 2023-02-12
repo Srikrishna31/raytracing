@@ -10,7 +10,11 @@ pub struct PerlinNoiseTexture {
 
 impl Texture for PerlinNoiseTexture {
     fn value(&self, _u: f64, _v: f64, p: &Point) -> Color {
-        *COLOR * self.noise.noise(&(self.scale * p))
+        if self.noise.use_turbulence() {
+            *COLOR * 0.5 * (1.0 + (self.scale * p.z() + 10.0 * self.noise.noise(p)).sin())
+        } else {
+            *COLOR * self.noise.noise(&(self.scale * p))
+        }
     }
 }
 

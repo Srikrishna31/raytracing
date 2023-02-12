@@ -563,11 +563,47 @@ pub fn perlin_textured_spheres(settings: &ImageSettings) -> Scene {
 }
 
 pub fn perlin_smoothed_textured_spheres(settings: &ImageSettings) -> Scene {
-    // let pertext = Rc::new(PerlinNoiseTexture::new(
-    //     PerlinNoiseOptions::HermitianSmoothing,
-    //     4.0,
-    // ));
+    let pertext = Rc::new(PerlinNoiseTexture::new(
+        PerlinNoiseOptions::HermitianSmoothing,
+        4.0,
+        false,
+    ));
 
+    let mut world = World::new();
+
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Rc::new(LambertianMaterial::new_with_texture(pertext.clone())),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 2.0, 0.0),
+        2.0,
+        Rc::new(LambertianMaterial::new_with_texture(pertext)),
+    )));
+
+    let lookfrom = Point::new(13.0, 2.0, 3.0);
+    let lookat = Point::new(0.0, 0.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera)
+}
+
+pub fn marble_spheres(settings: &ImageSettings) -> Scene {
     let pertext = Rc::new(PerlinNoiseTexture::new(
         PerlinNoiseOptions::VectorSmoothing,
         4.0,

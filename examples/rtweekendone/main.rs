@@ -14,7 +14,7 @@ fn main() {
         // let scene =
         //     scenes::rtweekend_one_final_scene_with_moving_spheres_checkered_texture(&settings);
         // let scene = scenes::perlin_textured_spheres(&settings);
-        let scene = scenes::perlin_smoothed_textured_spheres(&settings);
+        let scene = scenes::marble_spheres(&settings);
         render(settings, scene, |i: f64| eprintln!("{i:.2}% completed"))
     });
 
