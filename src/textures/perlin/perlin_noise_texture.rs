@@ -18,10 +18,12 @@ impl Texture for PerlinNoiseTexture {
 static COLOR: Lazy<Color> = Lazy::new(|| Color::new(1.0, 1.0, 1.0));
 
 impl PerlinNoiseTexture {
-    pub fn new(opt: PerlinNoiseOptions, scale: f64) -> PerlinNoiseTexture {
+    pub fn new(opt: PerlinNoiseOptions, scale: f64, useturbulence: bool) -> PerlinNoiseTexture {
         let perlin: Box<dyn Perlin> = match opt {
-            PerlinNoiseOptions::VectorSmoothing => Box::new(PerlinNoiseVectors::new(opt)),
-            _ => Box::new(PerlinNoiseFloat::new(opt)),
+            PerlinNoiseOptions::VectorSmoothing => {
+                Box::new(PerlinNoiseVectors::new(opt, useturbulence))
+            }
+            _ => Box::new(PerlinNoiseFloat::new(opt, useturbulence)),
         };
 
         PerlinNoiseTexture {
@@ -34,7 +36,7 @@ impl PerlinNoiseTexture {
 impl Default for PerlinNoiseTexture {
     fn default() -> Self {
         PerlinNoiseTexture {
-            noise: Box::new(PerlinNoiseFloat::new(PerlinNoiseOptions::Default)),
+            noise: Box::new(PerlinNoiseFloat::new(PerlinNoiseOptions::Default, false)),
             scale: 1.0,
         }
     }

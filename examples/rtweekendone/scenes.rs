@@ -571,6 +571,7 @@ pub fn perlin_smoothed_textured_spheres(settings: &ImageSettings) -> Scene {
     let pertext = Rc::new(PerlinNoiseTexture::new(
         PerlinNoiseOptions::VectorSmoothing,
         4.0,
+        true,
     ));
 
     let mut world = World::new();
