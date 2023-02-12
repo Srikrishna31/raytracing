@@ -265,3 +265,9 @@ impl Mul<&Vec3> for f64 {
         *rhs * self
     }
 }
+
+impl Default for Vec3 {
+    fn default() -> Self {
+        Vec3::new(0.0, 0.0, 0.0)
+    }
+}
