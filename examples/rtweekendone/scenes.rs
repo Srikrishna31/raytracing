@@ -563,8 +563,13 @@ pub fn perlin_textured_spheres(settings: &ImageSettings) -> Scene {
 }
 
 pub fn perlin_smoothed_textured_spheres(settings: &ImageSettings) -> Scene {
+    // let pertext = Rc::new(PerlinNoiseTexture::new(
+    //     PerlinNoiseOptions::HermitianSmoothing,
+    //     4.0,
+    // ));
+
     let pertext = Rc::new(PerlinNoiseTexture::new(
-        PerlinNoiseOptions::HermitianSmoothing,
+        PerlinNoiseOptions::VectorSmoothing,
         4.0,
     ));
 
