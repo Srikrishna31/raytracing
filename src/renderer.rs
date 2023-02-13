@@ -110,6 +110,10 @@ where
 /// A common trick used for visualizing normals (because it's easy and somewhat intuitive to assume
 /// **n** is a unit length vector - so each component is between -1 and 1) is to map each component
 /// to the interval from 0 to 1, and then map x/y/z to r/g/b.
+///
+/// ## Adding Background Color to the Ray Color Function
+/// We want to be able to set a background color (probably black in presence of lights), so the only
+/// light in the scene is coming from the emitters.
 #[embed_doc_image("camgeom", "doc_images/camera_geometry.jpg")]
 fn ray_color(r: &Ray, world: &dyn Hittable, depth: u32) -> Color {
     // If we've exceeded the ray bounce limit, no more light is gathered.
