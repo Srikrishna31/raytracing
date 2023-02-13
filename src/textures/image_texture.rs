@@ -1,9 +1,9 @@
-use std::path::Path;
-use crate::{Color, Point};
-use crate::utils::clamp;
 use super::Texture;
+use crate::utils::clamp;
+use crate::{Color, Point};
 use image;
 use image::{DynamicImage, GenericImageView};
+use std::path::Path;
 
 /// # Image Texture Mapping
 /// From the point **P**, we compute the surface coordinates *(u,v)*. We then use these to index into
@@ -41,9 +41,8 @@ impl Texture for ImageTexture {
         let u = clamp(u, 0.0, 1.0);
         let v = 1.0 - clamp(v, 0.0, 1.0); //Flip V to image coordinates.
 
-
         let i = {
-            let i =(u * width as f64) as u32;
+            let i = (u * width as f64) as u32;
             // Clamp integer mapping since actual coordinates should be less than 1.0
             if i >= width {
                 width - 1
@@ -65,7 +64,11 @@ impl Texture for ImageTexture {
         let pixel = self.img.get_pixel(i, j);
 
         //Currently we are not caring about alpha channel.
-        Color::new(color_scale*pixel[0] as f64, color_scale*pixel[1] as f64, color_scale*pixel[2] as f64)
+        Color::new(
+            color_scale * pixel[0] as f64,
+            color_scale * pixel[1] as f64,
+            color_scale * pixel[2] as f64,
+        )
     }
 }
 
@@ -73,6 +76,6 @@ impl ImageTexture {
     pub fn new(file: &Path) -> ImageTexture {
         let img = image::open(file).expect("File not found");
         //TODO: Write a log statement, which checks if the image is empty.
-        ImageTexture {img}
+        ImageTexture { img }
     }
 }
