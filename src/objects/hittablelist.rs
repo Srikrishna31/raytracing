@@ -57,6 +57,10 @@ impl HittableList {
         HittableList { objects: vec![] }
     }
 
+    pub fn new_with_object(obj: Rc<dyn Hittable>) -> HittableList {
+        HittableList { objects: vec![obj] }
+    }
+
     pub fn add(&mut self, object: Rc<dyn Hittable>) {
         self.objects.push(object);
     }

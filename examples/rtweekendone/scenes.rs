@@ -3,7 +3,10 @@ use raytracing::objects::{MovingSphere, Sphere, World};
 use raytracing::utils::{random, random_in_unit_interval, PI};
 use raytracing::{Camera, Color, ImageSettings, Point, Scene, Vec3};
 
-use raytracing::textures::{CheckerTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor};
+use raytracing::textures::{
+    CheckerTexture, ImageTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor,
+};
+use std::path::Path;
 use std::rc::Rc;
 
 pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> World {
@@ -622,6 +625,42 @@ pub fn marble_spheres(settings: &ImageSettings) -> Scene {
         2.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext)),
     )));
+
+    let lookfrom = Point::new(13.0, 2.0, 3.0);
+    let lookat = Point::new(0.0, 0.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera)
+}
+
+fn earth() -> World {
+    let path = std::env::current_dir()
+        .unwrap()
+        .join(Path::new("./examples/rtweekendone/earthmap.jpg"));
+
+    let earth_texture = Rc::new(ImageTexture::new(&path));
+    let earth_surface = Rc::new(LambertianMaterial::new_with_texture(earth_texture));
+    let globe = Rc::new(Sphere::new(Point::new(0.0, 0.0, 0.0), 2.0, earth_surface));
+
+    World::new_with_object(globe)
+}
+
+pub fn earth_scene(settings: &ImageSettings) -> Scene {
+    let world = earth();
 
     let lookfrom = Point::new(13.0, 2.0, 3.0);
     let lookat = Point::new(0.0, 0.0, 0.0);
