@@ -111,7 +111,7 @@ pub fn scene_for_wide_angle_camera() -> Scene {
         0.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn scene_with_alternate_viewpoint() -> Scene {
@@ -164,7 +164,7 @@ pub fn scene_with_alternate_viewpoint() -> Scene {
         0.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn scene_with_depth_of_field_camera() -> Scene {
@@ -221,7 +221,7 @@ pub fn scene_with_depth_of_field_camera() -> Scene {
         0.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn rtweekend_one_final_scene(settings: &ImageSettings) -> Scene {
@@ -304,7 +304,7 @@ pub fn rtweekend_one_final_scene(settings: &ImageSettings) -> Scene {
         0.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 /// The code below takes the example diffuse spheres from the scene at the end of the last book (Ray
@@ -394,7 +394,7 @@ pub fn rtweekend_one_final_scene_with_moving_spheres(settings: &ImageSettings) -
         1.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn rtweekend_one_final_scene_with_moving_spheres_checkered_texture(
@@ -485,7 +485,7 @@ pub fn rtweekend_one_final_scene_with_moving_spheres_checkered_texture(
         1.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn two_checkered_spheres(settings: &ImageSettings) -> Scene {
@@ -525,7 +525,7 @@ pub fn two_checkered_spheres(settings: &ImageSettings) -> Scene {
         1.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn perlin_textured_spheres(settings: &ImageSettings) -> Scene {
@@ -562,7 +562,7 @@ pub fn perlin_textured_spheres(settings: &ImageSettings) -> Scene {
         1.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn perlin_smoothed_textured_spheres(settings: &ImageSettings) -> Scene {
@@ -603,7 +603,7 @@ pub fn perlin_smoothed_textured_spheres(settings: &ImageSettings) -> Scene {
         1.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 pub fn marble_spheres(settings: &ImageSettings) -> Scene {
@@ -644,7 +644,7 @@ pub fn marble_spheres(settings: &ImageSettings) -> Scene {
         1.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
 
 fn earth() -> World {
@@ -680,5 +680,5 @@ pub fn earth_scene(settings: &ImageSettings) -> Scene {
         1.0,
     );
 
-    Scene::new(world, camera)
+    Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
 }
