@@ -3,6 +3,7 @@ mod hittable;
 mod hittablelist;
 mod moving_sphere;
 mod sphere;
+mod xyrect;
 
 pub use hittable::*;
 pub use moving_sphere::*;
@@ -11,3 +12,4 @@ pub use sphere::*;
 pub(crate) use bounding_box::BVHNode;
 pub use bounding_box::AABB;
 pub use hittablelist::HittableList as World;
+pub use xyrect::XYRect;
