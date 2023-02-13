@@ -63,7 +63,11 @@ where
     F: Fn(f64),
 {
     // World and Camera
-    let Scene { world, camera } = scene;
+    let Scene {
+        world,
+        camera,
+        background_color,
+    } = scene;
     let bvh_world = BVHNode::new(&world, 0.0, 0.0).unwrap();
 
     // Render
@@ -79,7 +83,7 @@ where
                 let u = (i as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
                 let v = (j as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
                 let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &bvh_world, settings.max_depth);
+                pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
             }
 
             write_color(&mut out, &pixel_color, settings.samples_per_pixel)
@@ -115,7 +119,7 @@ where
 /// We want to be able to set a background color (probably black in presence of lights), so the only
 /// light in the scene is coming from the emitters.
 #[embed_doc_image("camgeom", "doc_images/camera_geometry.jpg")]
-fn ray_color(r: &Ray, world: &dyn Hittable, depth: u32) -> Color {
+fn ray_color(r: &Ray, bg_color: &Color, world: &dyn Hittable, depth: u32) -> Color {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
         return Color::new(0.0, 0.0, 0.0);
@@ -126,26 +130,29 @@ fn ray_color(r: &Ray, world: &dyn Hittable, depth: u32) -> Color {
     // **t = 0**, but instead at **t = -0.0000001** or **t = 0.0000001** or whatever floating
     // point approximation the sphere intersector gives us. So we need to ignore hits very near zero:
     // So pass the t_min as 0.001.
-    if let Some(hit_rec) = world.hit(r, 0.001, utils::INFINITY) {
-        // todo!("Use a strategy pattern to choose between different diffusers");
-        //let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
-        // let target =
-        //     hit_rec.p + hit_rec.normal + Vec3::random_unit_vector_lambertian_distribution();
-        // let target = hit_rec.p + Vec3::random_unit_vector_in_hemisphere(&hit_rec.normal);
-        // return 0.5
-        //     * ray_color(
-        //         &Ray::new(&hit_rec.p, &(target - hit_rec.p)),
-        //         world,
-        //         depth - 1,
-        //     );
+    match world.hit(r, 0.001, utils::INFINITY) {
+        Some(hit_rec) => {
+            // todo!("Use a strategy pattern to choose between different diffusers");
+            //let target = hit_rec.p + hit_rec.normal + Vec3::random_vector_in_unit_sphere();
+            // let target =
+            //     hit_rec.p + hit_rec.normal + Vec3::random_unit_vector_lambertian_distribution();
+            // let target = hit_rec.p + Vec3::random_unit_vector_in_hemisphere(&hit_rec.normal);
+            // return 0.5
+            //     * ray_color(
+            //         &Ray::new(&hit_rec.p, &(target - hit_rec.p)),
+            //         world,
+            //         depth - 1,
+            //     );
 
-        return match hit_rec.mat.scatter(r, &hit_rec) {
-            Some((scattered, attenuation)) => attenuation * ray_color(&scattered, world, depth - 1),
-            None => Color::new(0.0, 0.0, 0.0),
-        };
+            let emitted = hit_rec.mat.emitted(hit_rec.u, hit_rec.v, &hit_rec.p);
+            match hit_rec.mat.scatter(r, &hit_rec) {
+                Some((scattered, attenuation)) => {
+                    emitted + attenuation * ray_color(&scattered, bg_color, world, depth - 1)
+                }
+                None => emitted,
+            }
+        }
+        // If the ray hits nothing, return the background color
+        None => *bg_color,
     }
-
-    let unit_direction = r.direction().unit_vector();
-    let t = 0.5 * (unit_direction.y() + 1.0);
-    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
 }
