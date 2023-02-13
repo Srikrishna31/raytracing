@@ -1,6 +1,6 @@
 aspect_ratio: 1.77778
 height: 400
-samples_per_pixel: 100
+samples_per_pixel: 400
 max_depth: 50
 
 # aspect_ratio: 1.5

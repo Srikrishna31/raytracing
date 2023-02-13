@@ -122,7 +122,8 @@ where
 fn ray_color(r: &Ray, bg_color: &Color, world: &dyn Hittable, depth: u32) -> Color {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
-        return Color::new(0.0, 0.0, 0.0);
+        // return Color::new(0.0, 0.0, 0.0);
+        return *bg_color;
     }
 
     // # Fixing the shadow Acne
@@ -147,12 +148,16 @@ fn ray_color(r: &Ray, bg_color: &Color, world: &dyn Hittable, depth: u32) -> Col
             let emitted = hit_rec.mat.emitted(hit_rec.u, hit_rec.v, &hit_rec.p);
             match hit_rec.mat.scatter(r, &hit_rec) {
                 Some((scattered, attenuation)) => {
+                    // eprintln!("Ray hit *****something*******!");
                     emitted + attenuation * ray_color(&scattered, bg_color, world, depth - 1)
                 }
                 None => emitted,
             }
         }
         // If the ray hits nothing, return the background color
-        None => *bg_color,
+        None => {
+            // eprintln!("Ray hit nothing! Emitting background color");
+            *bg_color
+        }
     }
 }

@@ -16,7 +16,8 @@ fn main() {
         // let scene = scenes::perlin_textured_spheres(&settings);
         // let scene = scenes::marble_spheres(&settings);
         // let scene = scenes::earth_scene(&settings);
-        let scene = scenes::scene_with_alternate_viewpoint();
+        // let scene = scenes::scene_with_alternate_viewpoint();
+        let scene = scenes::rectangle_light_scene(&settings);
         render(settings, scene, |i: f64| eprintln!("{i:.2}% completed"))
     });
 

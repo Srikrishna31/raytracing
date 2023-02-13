@@ -37,12 +37,12 @@ use std::rc::Rc;
 /// every dimension. For our rectangles, we'll just pad the box a bit on the infinitely-thin side.
 #[embed_doc_image("rayrectinter", "doc_images/ray_rectangle_intersection.jpg")]
 pub struct XYRect {
-    material: Rc<dyn Material>,
     x0: f64,
     x1: f64,
     y0: f64,
     y1: f64,
     k: f64,
+    material: Rc<dyn Material>,
 }
 
 impl Hittable for XYRect {
@@ -50,7 +50,7 @@ impl Hittable for XYRect {
         // The bounding box must have non-zero width in each dimension, so pad the Z dimension a small amount
         Some(AABB::new(
             Point::new(self.x0, self.y0, self.k - 0.0001),
-            Point::new(self.x0, self.y0, self.k + 0.0001),
+            Point::new(self.x1, self.y1, self.k + 0.0001),
         ))
     }
 
@@ -61,7 +61,7 @@ impl Hittable for XYRect {
         }
         let x = r.origin().x() + t * r.direction().x();
         let y = r.origin().y() + t * r.direction().y();
-        if x < self.x0 || x > self.x0 || y < self.y0 || y < self.y1 {
+        if x < self.x0 || x > self.x1 || y < self.y0 || y > self.y1 {
             return None;
         }
 
@@ -79,5 +79,18 @@ impl Hittable for XYRect {
         rec.set_face_normal(r, &outward_normal);
 
         Some(rec)
+    }
+}
+
+impl XYRect {
+    pub fn new(x0: f64, x1: f64, y0: f64, y1: f64, k: f64, material: Rc<dyn Material>) -> XYRect {
+        XYRect {
+            x0,
+            x1,
+            y0,
+            y1,
+            k,
+            material,
+        }
     }
 }

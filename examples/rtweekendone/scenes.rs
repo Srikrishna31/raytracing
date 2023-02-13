@@ -1,10 +1,11 @@
 use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
-use raytracing::objects::{MovingSphere, Sphere, World};
+use raytracing::objects::{MovingSphere, Sphere, World, XYRect};
 use raytracing::utils::{random, random_in_unit_interval, PI};
 use raytracing::{Camera, Color, ImageSettings, Point, Scene, Vec3};
 
+use raytracing::materials::lights::DiffuseLight;
 use raytracing::textures::{
-    CheckerTexture, ImageTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor,
+    CheckerTexture, ImageTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor, Texture,
 };
 use std::path::Path;
 use std::rc::Rc;
@@ -681,4 +682,54 @@ pub fn earth_scene(settings: &ImageSettings) -> Scene {
     );
 
     Scene::new(world, camera, Color::new(0.7, 0.8, 1.0))
+}
+
+pub fn rectangle_light_scene(settings: &ImageSettings) -> Scene {
+    let mut world = World::new();
+
+    let pertext = Rc::new(PerlinNoiseTexture::new(
+        PerlinNoiseOptions::VectorSmoothing,
+        4.0,
+        true,
+    ));
+    let lambertian = Rc::new(LambertianMaterial::new_with_texture(pertext));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -1000.0, 0.0),
+        1000.0,
+        lambertian.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 2.0, 0.0),
+        2.0,
+        lambertian,
+    )));
+
+    // Note that the light is brighter than (1,1,1). This allows it to be bright enough to light things.
+    let difflight = Rc::new(DiffuseLight::new(Color::new(4.0, 4.0, 4.0)));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 7.0, 0.0),
+        2.0,
+        difflight.clone(),
+    )));
+    world.add(Rc::new(XYRect::new(3.0, 5.0, 1.0, 3.0, -2.0, difflight)));
+
+    let lookfrom = Point::new(26.0, 3.0, 6.0);
+    let lookat = Point::new(0.0, 2.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera, Color::new(0.0, 0.0, 0.0))
 }

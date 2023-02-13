@@ -1,6 +1,6 @@
 use crate::materials::Material;
 use crate::objects::HitRecord;
-use crate::textures::Texture;
+use crate::textures::{SolidColor, Texture};
 use crate::{Color, Point, Ray};
 use std::rc::Rc;
 
@@ -20,5 +20,18 @@ impl Material for DiffuseLight {
 
     fn emitted(&self, u: f64, v: f64, p: &Point) -> Color {
         self.emit.value(u, v, p)
+    }
+}
+
+//TODO: Figure out a way to overload new to take an argument of texture or a color
+impl DiffuseLight {
+    pub fn new(c: Color) -> DiffuseLight {
+        DiffuseLight {
+            emit: Rc::new(SolidColor::new(c)),
+        }
+    }
+
+    pub fn new_with_texture(emit: Rc<dyn Texture>) -> DiffuseLight {
+        DiffuseLight { emit }
     }
 }
