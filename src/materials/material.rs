@@ -1,5 +1,5 @@
 use crate::objects::HitRecord;
-use crate::{Color, Ray};
+use crate::{Color, Point, Ray};
 use core::fmt::Debug;
 use std::fmt::Formatter;
 
@@ -14,6 +14,12 @@ pub trait Material {
     ///
     /// `rec`: The object having this material property being hit.
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)>;
+
+    fn emitted(&self, u: f64, v: f64, p: &Point) -> Color {
+        // To avoid all non-emitting materials provide an implementation, we return black as the
+        // default color from the trait.
+        Color::new(0.0, 0.0, 0.0)
+    }
 }
 
 impl Debug for dyn Material {
