@@ -1,7 +1,7 @@
 use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
 use raytracing::objects::{MovingSphere, Sphere, World, XYRect, XZRect, YZRect};
 use raytracing::utils::{random, random_in_unit_interval, PI};
-use raytracing::{Camera, Color, ImageSettings, Point, Scene, Vec3};
+use raytracing::{objects, Camera, Color, ImageSettings, Point, Scene, Vec3};
 
 use raytracing::materials::lights::DiffuseLight;
 use raytracing::textures::{
@@ -772,6 +772,43 @@ fn cornell_box() -> World {
 
 pub fn empty_cornell_box(settings: &ImageSettings) -> Scene {
     let world = cornell_box();
+
+    let lookfrom = Point::new(278.0, 278.0, -800.0);
+    let lookat = Point::new(278.0, 278.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        40.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera, Color::new(0.0, 0.0, 0.0))
+}
+
+pub fn cornell_box_with_two_boxes(settings: &ImageSettings) -> Scene {
+    let mut world = cornell_box();
+
+    let white = Rc::new(LambertianMaterial::new(Color::new(0.73, 0.73, 0.73)));
+
+    world.add(Rc::new(objects::Box::new(
+        Point::new(130.0, 0.0, 65.0),
+        Point::new(295.0, 165.0, 230.0),
+        white.clone(),
+    )));
+    world.add(Rc::new(objects::Box::new(
+        Point::new(265.0, 0.0, 295.0),
+        Point::new(430.0, 330.0, 460.0),
+        white,
+    )));
 
     let lookfrom = Point::new(278.0, 278.0, -800.0);
     let lookat = Point::new(278.0, 278.0, 0.0);
