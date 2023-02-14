@@ -48,3 +48,16 @@ impl Hittable for YZRect {
         ))
     }
 }
+
+impl YZRect {
+    pub fn new(y0: f64, y1: f64, z0: f64, z1: f64, k: f64, material: Rc<dyn Material>) -> YZRect {
+        YZRect {
+            y0,
+            y1,
+            z0,
+            z1,
+            k,
+            material,
+        }
+    }
+}

@@ -47,3 +47,16 @@ impl Hittable for XZRect {
         ))
     }
 }
+
+impl XZRect {
+    pub fn new(x0: f64, x1: f64, z0: f64, z1: f64, k: f64, material: Rc<dyn Material>) -> XZRect {
+        XZRect {
+            x0,
+            x1,
+            z0,
+            z1,
+            k,
+            material,
+        }
+    }
+}

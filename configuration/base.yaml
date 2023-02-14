@@ -1,7 +1,7 @@
-aspect_ratio: 1.77778
-height: 400
-samples_per_pixel: 400
-max_depth: 50
+# aspect_ratio: 1.77778
+# height: 400
+# samples_per_pixel: 100
+# max_depth: 50
 
 # aspect_ratio: 1.5
 # height: 800
@@ -12,3 +12,9 @@ max_depth: 50
 # height: 225
 # samples_per_pixel: 100
 # max_depth: 50
+
+# Cornell Box settings
+aspect_ratio: 1.0
+height: 600
+samples_per_pixel: 200
+max_depth: 50

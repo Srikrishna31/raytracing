@@ -1,5 +1,5 @@
 use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
-use raytracing::objects::{MovingSphere, Sphere, World, XYRect};
+use raytracing::objects::{MovingSphere, Sphere, World, XYRect, XZRect, YZRect};
 use raytracing::utils::{random, random_in_unit_interval, PI};
 use raytracing::{Camera, Color, ImageSettings, Point, Scene, Vec3};
 
@@ -724,6 +724,66 @@ pub fn rectangle_light_scene(settings: &ImageSettings) -> Scene {
         lookat,
         vup,
         20.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera, Color::new(0.0, 0.0, 0.0))
+}
+
+/// The "Cornell Box" was introduced in 1984 to model the interaction of light between diffuse surfaces.
+/// This function will make the 5 walls and the light of the box.
+fn cornell_box() -> World {
+    let mut world = World::new();
+
+    let red = Rc::new(LambertianMaterial::new(Color::new(0.65, 0.05, 0.05)));
+    let white = Rc::new(LambertianMaterial::new(Color::new(0.73, 0.73, 0.73)));
+    let green = Rc::new(LambertianMaterial::new(Color::new(0.12, 0.45, 0.15)));
+    let light = Rc::new(DiffuseLight::new(Color::new(15.0, 15.0, 15.0)));
+
+    world.add(Rc::new(YZRect::new(0.0, 555.0, 0.0, 555.0, 555.0, green)));
+    world.add(Rc::new(YZRect::new(0.0, 555.0, 0.0, 555.0, 0.0, red)));
+    world.add(Rc::new(XZRect::new(
+        213.0, 343.0, 227.0, 332.0, 554.0, light,
+    )));
+    world.add(Rc::new(XZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        0.0,
+        white.clone(),
+    )));
+    world.add(Rc::new(XZRect::new(
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        white.clone(),
+    )));
+    world.add(Rc::new(XYRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white)));
+
+    world
+}
+
+pub fn empty_cornell_box(settings: &ImageSettings) -> Scene {
+    let world = cornell_box();
+
+    let lookfrom = Point::new(278.0, 278.0, -800.0);
+    let lookat = Point::new(278.0, 278.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        40.0,
         settings.aspect_ratio,
         aperture,
         dist_to_focus,
