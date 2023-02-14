@@ -15,7 +15,7 @@ impl Hittable for Box {
         self.sides.hit(r, t_min, t_max)
     }
 
-    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AABB> {
+    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<AABB> {
         Some(AABB::new(self.min, self.max))
     }
 }
