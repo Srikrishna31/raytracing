@@ -1,4 +1,5 @@
 mod bounding_box;
+mod boxobject;
 mod hittable;
 mod hittablelist;
 mod moving_sphere;
@@ -13,6 +14,7 @@ pub use hittable::*;
 pub use moving_sphere::*;
 pub use sphere::*;
 //Export HittableList as world, since it is just a collection of hittable objects.
+pub use boxobject::Box;
 pub use hittablelist::HittableList as World;
 pub use xyrect::XYRect;
 pub use xzrect::XZRect;
