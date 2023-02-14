@@ -40,7 +40,7 @@ impl Hittable for YZRect {
         Some(rec)
     }
 
-    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AABB> {
+    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<AABB> {
         // The bounding box must have non-zero width in each dimension, so pad the X dimension a small amount
         Some(AABB::new(
             Point::new(self.k - 0.0001, self.y0, self.z0),

@@ -45,14 +45,6 @@ pub struct XYRect {
 }
 
 impl Hittable for XYRect {
-    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<AABB> {
-        // The bounding box must have non-zero width in each dimension, so pad the Z dimension a small amount
-        Some(AABB::new(
-            Point::new(self.x0, self.y0, self.k - 0.0001),
-            Point::new(self.x1, self.y1, self.k + 0.0001),
-        ))
-    }
-
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let t = (self.k - r.origin().z()) / r.direction().z();
         if t < t_min || t > t_max {
@@ -78,6 +70,14 @@ impl Hittable for XYRect {
         rec.set_face_normal(r, &outward_normal);
 
         Some(rec)
+    }
+
+    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<AABB> {
+        // The bounding box must have non-zero width in each dimension, so pad the Z dimension a small amount
+        Some(AABB::new(
+            Point::new(self.x0, self.y0, self.k - 0.0001),
+            Point::new(self.x1, self.y1, self.k + 0.0001),
+        ))
     }
 }
 
