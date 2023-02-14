@@ -26,7 +26,7 @@ impl ImageSettings {
     fn new(settings: ImageSettingsImpl) -> ImageSettings {
         ImageSettings {
             aspect_ratio: settings.aspect_ratio,
-            width: (settings.height as f64 * 16.0 / 9.0) as u32,
+            width: (settings.height as f64 * settings.aspect_ratio) as u32,
             height: settings.height,
             samples_per_pixel: settings.samples_per_pixel,
             max_depth: settings.max_depth,

@@ -122,8 +122,7 @@ where
 fn ray_color(r: &Ray, bg_color: &Color, world: &dyn Hittable, depth: u32) -> Color {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
-        // return Color::new(0.0, 0.0, 0.0);
-        return *bg_color;
+        return Color::new(0.0, 0.0, 0.0);
     }
 
     // # Fixing the shadow Acne
