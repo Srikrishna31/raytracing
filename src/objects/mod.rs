@@ -3,6 +3,7 @@ mod boxobject;
 mod hittable;
 mod hittablelist;
 mod moving_sphere;
+mod rotatey;
 mod sphere;
 mod translate;
 mod xyrect;
@@ -17,6 +18,7 @@ pub use sphere::*;
 //Export HittableList as world, since it is just a collection of hittable objects.
 pub use boxobject::Box;
 pub use hittablelist::HittableList as World;
+pub use rotatey::RotateY;
 pub use translate::Translate;
 pub use xyrect::XYRect;
 pub use xzrect::XZRect;
