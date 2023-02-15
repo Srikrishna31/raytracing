@@ -1,7 +1,7 @@
-use crate::materials::Material;
-use crate::objects::{HitRecord, Hittable, AABB};
+use super::super::{HitRecord, Hittable, AABB};
+use crate::materials::{Isotropic, Material};
 use crate::utils::{random_in_unit_interval, INFINITY};
-use crate::{Ray, Vec3};
+use crate::{Color, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
 use std::rc::Rc;
 
@@ -123,5 +123,17 @@ impl ConstantMedium {
             phase_function,
             neg_inv_density: -1.0 / density,
         }
+    }
+
+    pub fn new_with_color(
+        boundary: Rc<dyn Hittable>,
+        phase_color: Color,
+        density: f64,
+    ) -> ConstantMedium {
+        Self::new(
+            boundary,
+            Rc::new(Isotropic::new_with_color(phase_color)),
+            density,
+        )
     }
 }

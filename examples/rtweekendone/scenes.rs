@@ -6,6 +6,7 @@ use raytracing::utils::{random, random_in_unit_interval, PI};
 use raytracing::{objects, Camera, Color, ImageSettings, Point, Scene, Vec3};
 
 use raytracing::materials::lights::DiffuseLight;
+use raytracing::objects::volumes::ConstantMedium;
 use raytracing::textures::{
     CheckerTexture, ImageTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor, Texture,
 };
@@ -838,4 +839,131 @@ pub fn cornell_box_with_two_boxes(settings: &ImageSettings) -> Scene {
     );
 
     Scene::new(world, camera, Color::new(0.0, 0.0, 0.0))
+}
+
+/// # Rendering a Cornell Box with Smoke and Fog Boxes
+/// If we replace the two blocks with smoke and fog (dark and light particles), and make the light
+/// bigger (and dimmer so it doesn't blow out the scene) for faster convergence:
+pub fn cornell_smoke(settings: &ImageSettings) -> Scene {
+    let mut world = cornell_box();
+
+    let white = Rc::new(LambertianMaterial::new(Color::new(0.73, 0.73, 0.73)));
+
+    let mut box1: Rc<dyn Hittable> = Rc::new(objects::Box::new(
+        Point::new(0.0, 0.0, 0.0),
+        Point::new(165.0, 330.0, 165.0),
+        white.clone(),
+    ));
+    box1 = Rc::new(RotateY::new(box1, 15.0));
+    box1 = Rc::new(Translate::new(box1, Vec3::new(265.0, 0.0, 295.0)));
+
+    let mut box2: Rc<dyn Hittable> = Rc::new(objects::Box::new(
+        Point::new(0.0, 0.0, 0.0),
+        Point::new(165.0, 165.0, 165.0),
+        white,
+    ));
+    box2 = Rc::new(RotateY::new(box2, -18.0));
+    box2 = Rc::new(Translate::new(box2, Vec3::new(130.0, 0.0, 65.0)));
+
+    world.add(Rc::new(ConstantMedium::new_with_color(
+        box1,
+        Color::new(0.0, 0.0, 0.0),
+        0.01,
+    )));
+    world.add(Rc::new(ConstantMedium::new_with_color(
+        box2,
+        Color::new(1.0, 1.0, 1.0),
+        0.01,
+    )));
+
+    let lookfrom = Point::new(278.0, 278.0, -800.0);
+    let lookat = Point::new(278.0, 278.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        40.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera, Color::new(0.0, 0.0, 0.0))
+}
+
+/// # Raytracing: The next week
+/// Let's put it all together, with a big thin mist covering everything, and a blue subsurface reflection
+/// sphere (we didn't implement that explicitly, but a volume inside a dielectric is what a subsurface
+/// material is). The biggest limitation left in the renderer is no shadow rays, but that is why we
+/// get caustics and subsurface for free. It's a double-edged design decision.
+pub fn rtnextweek_final_scene() -> Scene {
+    let mut boxes1 = World::new();
+    let ground = Rc::new(LambertianMaterial::new(Color::new(0.48, 0.83, 0.53)));
+
+    const BOXES_PER_SIDE: i32 = 20;
+    let w = 100.0;
+
+    for i in 0..BOXES_PER_SIDE {
+        for j in 0..BOXES_PER_SIDE {
+            let x0 = -1000.0 + (i as f64) * w;
+            let z0 = -1000.0 + (j as f64) * w;
+            let y0 = 0.0;
+            let x1 = x0 + w;
+            let y1 = random(1.0, 101.0);
+            let z1 = z0 + w;
+
+            boxes1.add(Rc::new(objects::Box::new(
+                Point::new(x0, y0, z0),
+                Point::new(x1, y1, z1),
+                ground.clone(),
+            )));
+        }
+    }
+
+    let mut world = World::new();
+
+    world.add(Rc::new(boxes1));
+
+    let light = Rc::new(DiffuseLight::new(Color::new(7.0, 7.0, 7.0)));
+    world.add(Rc::new(XZRect::new(
+        123.0, 423.0, 147.0, 412.0, 554.0, light,
+    )));
+
+    let center1 = Point::new(400.0, 400.0, 400.0);
+    let center2 = center1 + Vec3::new(30.0, 0.0, 0.0);
+    let moving_sphere_material = Rc::new(LambertianMaterial::new(Color::new(0.7, 0.3, 0.1)));
+
+    world.add(Rc::new(
+        MovingSphere::new(center1, center2, 50.0, moving_sphere_material, 0.0, 1.0).unwrap(),
+    ));
+    world.add(Rc::new(Sphere::new(
+        Point::new(260.0, 150.0, 45.0),
+        50.0,
+        Rc::new(Dielectric::new(1.5)),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 150.0, 145.0),
+        50.0,
+        Rc::new(Metal::new(Color::new(0.8, 0.8, 0.9), 1.0)),
+    )));
+
+    let boundary = Rc::new(Sphere::new(
+        Point::new(360.0, 150.0, 145.0),
+        70.0,
+        Rc::new(Dielectric::new(1.5)),
+    ));
+    world.add(boundary.clone());
+    world.add(Rc::new(ConstantMedium::new_with_color(
+        boundary.clone(),
+        Color::new(0.2, 0.4, 0.9),
+        0.2,
+    )));
+
+    Scene::new(world, Camera::default(), Color::default())
 }
