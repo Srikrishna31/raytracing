@@ -46,6 +46,26 @@ impl HitRecord {
         }
     }
 
+    pub fn new_with_all_params(
+        p: Vec3,
+        normal: Vec3,
+        mat: Rc<dyn Material>,
+        t: f64,
+        u: f64,
+        v: f64,
+        front_face: bool,
+    ) -> HitRecord {
+        HitRecord {
+            p,
+            normal,
+            mat,
+            t,
+            u,
+            v,
+            front_face,
+        }
+    }
+
     /// # Surface Normals
     /// A surface normal is a vector that is perpendicular to the surface at the point of intersection.
     /// There are two design decisions to make for normals. The first is whether these normals are
