@@ -19,7 +19,8 @@ fn main() {
         // let scene = scenes::scene_with_alternate_viewpoint();
         // let scene = scenes::rectangle_light_scene(&settings);
         // let scene = scenes::empty_cornell_box(&settings);
-        let scene = scenes::cornell_box_with_two_boxes(&settings);
+        // let scene = scenes::cornell_box_with_two_boxes(&settings);
+        let scene = scenes::cornell_smoke(&settings);
         render(settings, scene, |i: f64| eprintln!("{i:.2}% completed"))
     });
 

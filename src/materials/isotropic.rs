@@ -1,8 +1,8 @@
 use crate::materials::Material;
 use crate::objects::HitRecord;
 use crate::textures::{SolidColor, Texture};
-use crate::{Color, Ray};
 use crate::Vec3;
+use crate::{Color, Ray};
 use std::rc::Rc;
 
 pub struct Isotropic {
@@ -11,7 +11,8 @@ pub struct Isotropic {
 
 impl Material for Isotropic {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
-        let scattered_ray = Ray::new_with_time(&rec.p, &Vec3::random_vector_in_unit_sphere(), r_in.time());
+        let scattered_ray =
+            Ray::new_with_time(&rec.p, &Vec3::random_vector_in_unit_sphere(), r_in.time());
         let attenuation = self.albedo.value(rec.u, rec.v, &rec.p);
 
         Some((scattered_ray, attenuation))
