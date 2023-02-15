@@ -61,14 +61,14 @@ impl Hittable for RotateY {
         let rotated_ray = Ray::new_with_time(&origin, &direction, r.time());
 
         self.obj.hit(&rotated_ray, t_min, t_max).map(|mut hit_rec| {
-            let p = hit_rec.p;
-            let normal = hit_rec.normal;
+            let mut p = hit_rec.p;
+            let mut normal = hit_rec.normal;
 
-            p[0] = self.cos_theta * rec.p.x() + self.sin_theta * rec.p.z();
-            p[2] = -self.sin_theta * rec.p.z() + self.cos_theta * rec.p.z();
+            p[0] = self.cos_theta * hit_rec.p.x() + self.sin_theta * hit_rec.p.z();
+            p[2] = -self.sin_theta * hit_rec.p.z() + self.cos_theta * hit_rec.p.z();
 
-            normal[0] = self.cos_theta * rec.normal.x() + self.sin_theta * rec.normal.z();
-            normal[2] = -self.sin_theta * rec.normal.z() + self.cos_theta * rec.normal.z();
+            normal[0] = self.cos_theta * hit_rec.normal.x() + self.sin_theta * hit_rec.normal.z();
+            normal[2] = -self.sin_theta * hit_rec.normal.z() + self.cos_theta * hit_rec.normal.z();
 
             hit_rec.p = p;
             hit_rec.set_face_normal(&rotated_ray, &normal);

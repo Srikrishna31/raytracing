@@ -41,3 +41,9 @@ impl Hittable for Translate {
             .map(|bbox| AABB::new(bbox.min() + self.offset, bbox.max() + self.offset))
     }
 }
+
+impl Translate {
+    pub fn new(obj: Rc<dyn Hittable>, offset: Vec3) -> Translate {
+        Translate { obj, offset }
+    }
+}

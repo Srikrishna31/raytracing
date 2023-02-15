@@ -1,5 +1,7 @@
 use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
-use raytracing::objects::{MovingSphere, Sphere, World, XYRect, XZRect, YZRect};
+use raytracing::objects::{
+    Hittable, MovingSphere, RotateY, Sphere, Translate, World, XYRect, XZRect, YZRect,
+};
 use raytracing::utils::{random, random_in_unit_interval, PI};
 use raytracing::{objects, Camera, Color, ImageSettings, Point, Scene, Vec3};
 
@@ -799,16 +801,23 @@ pub fn cornell_box_with_two_boxes(settings: &ImageSettings) -> Scene {
 
     let white = Rc::new(LambertianMaterial::new(Color::new(0.73, 0.73, 0.73)));
 
-    world.add(Rc::new(objects::Box::new(
-        Point::new(130.0, 0.0, 65.0),
-        Point::new(295.0, 165.0, 230.0),
+    let mut box1: Rc<dyn Hittable> = Rc::new(objects::Box::new(
+        Point::new(0.0, 0.0, 0.0),
+        Point::new(165.0, 330.0, 165.0),
         white.clone(),
-    )));
-    world.add(Rc::new(objects::Box::new(
-        Point::new(265.0, 0.0, 295.0),
-        Point::new(430.0, 330.0, 460.0),
+    ));
+    box1 = Rc::new(RotateY::new(box1, 15.0));
+    box1 = Rc::new(Translate::new(box1, Vec3::new(265.0, 0.0, 295.0)));
+    world.add(box1);
+
+    let mut box2: Rc<dyn Hittable> = Rc::new(objects::Box::new(
+        Point::new(0.0, 0.0, 0.0),
+        Point::new(165.0, 165.0, 165.0),
         white,
-    )));
+    ));
+    box2 = Rc::new(RotateY::new(box2, -18.0));
+    box2 = Rc::new(Translate::new(box2, Vec3::new(130.0, 0.0, 65.0)));
+    world.add(box2);
 
     let lookfrom = Point::new(278.0, 278.0, -800.0);
     let lookat = Point::new(278.0, 278.0, 0.0);
