@@ -77,13 +77,13 @@ impl Hittable for ConstantMedium {
 
                 let ray_length = r.direction().length();
                 let distance_inside_boundary = (r2.t - r1.t) * ray_length;
-                let hit_distance = self.neg_inv_density * random_in_unit_interval().log(10.0); // Todo: CHeck if this needs to change to ln
+                let hit_distance = self.neg_inv_density * random_in_unit_interval().ln();
 
                 if hit_distance > distance_inside_boundary {
                     return None;
                 }
 
-                let t = r1.t + hit_distance * ray_length;
+                let t = r1.t + hit_distance / ray_length;
                 let p = r.at(t);
 
                 if debugging {
@@ -95,12 +95,12 @@ impl Hittable for ConstantMedium {
 
                 Some(HitRecord::new_with_all_params(
                     p,
-                    Vec3::new(1.0, 0.0, 0.0),
+                    Vec3::new(1.0, 0.0, 0.0), // arbitrary
                     self.phase_function.clone(),
                     t,
                     0.0,
                     0.0,
-                    true,
+                    true, // also arbitrary
                 ))
             }
             _ => None,
@@ -121,7 +121,7 @@ impl ConstantMedium {
         ConstantMedium {
             boundary,
             phase_function,
-            neg_inv_density: 1.0 / density,
+            neg_inv_density: -1.0 / density,
         }
     }
 }
