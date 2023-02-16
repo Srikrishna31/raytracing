@@ -902,7 +902,7 @@ pub fn cornell_smoke(settings: &ImageSettings) -> Scene {
 /// sphere (we didn't implement that explicitly, but a volume inside a dielectric is what a subsurface
 /// material is). The biggest limitation left in the renderer is no shadow rays, but that is why we
 /// get caustics and subsurface for free. It's a double-edged design decision.
-pub fn rtnextweek_final_scene() -> Scene {
+pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
     let mut boxes1 = World::new();
     let ground = Rc::new(LambertianMaterial::new(Color::new(0.48, 0.83, 0.53)));
 
@@ -965,5 +965,72 @@ pub fn rtnextweek_final_scene() -> Scene {
         0.2,
     )));
 
-    Scene::new(world, Camera::default(), Color::default())
+    let boundary1 = Rc::new(Sphere::new(
+        Point::new(0.0, 0.0, 0.0),
+        5000.0,
+        Rc::new(Dielectric::new(1.5)),
+    ));
+    world.add(Rc::new(ConstantMedium::new_with_color(
+        boundary1,
+        Color::new(1.0, 1.0, 1.0),
+        0.0001,
+    )));
+
+    let path = std::env::current_dir()
+        .unwrap()
+        .join(Path::new("./examples/rtweekendone/earthmap.jpg"));
+    let emat = Rc::new(LambertianMaterial::new_with_texture(Rc::new(
+        ImageTexture::new(&path),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(400.0, 200.0, 400.0),
+        100.0,
+        emat,
+    )));
+
+    let pertext = Rc::new(PerlinNoiseTexture::new(
+        PerlinNoiseOptions::VectorSmoothing,
+        0.1,
+        true,
+    ));
+    world.add(Rc::new(Sphere::new(
+        Point::new(220.0, 280.0, 300.0),
+        80.0,
+        Rc::new(LambertianMaterial::new_with_texture(pertext)),
+    )));
+
+    let mut boxes2 = World::new();
+    let white = Rc::new(LambertianMaterial::new(Color::new(0.73, 0.73, 0.73)));
+    for i in 0..1000 {
+        boxes2.add(Rc::new(Sphere::new(
+            Point::random_vector(0.0, 165.0),
+            10.0,
+            white.clone(),
+        )));
+    }
+
+    world.add(Rc::new(Translate::new(
+        Rc::new(RotateY::new(Rc::new(boxes2), 15.0)),
+        Vec3::new(-100.0, 270.0, 395.0),
+    )));
+
+    let lookfrom = Point::new(478.0, 278.0, -600.0);
+    let lookat = Point::new(278.0, 278.0, 0.0);
+    let vup = Point::new(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.0;
+
+    let camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        40.0,
+        settings.aspect_ratio,
+        aperture,
+        dist_to_focus,
+        0.0,
+        1.0,
+    );
+
+    Scene::new(world, camera, Color::new(0.0, 0.0, 0.0))
 }
