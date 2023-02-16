@@ -14,7 +14,14 @@
 # max_depth: 50
 
 # Cornell Box settings
+# aspect_ratio: 1.0
+# height: 600
+# samples_per_pixel: 200
+# max_depth: 50
+
+
+# RTNextWeek Settings
 aspect_ratio: 1.0
-height: 600
-samples_per_pixel: 200
+height: 800
+samples_per_pixel: 10000
 max_depth: 50
