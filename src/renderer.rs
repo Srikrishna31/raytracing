@@ -1,15 +1,16 @@
 use embed_doc_image::embed_doc_image;
 use std::fmt::Write as FmtWrite;
-use std::io;
 use std::io::{Result, Write};
 
-use crate::configuration::ImageSettings;
 use crate::{
+    configuration::ImageFormat as ConfImageFormat,
+    configuration::ImageSettings,
     objects::{BVHNode, Hittable},
     utils,
     utils::{clamp, random_in_unit_interval},
     Color, Ray, Scene,
 };
+use image::{ImageBuffer, ImageFormat};
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
@@ -31,7 +32,7 @@ fn write_color<T: Write>(
 
     // Write the translated [0,255] value of each color component
     let mut str = String::new();
-    writeln!(
+    write!(
         str,
         "{} {} {}",
         (256.0 * clamp(r, 0.0, 0.999)) as i32,
@@ -73,12 +74,17 @@ where
     // Render
     println!("P3\n{} {}\n255\n", &settings.width, &settings.height);
 
-    let mut out = io::stdout();
+    let mut imout = ImageBuffer::<image::Rgb<u8>, Vec<u8>>::new(settings.width, settings.height);
+    //let mut imout = ImageBuffer::from_pixel(settings.width, settings.height, image::Rgb([0,0,0]));
+    let buff = imout.as_mut();
+
     for j in (0..settings.height).rev() {
         progress_callback((1.0 - j as f64 / settings.height as f64) * 100.0);
 
         for i in 0..settings.width {
             let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+            let index = ((j * settings.width + i) * 3) as usize;
+            let mut buffout = &mut buff[index..index + 3];
             for _ in 0..settings.samples_per_pixel {
                 let u = (i as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
                 let v = (j as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
@@ -86,10 +92,17 @@ where
                 pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
             }
 
-            write_color(&mut out, &pixel_color, settings.samples_per_pixel)
+            write_color(&mut buffout, &pixel_color, settings.samples_per_pixel)
                 .expect("Error writing to output");
         }
     }
+
+    imout
+        .save_with_format(
+            std::path::Path::new(&settings.path),
+            get_format(settings.format),
+        )
+        .expect("Unable to save image in specified format");
     eprintln!("\nDone.\n")
 }
 
@@ -157,6 +170,19 @@ fn ray_color(r: &Ray, bg_color: &Color, world: &dyn Hittable, depth: u32) -> Col
         None => {
             // eprintln!("Ray hit nothing! Emitting background color");
             *bg_color
+        }
+    }
+}
+
+fn get_format(format: ConfImageFormat) -> ImageFormat {
+    match format {
+        ConfImageFormat::Jpg => ImageFormat::Jpeg,
+        ConfImageFormat::Png => ImageFormat::Png,
+        ConfImageFormat::Tiff => ImageFormat::Tiff,
+        ConfImageFormat::Ppm => ImageFormat::Pnm,
+        _ => {
+            eprintln!("Unsupported format. Defaulting to JPEG");
+            ImageFormat::Jpeg
         }
     }
 }

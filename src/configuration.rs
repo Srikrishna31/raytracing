@@ -1,7 +1,8 @@
 use config::ConfigError;
+use serde::Deserialize;
 use serde_aux::field_attributes::deserialize_number_from_string;
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(Deserialize, Clone)]
 struct ImageSettingsImpl {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     aspect_ratio: f64,
@@ -11,15 +12,28 @@ struct ImageSettingsImpl {
     samples_per_pixel: u32,
     #[serde(deserialize_with = "deserialize_number_from_string")]
     max_depth: u32,
+    format: ImageFormat,
+    path: String,
+}
+
+#[derive(Deserialize, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum ImageFormat {
+    Jpg,
+    Png,
+    Ppm,
+    Tiff,
 }
 
 #[derive(Clone)]
 pub struct ImageSettings {
     pub aspect_ratio: f64,
-    pub(crate) width: u32,
-    pub(crate) height: u32,
-    pub(crate) samples_per_pixel: u32,
-    pub(crate) max_depth: u32,
+    pub width: u32,
+    pub height: u32,
+    pub samples_per_pixel: u32,
+    pub max_depth: u32,
+    pub format: ImageFormat,
+    pub path: String,
 }
 
 impl ImageSettings {
@@ -30,6 +44,8 @@ impl ImageSettings {
             height: settings.height,
             samples_per_pixel: settings.samples_per_pixel,
             max_depth: settings.max_depth,
+            format: settings.format,
+            path: settings.path,
         }
     }
 }
