@@ -25,6 +25,7 @@ config = "0.13"
 serde = {version = "1", features = ["derive"]}
 serde-aux = "4"
 image = "0.24"
+rayon = "1.6"
 
 [dev-dependencies]
 timeit = "0.1"
