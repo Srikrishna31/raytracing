@@ -1,6 +1,5 @@
 use embed_doc_image::embed_doc_image;
-use std::fmt::Write as FmtWrite;
-use std::io::{Result, Write};
+use std::io::{Result};
 
 use crate::{
     configuration::ImageFormat as ConfImageFormat,
@@ -15,8 +14,8 @@ use image::{ImageBuffer, ImageFormat};
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
 /// then perform a single divide at the end (by the number of samples) when writing out the color.
-fn write_color<T: Write>(
-    out: &mut T,
+fn write_color(
+    out: &mut [u8;3],
     pixel_color: &Color,
     samples_per_pixel: u32,
 ) -> Result<usize> {
@@ -31,17 +30,11 @@ fn write_color<T: Write>(
     b = f64::sqrt(scale * b);
 
     // Write the translated [0,255] value of each color component
-    let mut str = String::new();
-    write!(
-        str,
-        "{} {} {}",
-        (256.0 * clamp(r, 0.0, 0.999)) as i32,
-        (256.0 * clamp(g, 0.0, 0.999)) as i32,
-        (256.0 * clamp(b, 0.0, 0.999)) as i32,
-    )
-    .expect("Error formatting write");
+    out[0] = (256.0 * clamp(r, 0.0, 0.999)) as u8;
+    out[1] = (256.0 * clamp(g, 0.0, 0.999)) as u8;
+    out[2] = (256.0 * clamp(b, 0.0, 0.999)) as u8;
 
-    out.write(str.as_bytes())
+    Ok(3)
 }
 
 /// # Antialiasing
@@ -72,29 +65,20 @@ where
     let bvh_world = BVHNode::new(&world, 0.0, 0.0).unwrap();
 
     // Render
-    println!("P3\n{} {}\n255\n", &settings.width, &settings.height);
-
     let mut imout = ImageBuffer::<image::Rgb<u8>, Vec<u8>>::new(settings.width, settings.height);
-    //let mut imout = ImageBuffer::from_pixel(settings.width, settings.height, image::Rgb([0,0,0]));
-    let buff = imout.as_mut();
 
-    for j in (0..settings.height).rev() {
-        progress_callback((1.0 - j as f64 / settings.height as f64) * 100.0);
-
-        for i in 0..settings.width {
-            let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-            let index = ((j * settings.width + i) * 3) as usize;
-            let mut buffout = &mut buff[index..index + 3];
-            for _ in 0..settings.samples_per_pixel {
-                let u = (i as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
-                let v = (j as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
-                let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
-            }
-
-            write_color(&mut buffout, &pixel_color, settings.samples_per_pixel)
-                .expect("Error writing to output");
+    for (i,j,pixel) in imout.enumerate_pixels_mut() {
+        progress_callback(j as f64 / settings.height as f64 * 100.0);
+        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+        for _ in 0..settings.samples_per_pixel {
+            let u = (i as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
+            let v = (j as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
+            let r = camera.get_ray(u, v);
+            pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
         }
+
+        write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
+            .expect("Error writing to output");
     }
 
     imout
