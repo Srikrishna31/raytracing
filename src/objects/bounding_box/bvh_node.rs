@@ -5,6 +5,7 @@ use crate::Ray;
 use embed_doc_image::embed_doc_image;
 use std::cmp::Ordering;
 use std::rc::Rc;
+use std::sync::Arc;
 
 /// # Bounding Volume Hierarchies
 /// The ray-object intersection is the main time-bottleneck in a ray tracer, and the time is linear
@@ -55,8 +56,8 @@ use std::rc::Rc;
 /// ```
 #[embed_doc_image("bvh", "doc_images/bounding_volume_hierarchy.jpg")]
 pub struct BVHNode {
-    left: Rc<dyn Hittable>,
-    right: Rc<dyn Hittable>,
+    left: Arc<dyn Hittable>,
+    right: Arc<dyn Hittable>,
     bbox: AABB,
 }
 
@@ -113,7 +114,7 @@ impl BVHNode {
 
     #[allow(clippy::ptr_arg)]
     fn new_helper(
-        src_objects: &Vec<Rc<dyn Hittable>>,
+        src_objects: &Vec<Arc<dyn Hittable>>,
         start: usize,
         end: usize,
         time0: f64,
@@ -121,7 +122,7 @@ impl BVHNode {
     ) -> Result<BVHNode, String> {
         let mut objects = src_objects.clone();
         let axis = random_int(0, 2) as u8;
-        let comparator = |a: &Rc<dyn Hittable>, b: &Rc<dyn Hittable>| {
+        let comparator = |a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>| {
             BVHNode::box_compare(a.clone(), b.clone(), axis).unwrap()
         };
         let object_span = end - start;
@@ -141,10 +142,10 @@ impl BVHNode {
 
             // Will need to specify the type here as dyn Hittable. Otherwise, Rust treats as Rc<BVHNode>
             // and complains that the types don't match. Probably in future it might not be needed to do this.
-            let left: Rc<dyn Hittable> =
-                Rc::new(Self::new_helper(&objects, start, mid, time0, time1)?);
-            let right: Rc<dyn Hittable> =
-                Rc::new(Self::new_helper(&objects, mid, end, time0, time1)?);
+            let left: Arc<dyn Hittable> =
+                Arc::new(Self::new_helper(&objects, start, mid, time0, time1)?);
+            let right: Arc<dyn Hittable> =
+                Arc::new(Self::new_helper(&objects, mid, end, time0, time1)?);
 
             (left, right)
         };
@@ -161,7 +162,7 @@ impl BVHNode {
     }
 
     #[inline]
-    fn box_compare(a: Rc<dyn Hittable>, b: Rc<dyn Hittable>, axis: u8) -> Result<Ordering, String> {
+    fn box_compare(a: Arc<dyn Hittable>, b: Arc<dyn Hittable>, axis: u8) -> Result<Ordering, String> {
         let axis = axis as usize;
         let (a_box, b_box) = match (a.bounding_box(0.0, 0.0), b.bounding_box(0.0, 0.0)) {
             (Some(ab), Some(bb)) => (ab, bb),

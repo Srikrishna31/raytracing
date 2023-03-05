@@ -1,13 +1,14 @@
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::ray::Ray;
 use std::rc::Rc;
+use std::sync::Arc;
 use std::vec::Vec;
 
 /// This represents the world/scene which is composed of hittables (objects). This can be used to
 /// arbitrarily position a list of objects in the scene and render them.
 #[derive(Clone)]
 pub struct HittableList {
-    pub(in crate::objects) objects: Vec<Rc<dyn Hittable>>,
+    pub(in crate::objects) objects: Vec<Arc<dyn Hittable>>,
 }
 
 impl Hittable for HittableList {
@@ -57,11 +58,11 @@ impl HittableList {
         HittableList { objects: vec![] }
     }
 
-    pub fn new_with_object(obj: Rc<dyn Hittable>) -> HittableList {
+    pub fn new_with_object(obj: Arc<dyn Hittable>) -> HittableList {
         HittableList { objects: vec![obj] }
     }
 
-    pub fn add(&mut self, object: Rc<dyn Hittable>) {
+    pub fn add(&mut self, object: Arc<dyn Hittable>) {
         self.objects.push(object);
     }
 
