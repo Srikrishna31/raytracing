@@ -1,5 +1,5 @@
 use embed_doc_image::embed_doc_image;
-use std::io::{Result};
+use std::io::Result;
 
 use crate::{
     configuration::ImageFormat as ConfImageFormat,
@@ -14,11 +14,7 @@ use image::{ImageBuffer, ImageFormat};
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
 /// then perform a single divide at the end (by the number of samples) when writing out the color.
-fn write_color(
-    out: &mut [u8;3],
-    pixel_color: &Color,
-    samples_per_pixel: u32,
-) -> Result<usize> {
+fn write_color(out: &mut [u8; 3], pixel_color: &Color, samples_per_pixel: u32) -> Result<usize> {
     let mut r = pixel_color.x();
     let mut g = pixel_color.y();
     let mut b = pixel_color.z();
@@ -67,7 +63,7 @@ where
     // Render
     let mut imout = ImageBuffer::<image::Rgb<u8>, Vec<u8>>::new(settings.width, settings.height);
 
-    for (i,j,pixel) in imout.enumerate_pixels_mut() {
+    for (i, j, pixel) in imout.enumerate_pixels_mut() {
         progress_callback(j as f64 / settings.height as f64 * 100.0);
         let mut pixel_color = Color::new(0.0, 0.0, 0.0);
         for _ in 0..settings.samples_per_pixel {
@@ -87,7 +83,6 @@ where
             get_format(settings.format),
         )
         .expect("Unable to save image in specified format");
-    eprintln!("\nDone.\n")
 }
 
 /// At the core, the ray tracer sends rays through pixels and computes the color seen in the direction
