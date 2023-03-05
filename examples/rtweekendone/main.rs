@@ -23,7 +23,7 @@ fn main() {
 
         settings.path = std::env::current_dir()
             .unwrap()
-            .join(Path::new("image_alternate_viewpoint_rel.jpg"))
+            .join(Path::new("image_alternate_viewpoint_rel_1.jpg"))
             .into_os_string()
             .into_string()
             .expect("Couldnot build path to file");
