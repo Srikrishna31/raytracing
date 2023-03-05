@@ -3,6 +3,7 @@ use crate::materials::Material;
 use crate::objects::{HitRecord, Hittable, XYRect, XZRect, YZRect, AABB};
 use crate::{Point, Ray};
 use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct Box {
     min: Point,
@@ -24,7 +25,7 @@ impl Box {
     pub fn new(min: Point, max: Point, material: Rc<dyn Material>) -> Box {
         let mut sides = HittableList::new();
 
-        sides.add(Rc::new(XYRect::new(
+        sides.add(Arc::new(XYRect::new(
             min.x(),
             max.x(),
             min.y(),
@@ -32,7 +33,7 @@ impl Box {
             max.z(),
             material.clone(),
         )));
-        sides.add(Rc::new(XYRect::new(
+        sides.add(Arc::new(XYRect::new(
             min.x(),
             max.x(),
             min.y(),
@@ -41,7 +42,7 @@ impl Box {
             material.clone(),
         )));
 
-        sides.add(Rc::new(XZRect::new(
+        sides.add(Arc::new(XZRect::new(
             min.x(),
             max.x(),
             min.z(),
@@ -49,7 +50,7 @@ impl Box {
             max.y(),
             material.clone(),
         )));
-        sides.add(Rc::new(XZRect::new(
+        sides.add(Arc::new(XZRect::new(
             min.x(),
             max.x(),
             min.z(),
@@ -58,7 +59,7 @@ impl Box {
             material.clone(),
         )));
 
-        sides.add(Rc::new(YZRect::new(
+        sides.add(Arc::new(YZRect::new(
             min.y(),
             max.y(),
             min.z(),
@@ -66,7 +67,7 @@ impl Box {
             max.x(),
             material.clone(),
         )));
-        sides.add(Rc::new(YZRect::new(
+        sides.add(Arc::new(YZRect::new(
             min.y(),
             max.y(),
             min.z(),

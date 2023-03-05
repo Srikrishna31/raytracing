@@ -176,3 +176,7 @@ impl BVHNode {
         }
     }
 }
+
+// For parallel rendering
+unsafe impl Send for BVHNode {}
+unsafe impl Sync for BVHNode {}
