@@ -12,6 +12,7 @@ use raytracing::textures::{
 };
 use std::path::Path;
 use std::rc::Rc;
+use std::sync::Arc;
 
 pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> World {
     let mut world = World::new();
@@ -20,22 +21,22 @@ pub(crate) fn scene_with_dielectric_and_shiny_sphere() -> World {
     let material_left = Rc::new(Dielectric::new(1.5));
     let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -100.5, -1.0),
         100.0,
         material_ground,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 0.0, -1.0),
         0.5,
         material_center,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         0.5,
         material_left,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(1.0, 0.0, -1.0),
         0.5,
         material_right,
@@ -54,29 +55,29 @@ pub fn scene_with_hollow_glass_sphere() -> World {
     let material_left = Rc::new(Dielectric::new(1.5));
     let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -100.5, -1.0),
         100.0,
         material_ground,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 0.0, -1.0),
         0.5,
         material_center,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         0.5,
         material_left.clone(),
     )));
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         -0.4,
         material_left,
     )));
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(1.0, 0.0, -1.0),
         0.5,
         material_right,
@@ -92,12 +93,12 @@ pub fn scene_for_wide_angle_camera() -> Scene {
     let material_left = Rc::new(LambertianMaterial::new(Color::new(0.0, 0.0, 1.0)));
     let material_right = Rc::new(LambertianMaterial::new(Color::new(1.0, 0.0, 0.0)));
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-R, 0.0, -1.0),
         R,
         material_left,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(R, 0.0, -1.0),
         R,
         material_right,
@@ -126,27 +127,27 @@ pub fn scene_with_alternate_viewpoint() -> Scene {
     let material_left = Rc::new(Dielectric::new(1.5));
     let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -100.5, -1.0),
         100.0,
         material_ground,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 0.0, -1.0),
         0.5,
         material_center,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         0.5,
         material_left.clone(),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         -0.45,
         material_left,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(1.0, 0.0, -1.0),
         0.5,
         material_right,
@@ -179,27 +180,27 @@ pub fn scene_with_depth_of_field_camera() -> Scene {
     let material_left = Rc::new(Dielectric::new(1.5));
     let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -100.5, -1.0),
         100.0,
         material_ground,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 0.0, -1.0),
         0.5,
         material_center,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         0.5,
         material_left.clone(),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         -0.45,
         material_left,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(1.0, 0.0, -1.0),
         0.5,
         material_right,
@@ -232,7 +233,7 @@ pub fn rtweekend_one_final_scene(settings: &ImageSettings) -> Scene {
     let mut world = World::new();
 
     let ground_material = Rc::new(LambertianMaterial::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -252,38 +253,38 @@ pub fn rtweekend_one_final_scene(settings: &ImageSettings) -> Scene {
                     // diffuse
                     let albedo = Color::random_unit_vector() * Color::random_unit_vector();
                     let sphere_material = Rc::new(LambertianMaterial::new(albedo));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else if choose_material < 0.95 {
                     // metal
                     let albedo = Color::random_vector(0.5, 1.0);
                     let fuzz = random(0.0, 0.5);
                     let sphere_material = Rc::new(Metal::new(albedo, fuzz));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
                     let sphere_material = Rc::new(Dielectric::new(1.5));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
             }
         }
     }
 
     let material1 = Rc::new(Dielectric::new(1.5));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
     let material2 = Rc::new(LambertianMaterial::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     )));
 
     let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(4.0, 1.0, 0.0),
         1.0,
         material3,
@@ -320,7 +321,7 @@ pub fn rtweekend_one_final_scene_with_moving_spheres(settings: &ImageSettings) -
     let mut world = World::new();
 
     let ground_material = Rc::new(LambertianMaterial::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -341,7 +342,7 @@ pub fn rtweekend_one_final_scene_with_moving_spheres(settings: &ImageSettings) -
                     let albedo = Color::random_unit_vector() * Color::random_unit_vector();
                     let sphere_material = Rc::new(LambertianMaterial::new(albedo));
                     let center2 = center + Vec3::new(0.0, random(0.0, 0.5), 0.0);
-                    world.add(Rc::new(
+                    world.add(Arc::new(
                         MovingSphere::new(center, center2, 0.2, sphere_material, 0.0, 1.0).unwrap(),
                     ));
                 } else if choose_material < 0.95 {
@@ -349,32 +350,32 @@ pub fn rtweekend_one_final_scene_with_moving_spheres(settings: &ImageSettings) -
                     let albedo = Color::random_vector(0.5, 1.0);
                     let fuzz = random(0.0, 0.5);
                     let sphere_material = Rc::new(Metal::new(albedo, fuzz));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
                     let sphere_material = Rc::new(Dielectric::new(1.5));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
             }
         }
     }
 
     let material1 = Rc::new(Dielectric::new(1.5));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
     let material2 = Rc::new(LambertianMaterial::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     )));
 
     let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(4.0, 1.0, 0.0),
         1.0,
         material3,
@@ -411,7 +412,7 @@ pub fn rtweekend_one_final_scene_with_moving_spheres_checkered_texture(
         Rc::new(SolidColor::new(Color::new(0.9, 0.9, 0.9))),
     ));
     let ground_material = Rc::new(LambertianMaterial::new_with_texture(checker));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -432,7 +433,7 @@ pub fn rtweekend_one_final_scene_with_moving_spheres_checkered_texture(
                     let albedo = Color::random_unit_vector() * Color::random_unit_vector();
                     let sphere_material = Rc::new(LambertianMaterial::new(albedo));
                     let center2 = center + Vec3::new(0.0, random(0.0, 0.5), 0.0);
-                    world.add(Rc::new(
+                    world.add(Arc::new(
                         MovingSphere::new(center, center2, 0.2, sphere_material, 0.0, 1.0).unwrap(),
                     ));
                 } else if choose_material < 0.95 {
@@ -440,32 +441,32 @@ pub fn rtweekend_one_final_scene_with_moving_spheres_checkered_texture(
                     let albedo = Color::random_vector(0.5, 1.0);
                     let fuzz = random(0.0, 0.5);
                     let sphere_material = Rc::new(Metal::new(albedo, fuzz));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
                     let sphere_material = Rc::new(Dielectric::new(1.5));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
             }
         }
     }
 
     let material1 = Rc::new(Dielectric::new(1.5));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
     let material2 = Rc::new(LambertianMaterial::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     )));
 
     let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(4.0, 1.0, 0.0),
         1.0,
         material3,
@@ -500,12 +501,12 @@ pub fn two_checkered_spheres(settings: &ImageSettings) -> Scene {
 
     let mut world = World::new();
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -10.0, 0.0),
         10.0,
         Rc::new(LambertianMaterial::new_with_texture(checker.clone())),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 10.0, 0.0),
         10.0,
         Rc::new(LambertianMaterial::new_with_texture(checker)),
@@ -537,12 +538,12 @@ pub fn perlin_textured_spheres(settings: &ImageSettings) -> Scene {
 
     let mut world = World::new();
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext.clone())),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 2.0, 0.0),
         2.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext)),
@@ -578,12 +579,12 @@ pub fn perlin_smoothed_textured_spheres(settings: &ImageSettings) -> Scene {
 
     let mut world = World::new();
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext.clone())),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 2.0, 0.0),
         2.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext)),
@@ -619,12 +620,12 @@ pub fn marble_spheres(settings: &ImageSettings) -> Scene {
 
     let mut world = World::new();
 
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext.clone())),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 2.0, 0.0),
         2.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext)),
@@ -658,7 +659,7 @@ fn earth() -> World {
 
     let earth_texture = Rc::new(ImageTexture::new(&path));
     let earth_surface = Rc::new(LambertianMaterial::new_with_texture(earth_texture));
-    let globe = Rc::new(Sphere::new(Point::new(0.0, 0.0, 0.0), 2.0, earth_surface));
+    let globe = Arc::new(Sphere::new(Point::new(0.0, 0.0, 0.0), 2.0, earth_surface));
 
     World::new_with_object(globe)
 }
@@ -696,12 +697,12 @@ pub fn rectangle_light_scene(settings: &ImageSettings) -> Scene {
         true,
     ));
     let lambertian = Rc::new(LambertianMaterial::new_with_texture(pertext));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         lambertian.clone(),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 2.0, 0.0),
         2.0,
         lambertian,
@@ -709,12 +710,12 @@ pub fn rectangle_light_scene(settings: &ImageSettings) -> Scene {
 
     // Note that the light is brighter than (1,1,1). This allows it to be bright enough to light things.
     let difflight = Rc::new(DiffuseLight::new(Color::new(4.0, 4.0, 4.0)));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 7.0, 0.0),
         2.0,
         difflight.clone(),
     )));
-    world.add(Rc::new(XYRect::new(3.0, 5.0, 1.0, 3.0, -2.0, difflight)));
+    world.add(Arc::new(XYRect::new(3.0, 5.0, 1.0, 3.0, -2.0, difflight)));
 
     let lookfrom = Point::new(26.0, 3.0, 6.0);
     let lookat = Point::new(0.0, 2.0, 0.0);
@@ -747,12 +748,12 @@ fn cornell_box() -> World {
     let green = Rc::new(LambertianMaterial::new(Color::new(0.12, 0.45, 0.15)));
     let light = Rc::new(DiffuseLight::new(Color::new(15.0, 15.0, 15.0)));
 
-    world.add(Rc::new(YZRect::new(0.0, 555.0, 0.0, 555.0, 555.0, green)));
-    world.add(Rc::new(YZRect::new(0.0, 555.0, 0.0, 555.0, 0.0, red)));
-    world.add(Rc::new(XZRect::new(
+    world.add(Arc::new(YZRect::new(0.0, 555.0, 0.0, 555.0, 555.0, green)));
+    world.add(Arc::new(YZRect::new(0.0, 555.0, 0.0, 555.0, 0.0, red)));
+    world.add(Arc::new(XZRect::new(
         213.0, 343.0, 227.0, 332.0, 554.0, light,
     )));
-    world.add(Rc::new(XZRect::new(
+    world.add(Arc::new(XZRect::new(
         0.0,
         555.0,
         0.0,
@@ -760,7 +761,7 @@ fn cornell_box() -> World {
         0.0,
         white.clone(),
     )));
-    world.add(Rc::new(XZRect::new(
+    world.add(Arc::new(XZRect::new(
         0.0,
         555.0,
         0.0,
@@ -768,7 +769,7 @@ fn cornell_box() -> World {
         555.0,
         white.clone(),
     )));
-    world.add(Rc::new(XYRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white)));
+    world.add(Arc::new(XYRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white)));
 
     world
 }
@@ -808,8 +809,8 @@ pub fn cornell_box_with_two_boxes(settings: &ImageSettings) -> Scene {
         white.clone(),
     ));
     box1 = Rc::new(RotateY::new(box1, 15.0));
-    box1 = Rc::new(Translate::new(box1, Vec3::new(265.0, 0.0, 295.0)));
-    world.add(box1);
+    let arcbox1 = Arc::new(Translate::new(box1, Vec3::new(265.0, 0.0, 295.0)));
+    world.add(arcbox1);
 
     let mut box2: Rc<dyn Hittable> = Rc::new(objects::Box::new(
         Point::new(0.0, 0.0, 0.0),
@@ -817,8 +818,8 @@ pub fn cornell_box_with_two_boxes(settings: &ImageSettings) -> Scene {
         white,
     ));
     box2 = Rc::new(RotateY::new(box2, -18.0));
-    box2 = Rc::new(Translate::new(box2, Vec3::new(130.0, 0.0, 65.0)));
-    world.add(box2);
+    let arcbox2 = Arc::new(Translate::new(box2, Vec3::new(130.0, 0.0, 65.0)));
+    world.add(arcbox2);
 
     let lookfrom = Point::new(278.0, 278.0, -800.0);
     let lookat = Point::new(278.0, 278.0, 0.0);
@@ -865,12 +866,12 @@ pub fn cornell_smoke(settings: &ImageSettings) -> Scene {
     box2 = Rc::new(RotateY::new(box2, -18.0));
     box2 = Rc::new(Translate::new(box2, Vec3::new(130.0, 0.0, 65.0)));
 
-    world.add(Rc::new(ConstantMedium::new_with_color(
+    world.add(Arc::new(ConstantMedium::new_with_color(
         box1,
         Color::new(0.0, 0.0, 0.0),
         0.01,
     )));
-    world.add(Rc::new(ConstantMedium::new_with_color(
+    world.add(Arc::new(ConstantMedium::new_with_color(
         box2,
         Color::new(1.0, 1.0, 1.0),
         0.01,
@@ -918,7 +919,7 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
             let y1 = random(1.0, 101.0);
             let z1 = z0 + w;
 
-            boxes1.add(Rc::new(objects::Box::new(
+            boxes1.add(Arc::new(objects::Box::new(
                 Point::new(x0, y0, z0),
                 Point::new(x1, y1, z1),
                 ground.clone(),
@@ -928,10 +929,10 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
 
     let mut world = World::new();
 
-    world.add(Rc::new(boxes1));
+    world.add(Arc::new(boxes1));
 
     let light = Rc::new(DiffuseLight::new(Color::new(7.0, 7.0, 7.0)));
-    world.add(Rc::new(XZRect::new(
+    world.add(Arc::new(XZRect::new(
         123.0, 423.0, 147.0, 412.0, 554.0, light,
     )));
 
@@ -939,28 +940,28 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
     let center2 = center1 + Vec3::new(30.0, 0.0, 0.0);
     let moving_sphere_material = Rc::new(LambertianMaterial::new(Color::new(0.7, 0.3, 0.1)));
 
-    world.add(Rc::new(
+    world.add(Arc::new(
         MovingSphere::new(center1, center2, 50.0, moving_sphere_material, 0.0, 1.0).unwrap(),
     ));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(260.0, 150.0, 45.0),
         50.0,
         Rc::new(Dielectric::new(1.5)),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 150.0, 145.0),
         50.0,
         Rc::new(Metal::new(Color::new(0.8, 0.8, 0.9), 1.0)),
     )));
 
-    let boundary = Rc::new(Sphere::new(
+    let boundary = Sphere::new(
         Point::new(360.0, 150.0, 145.0),
         70.0,
         Rc::new(Dielectric::new(1.5)),
-    ));
-    world.add(boundary.clone());
-    world.add(Rc::new(ConstantMedium::new_with_color(
-        boundary.clone(),
+    );
+    world.add(Arc::new(boundary.clone()));
+    world.add(Arc::new(ConstantMedium::new_with_color(
+        Rc::new(boundary),
         Color::new(0.2, 0.4, 0.9),
         0.2,
     )));
@@ -970,7 +971,7 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
         5000.0,
         Rc::new(Dielectric::new(1.5)),
     ));
-    world.add(Rc::new(ConstantMedium::new_with_color(
+    world.add(Arc::new(ConstantMedium::new_with_color(
         boundary1,
         Color::new(1.0, 1.0, 1.0),
         0.0001,
@@ -982,7 +983,7 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
     let emat = Rc::new(LambertianMaterial::new_with_texture(Rc::new(
         ImageTexture::new(&path),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(400.0, 200.0, 400.0),
         100.0,
         emat,
@@ -993,7 +994,7 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
         0.1,
         true,
     ));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(220.0, 280.0, 300.0),
         80.0,
         Rc::new(LambertianMaterial::new_with_texture(pertext)),
@@ -1002,14 +1003,14 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
     let mut boxes2 = World::new();
     let white = Rc::new(LambertianMaterial::new(Color::new(0.73, 0.73, 0.73)));
     for i in 0..1000 {
-        boxes2.add(Rc::new(Sphere::new(
+        boxes2.add(Arc::new(Sphere::new(
             Point::random_vector(0.0, 165.0),
             10.0,
             white.clone(),
         )));
     }
 
-    world.add(Rc::new(Translate::new(
+    world.add(Arc::new(Translate::new(
         Rc::new(RotateY::new(Rc::new(boxes2), 15.0)),
         Vec3::new(-100.0, 270.0, 395.0),
     )));
