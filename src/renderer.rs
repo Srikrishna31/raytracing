@@ -1,6 +1,6 @@
 use embed_doc_image::embed_doc_image;
 use std::io::Result;
-
+use rayon::prelude::*;
 use crate::{
     configuration::ImageFormat as ConfImageFormat,
     configuration::ImageSettings,
@@ -62,7 +62,25 @@ where
 
     // Render
     let mut imout = ImageBuffer::<image::Rgb<u8>, Vec<u8>>::new(settings.width, settings.height);
-    for i in 0..settings.width * settings.height {
+    // (0..settings.width*settings.height).into_par_iter().for_each(|i|{
+    //     let x = i / settings.width;
+    //     let y = i % settings.width;
+    //     let pixel =     imout.get_pixel_mut(x, y);
+    //     let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+    //     for _ in 0..settings.samples_per_pixel {
+    //         let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
+    //         let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
+    //         let r = camera.get_ray(u, v);
+    //         pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
+    //     }
+    //
+    //     write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
+    //         .expect("Error writing to output");
+    //
+    //     progress_callback(y as f64 / settings.height as f64 * 100.0);
+    // });
+    let iters :u32 = settings.width * settings.height;
+    for i in 0..iters {
         let x = i / settings.width;
         let y = i % settings.width;
         let pixel =     imout.get_pixel_mut(x, y);
@@ -77,7 +95,7 @@ where
         write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
             .expect("Error writing to output");
 
-        progress_callback(y as f64 / settings.height as f64 * 100.0);
+        progress_callback((i as f64 / iters as f64)  * 100.0);
     }
 
     // for (i, j, pixel) in imout.enumerate_pixels_mut() {
