@@ -2,24 +2,25 @@ extern crate raytracing;
 
 mod scenes;
 
+use indicatif::{ProgressBar, ProgressStyle};
 use raytracing::{load_configuration, render};
 use std::path::Path;
 use timeit::timeit_loops;
-use indicatif::{ProgressBar, ProgressState, ProgressStyle};
-use std::fmt::Write;
 
 fn main() {
     let time = timeit_loops!(1, {
-        let mut perc_completed = 0.0;
-        let total = 100;
-        let mut pb = ProgressBar::new(total);
-        pb.set_style(ProgressStyle::with_template(
-            "{spinner:.green} [{elapsed_precise}] [{wide:.cyan/blue}] {bytes}/{total_bytes}"
-        )
-        .unwrap()
-        .progress_chars("#>-"));
-
         let mut settings = load_configuration().expect("Couldnot read settings");
+
+        let total = 100;
+        let pb = ProgressBar::new(total);
+        pb.set_style(
+            ProgressStyle::with_template(
+                "{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {percent}",
+            )
+            .unwrap()
+            .progress_chars("#>-"),
+        );
+
         settings.path = std::env::current_dir()
             .unwrap()
             .join(Path::new("image_alternate_viewpoint_rel.jpg"))
@@ -43,8 +44,6 @@ fn main() {
         render(settings, scene, |i: f64| pb.set_position(i as u64));
 
         pb.finish_with_message("Done!");
-
     });
     eprintln!("{time} seconds to render the image");
-
 }
