@@ -5,9 +5,20 @@ mod scenes;
 use raytracing::{load_configuration, render};
 use std::path::Path;
 use timeit::timeit_loops;
+use indicatif::{ProgressBar, ProgressState, ProgressStyle};
+use std::fmt::Write;
 
 fn main() {
     let time = timeit_loops!(1, {
+        let mut perc_completed = 0.0;
+        let total = 100;
+        let mut pb = ProgressBar::new(total);
+        pb.set_style(ProgressStyle::with_template(
+            "{spinner:.green} [{elapsed_precise}] [{wide:.cyan/blue}] {bytes}/{total_bytes}"
+        )
+        .unwrap()
+        .progress_chars("#>-"));
+
         let mut settings = load_configuration().expect("Couldnot read settings");
         settings.path = std::env::current_dir()
             .unwrap()
@@ -29,8 +40,11 @@ fn main() {
         // let scene = scenes::cornell_smoke(&settings);
         // let scene = scenes::rtnextweek_final_scene(&settings);
 
-        render(settings, scene, |i: f64| eprintln!("{i:.2}% completed"))
-    });
+        render(settings, scene, |i: f64| pb.set_position(i as u64));
 
+        pb.finish_with_message("Done!");
+
+    });
     eprintln!("{time} seconds to render the image");
+
 }
