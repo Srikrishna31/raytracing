@@ -5,6 +5,7 @@ use crate::{Point, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
 use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct Sphere {
     center: Point,
     radius: f64,
