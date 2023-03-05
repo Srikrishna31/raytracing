@@ -10,12 +10,13 @@ use crate::{
     Color, Ray, Scene,
 };
 use std::sync::Arc;
-use image::{ImageBuffer, ImageFormat};
+use image::{EncodableLayout, ImageBuffer, ImageFormat, RgbaImage};
+use image::codecs::jpeg::JpegEncoder;
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
 /// then perform a single divide at the end (by the number of samples) when writing out the color.
-fn write_color(out: &mut [u8; 3], pixel_color: &Color, samples_per_pixel: u32) -> Result<usize> {
+fn get_color(pixel_color: &Color, samples_per_pixel: u32) -> Vec<u8> {
     let mut r = pixel_color.x();
     let mut g = pixel_color.y();
     let mut b = pixel_color.z();
@@ -27,11 +28,12 @@ fn write_color(out: &mut [u8; 3], pixel_color: &Color, samples_per_pixel: u32) -
     b = f64::sqrt(scale * b);
 
     // Write the translated [0,255] value of each color component
-    out[0] = (256.0 * clamp(r, 0.0, 0.999)) as u8;
-    out[1] = (256.0 * clamp(g, 0.0, 0.999)) as u8;
-    out[2] = (256.0 * clamp(b, 0.0, 0.999)) as u8;
+    let r = (256.0 * clamp(r, 0.0, 0.999)) as u8;
+    let g = (256.0 * clamp(g, 0.0, 0.999)) as u8;
+    let b = (256.0 * clamp(b, 0.0, 0.999)) as u8;
 
-    Ok(3)
+    // Compose a bgra int
+    vec![255, r, g, b]
 }
 
 /// # Antialiasing
@@ -51,7 +53,7 @@ fn write_color(out: &mut [u8; 3], pixel_color: &Color, samples_per_pixel: u32) -
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 pub fn render<F>(settings: ImageSettings, scene: Scene, progress_callback: F)
 where
-    F: Fn(f64),
+    F: Fn(f64) + Sync + Send,
 {
     // World and Camera
     let Scene {
@@ -62,13 +64,11 @@ where
     let bvh_world = Arc::new(BVHNode::new(&world, 0.0, 0.0).unwrap());
 
     // Render
-    let mut imout = ImageBuffer::<image::Rgb<u8>, Vec<u8>>::new(settings.width, settings.height);
     let iters :u32 = settings.width * settings.height;
 
-    (0..iters).into_par_iter().for_each(|i|{
+    let buffer: Vec<u8> = (0..iters).into_par_iter().flat_map(|i|{
         let x = i / settings.width;
         let y = i % settings.width;
-        let pixel =     imout.get_pixel_mut(x, y);
         let mut pixel_color = Color::new(0.0, 0.0, 0.0);
         for _ in 0..settings.samples_per_pixel {
             let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
@@ -77,11 +77,11 @@ where
             pixel_color += ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
         }
 
-        write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
-            .expect("Error writing to output");
-
         progress_callback(i as f64 / iters as f64 * 100.0);
-    });
+
+        get_color(&pixel_color, settings.samples_per_pixel)
+    })
+        .collect();
     // for i in 0..iters {
     //     let x = i / settings.width;
     //     let y = i % settings.width;
@@ -99,6 +99,8 @@ where
     //
     //     progress_callback((i as f64 / iters as f64)  * 100.0);
     // }
+
+    let imout : RgbaImage = image::ImageBuffer::from_vec(settings.width, settings.height, buffer).expect("Unable to construct image");
 
     imout
         .save_with_format(
