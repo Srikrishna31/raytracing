@@ -9,6 +9,7 @@ use crate::{
     utils::{clamp, random_in_unit_interval},
     Color, Ray, Scene,
 };
+use std::sync::Arc;
 use image::{ImageBuffer, ImageFormat};
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
@@ -58,11 +59,30 @@ where
         camera,
         background_color,
     } = scene;
-    let bvh_world = BVHNode::new(&world, 0.0, 0.0).unwrap();
+    let bvh_world = Arc::new(BVHNode::new(&world, 0.0, 0.0).unwrap());
 
     // Render
     let mut imout = ImageBuffer::<image::Rgb<u8>, Vec<u8>>::new(settings.width, settings.height);
-    // (0..settings.width*settings.height).into_par_iter().for_each(|i|{
+    let iters :u32 = settings.width * settings.height;
+
+    (0..iters).into_par_iter().for_each(|i|{
+        let x = i / settings.width;
+        let y = i % settings.width;
+        let pixel =     imout.get_pixel_mut(x, y);
+        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+        for _ in 0..settings.samples_per_pixel {
+            let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
+            let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
+            let r = camera.get_ray(u, v);
+            pixel_color += ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
+        }
+
+        write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
+            .expect("Error writing to output");
+
+        progress_callback(i as f64 / iters as f64 * 100.0);
+    });
+    // for i in 0..iters {
     //     let x = i / settings.width;
     //     let y = i % settings.width;
     //     let pixel =     imout.get_pixel_mut(x, y);
@@ -77,39 +97,7 @@ where
     //     write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
     //         .expect("Error writing to output");
     //
-    //     progress_callback(y as f64 / settings.height as f64 * 100.0);
-    // });
-    let iters :u32 = settings.width * settings.height;
-    for i in 0..iters {
-        let x = i / settings.width;
-        let y = i % settings.width;
-        let pixel =     imout.get_pixel_mut(x, y);
-        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-        for _ in 0..settings.samples_per_pixel {
-            let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
-            let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
-            let r = camera.get_ray(u, v);
-            pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
-        }
-
-        write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
-            .expect("Error writing to output");
-
-        progress_callback((i as f64 / iters as f64)  * 100.0);
-    }
-
-    // for (i, j, pixel) in imout.enumerate_pixels_mut() {
-    //     progress_callback(j as f64 / settings.height as f64 * 100.0);
-    //     let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-    //     for _ in 0..settings.samples_per_pixel {
-    //         let u = (i as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
-    //         let v = (j as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
-    //         let r = camera.get_ray(u, v);
-    //         pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
-    //     }
-    //
-    //     write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
-    //         .expect("Error writing to output");
+    //     progress_callback((i as f64 / iters as f64)  * 100.0);
     // }
 
     imout
@@ -146,7 +134,7 @@ where
 /// We want to be able to set a background color (probably black in presence of lights), so the only
 /// light in the scene is coming from the emitters.
 #[embed_doc_image("camgeom", "doc_images/camera_geometry.jpg")]
-fn ray_color(r: &Ray, bg_color: &Color, world: &dyn Hittable, depth: u32) -> Color {
+fn ray_color(r: &Ray, bg_color: &Color, world: Arc<dyn Hittable>, depth: u32) -> Color {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
         return Color::new(0.0, 0.0, 0.0);
