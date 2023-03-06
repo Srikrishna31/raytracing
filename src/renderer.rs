@@ -31,7 +31,7 @@ fn get_color(pixel_color: &Color, samples_per_pixel: u32) -> Vec<u8> {
     let g = (256.0 * clamp(g, 0.0, 0.999)) as u8;
     let b = (256.0 * clamp(b, 0.0, 0.999)) as u8;
 
-    // Compose a bgra int
+    // Compose an rgba vec
     vec![r, g, b, 255]
 }
 
@@ -61,12 +61,10 @@ where
         background_color,
     } = scene;
     let bvh_world = Arc::new(BVHNode::new(&world, 0.0, 0.0).unwrap());
-    let progress_counter = Arc::new(AtomicU64::new(0));
+    let progress_counter = AtomicU64::new(0);
 
     // Render
     let iters: u32 = settings.width * settings.height;
-    eprintln!("Total iters: {}", &iters);
-
     let buffer: Vec<u8> = (0..iters)
         .into_par_iter()
         .flat_map(|i| {
@@ -80,6 +78,7 @@ where
                 pixel_color +=
                     ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
             }
+
             let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
             progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
 
