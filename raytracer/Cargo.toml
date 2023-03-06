@@ -10,6 +10,7 @@ path = "src/lib.rs"
 
 [[example]]
 name = "rtweekendone"
+name = "rtnextweek"
 
 [package.metadata.docs.rs]
 rustdoc-args = [
