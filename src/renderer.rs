@@ -153,17 +153,13 @@ fn ray_color(r: &Ray, bg_color: &Color, world: Arc<dyn Hittable>, depth: u32) ->
             let emitted = hit_rec.mat.emitted(hit_rec.u, hit_rec.v, &hit_rec.p);
             match hit_rec.mat.scatter(r, &hit_rec) {
                 Some((scattered, attenuation)) => {
-                    // eprintln!("Ray hit *****something*******!");
                     emitted + attenuation * ray_color(&scattered, bg_color, world, depth - 1)
                 }
                 None => emitted,
             }
         }
         // If the ray hits nothing, return the background color
-        None => {
-            // eprintln!("Ray hit nothing! Emitting background color");
-            *bg_color
-        }
+        None => *bg_color,
     }
 }
 
