@@ -1,7 +1,3 @@
-use embed_doc_image::embed_doc_image;
-use std::io::Result;
-use std::ops::{Add, AddAssign, Deref};
-use rayon::prelude::*;
 use crate::{
     configuration::ImageFormat as ConfImageFormat,
     configuration::ImageSettings,
@@ -10,11 +6,11 @@ use crate::{
     utils::{clamp, random_in_unit_interval},
     Color, Ray, Scene,
 };
-use std::sync::{Arc, RwLock};
+use embed_doc_image::embed_doc_image;
+use image::{ImageFormat, RgbaImage};
+use rayon::prelude::*;
 use std::sync::atomic::{AtomicU64, Ordering};
-use image::{EncodableLayout, ImageBuffer, ImageFormat, RgbaImage};
-use image::codecs::jpeg::JpegEncoder;
-use rand::distributions::uniform::SampleBorrow;
+use std::sync::Arc;
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
@@ -65,47 +61,34 @@ where
         background_color,
     } = scene;
     let bvh_world = Arc::new(BVHNode::new(&world, 0.0, 0.0).unwrap());
-    let mut progress_counter = Arc::new(AtomicU64::new(0));
+    let progress_counter = Arc::new(AtomicU64::new(0));
 
     // Render
-    let iters :u32 = settings.width * settings.height;
+    let iters: u32 = settings.width * settings.height;
     eprintln!("Total iters: {}", &iters);
 
-    let buffer: Vec<u8> = (0..iters).into_par_iter().flat_map(|i|{
-        let x = i / settings.width;
-        let y = i % settings.width;
-        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-        for _ in 0..settings.samples_per_pixel {
-            let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
-            let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
-            let r = camera.get_ray(u, v);
-            pixel_color += ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
-        }
-        let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
-        progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
+    let buffer: Vec<u8> = (0..iters)
+        .into_par_iter()
+        .flat_map(|i| {
+            let x = i / settings.width;
+            let y = i % settings.width;
+            let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+            for _ in 0..settings.samples_per_pixel {
+                let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
+                let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
+                let r = camera.get_ray(u, v);
+                pixel_color +=
+                    ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
+            }
+            let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
+            progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
 
-        get_color(&pixel_color, settings.samples_per_pixel)
-    })
+            get_color(&pixel_color, settings.samples_per_pixel)
+        })
         .collect();
-    // for i in 0..iters {
-    //     let x = i / settings.width;
-    //     let y = i % settings.width;
-    //     let pixel =     imout.get_pixel_mut(x, y);
-    //     let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-    //     for _ in 0..settings.samples_per_pixel {
-    //         let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
-    //         let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
-    //         let r = camera.get_ray(u, v);
-    //         pixel_color += ray_color(&r, &background_color, &bvh_world, settings.max_depth);
-    //     }
-    //
-    //     write_color(&mut pixel.0, &pixel_color, settings.samples_per_pixel)
-    //         .expect("Error writing to output");
-    //
-    //     progress_callback((i as f64 / iters as f64)  * 100.0);
-    // }
 
-    let imout : RgbaImage = image::ImageBuffer::from_vec(settings.width, settings.height, buffer).expect("Unable to construct image");
+    let imout: RgbaImage = image::ImageBuffer::from_vec(settings.width, settings.height, buffer)
+        .expect("Unable to construct image");
 
     imout
         .save_with_format(
@@ -189,9 +172,5 @@ fn get_format(format: ConfImageFormat) -> ImageFormat {
         ConfImageFormat::Png => ImageFormat::Png,
         ConfImageFormat::Tiff => ImageFormat::Tiff,
         ConfImageFormat::Ppm => ImageFormat::Pnm,
-        _ => {
-            eprintln!("Unsupported format. Defaulting to JPEG");
-            ImageFormat::Jpeg
-        }
     }
 }

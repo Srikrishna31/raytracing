@@ -161,7 +161,11 @@ impl BVHNode {
     }
 
     #[inline]
-    fn box_compare(a: Arc<dyn Hittable>, b: Arc<dyn Hittable>, axis: u8) -> Result<Ordering, String> {
+    fn box_compare(
+        a: Arc<dyn Hittable>,
+        b: Arc<dyn Hittable>,
+        axis: u8,
+    ) -> Result<Ordering, String> {
         let axis = axis as usize;
         let (a_box, b_box) = match (a.bounding_box(0.0, 0.0), b.bounding_box(0.0, 0.0)) {
             (Some(ab), Some(bb)) => (ab, bb),
