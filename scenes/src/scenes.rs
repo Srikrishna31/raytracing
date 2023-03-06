@@ -8,7 +8,7 @@ use raytracer::{objects, Camera, Color, ImageSettings, Point, Scene, Vec3};
 use raytracer::materials::lights::DiffuseLight;
 use raytracer::objects::volumes::ConstantMedium;
 use raytracer::textures::{
-    CheckerTexture, ImageTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor, Texture,
+    CheckerTexture, ImageTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor,
 };
 use std::path::Path;
 use std::sync::Arc;
@@ -1001,7 +1001,7 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
 
     let mut boxes2 = World::new();
     let white = Arc::new(LambertianMaterial::new(Color::new(0.73, 0.73, 0.73)));
-    for i in 0..1000 {
+    for _ in 0..1000 {
         boxes2.add(Arc::new(Sphere::new(
             Point::random_vector(0.0, 165.0),
             10.0,
