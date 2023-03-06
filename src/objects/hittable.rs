@@ -8,11 +8,11 @@ use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 pub struct HitRecord {
-    pub p: Point,              // Point where the ray hit the object.
-    pub normal: Vec3,          // Normal at the point of impact.
+    pub p: Point,               // Point where the ray hit the object.
+    pub normal: Vec3,           // Normal at the point of impact.
     pub mat: Arc<dyn Material>, // Material of the object being hit.
-    pub t: f64,                // Time of impact.
-    pub u: f64,                // U,V texture coordinates for color mapping.
+    pub t: f64,                 // Time of impact.
+    pub u: f64,                 // U,V texture coordinates for color mapping.
     pub v: f64,
     pub front_face: bool,
 }
