@@ -15,7 +15,7 @@ fn main() {
         let pb = ProgressBar::new(total);
         pb.set_style(
             ProgressStyle::with_template(
-                "{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {percent}",
+                "{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {msg}",
             )
             .unwrap()
             .progress_chars("#>-"),
@@ -23,7 +23,7 @@ fn main() {
 
         settings.path = std::env::current_dir()
             .unwrap()
-            .join(Path::new("image_alternate_viewpoint_rel_1.jpg"))
+            .join(Path::new("image_alternate_viewpoint_rel_3.jpg"))
             .into_os_string()
             .into_string()
             .expect("Couldnot build path to file");
@@ -41,7 +41,10 @@ fn main() {
         // let scene = scenes::cornell_smoke(&settings);
         // let scene = scenes::rtnextweek_final_scene(&settings);
 
-        render(settings, scene, |i: f64| pb.set_position(i as u64));
+        render(settings, scene, |i: f64| {
+            pb.set_position(i as u64);
+            pb.set_message(format!("{i:.2}%"));
+        });
 
         pb.finish_with_message("Done!");
     });
