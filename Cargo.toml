@@ -2,3 +2,13 @@
 members = ["raytracer", "scenes"]
 default-members = ["raytracer", "scenes"]
 
+[profile.release]
+debug = false
+lto = true
+
+[profile.production]
+inherits = "release"
+codegen-units = 1
+opt-level = 3
+incremental = false
+panic = "abort"

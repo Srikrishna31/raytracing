@@ -10,6 +10,8 @@ path = "src/lib.rs"
 
 [[example]]
 name = "rtweekendone"
+
+[[example]]
 name = "rtnextweek"
 
 [package.metadata.docs.rs]

@@ -82,7 +82,10 @@ where
             }
 
             let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
-            progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
+            // Call the callback only on the boundaries of 10 pixels to avoid insignificant updates.
+            if prev_value % 10 == 0 || iters < 10 {
+                progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
+            }
 
             get_color(&pixel_color, settings.samples_per_pixel)
         })
