@@ -14,7 +14,7 @@ pub fn degrees_to_radians(degrees: f64) -> f64 {
 /// Returns a random real in [0,1).
 #[inline]
 pub fn random_in_unit_interval() -> f64 {
-    static mut RNG_THREAD: Lazy<ThreadRng> = Lazy::new(thread_rng);
+    static mut RNG_THREAD: Lazy<ThreadRng> = Lazy::new(ThreadRng::default);
 
     unsafe { RNG_THREAD.gen() }
 }

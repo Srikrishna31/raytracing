@@ -2,7 +2,6 @@ use super::hittablelist::HittableList;
 use crate::materials::Material;
 use crate::objects::{HitRecord, Hittable, XYRect, XZRect, YZRect, AABB};
 use crate::{Point, Ray};
-use std::rc::Rc;
 use std::sync::Arc;
 
 pub struct Box {
@@ -22,7 +21,7 @@ impl Hittable for Box {
 }
 
 impl Box {
-    pub fn new(min: Point, max: Point, material: Rc<dyn Material>) -> Box {
+    pub fn new(min: Point, max: Point, material: Arc<dyn Material>) -> Box {
         let mut sides = HittableList::new();
 
         sides.add(Arc::new(XYRect::new(

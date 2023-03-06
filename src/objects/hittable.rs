@@ -4,13 +4,13 @@ use crate::ray::Ray;
 use crate::vec3::{Point, Vec3};
 use crate::{materials, Color};
 use embed_doc_image::embed_doc_image;
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 pub struct HitRecord {
     pub p: Point,              // Point where the ray hit the object.
     pub normal: Vec3,          // Normal at the point of impact.
-    pub mat: Rc<dyn Material>, // Material of the object being hit.
+    pub mat: Arc<dyn Material>, // Material of the object being hit.
     pub t: f64,                // Time of impact.
     pub u: f64,                // U,V texture coordinates for color mapping.
     pub v: f64,
@@ -34,7 +34,7 @@ pub trait Hittable {
 }
 
 impl HitRecord {
-    pub fn new(material: Rc<dyn Material>) -> HitRecord {
+    pub fn new(material: Arc<dyn Material>) -> HitRecord {
         HitRecord {
             p: Vec3 { e: [0.0, 0.0, 0.0] },
             normal: Vec3 { e: [0.0, 0.0, 0.0] },
@@ -49,7 +49,7 @@ impl HitRecord {
     pub fn new_with_all_params(
         p: Vec3,
         normal: Vec3,
-        mat: Rc<dyn Material>,
+        mat: Arc<dyn Material>,
         t: f64,
         u: f64,
         v: f64,
@@ -111,7 +111,7 @@ impl HitRecord {
 
 impl Default for HitRecord {
     fn default() -> Self {
-        let lambertian = Rc::new(materials::LambertianMaterial::new(Color::new(
+        let lambertian = Arc::new(materials::LambertianMaterial::new(Color::new(
             1.0, 1.0, 1.0,
         )));
         HitRecord::new(lambertian)

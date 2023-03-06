@@ -3,7 +3,7 @@ use crate::materials::{Isotropic, Material};
 use crate::utils::{random_in_unit_interval, INFINITY};
 use crate::{Color, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// # Volumes
 /// It's nice to add smoke/fog/mist to a raytracer. These are sometimes called *volumes* or
@@ -35,8 +35,8 @@ use std::rc::Rc;
 #[embed_doc_image("rayvolume", "doc_images/ray_volume_interaction.jpg")]
 pub struct ConstantMedium {
     neg_inv_density: f64,
-    boundary: Rc<dyn Hittable>,
-    phase_function: Rc<dyn Material>,
+    boundary: Arc<dyn Hittable>,
+    phase_function: Arc<dyn Material>,
 }
 
 impl Hittable for ConstantMedium {
@@ -114,8 +114,8 @@ impl Hittable for ConstantMedium {
 
 impl ConstantMedium {
     pub fn new(
-        boundary: Rc<dyn Hittable>,
-        phase_function: Rc<dyn Material>,
+        boundary: Arc<dyn Hittable>,
+        phase_function: Arc<dyn Material>,
         density: f64,
     ) -> ConstantMedium {
         ConstantMedium {
@@ -126,13 +126,13 @@ impl ConstantMedium {
     }
 
     pub fn new_with_color(
-        boundary: Rc<dyn Hittable>,
+        boundary: Arc<dyn Hittable>,
         phase_color: Color,
         density: f64,
     ) -> ConstantMedium {
         Self::new(
             boundary,
-            Rc::new(Isotropic::new_with_color(phase_color)),
+            Arc::new(Isotropic::new_with_color(phase_color)),
             density,
         )
     }

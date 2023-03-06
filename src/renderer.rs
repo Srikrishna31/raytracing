@@ -1,5 +1,6 @@
 use embed_doc_image::embed_doc_image;
 use std::io::Result;
+use std::ops::{Add, AddAssign, Deref};
 use rayon::prelude::*;
 use crate::{
     configuration::ImageFormat as ConfImageFormat,
@@ -9,9 +10,11 @@ use crate::{
     utils::{clamp, random_in_unit_interval},
     Color, Ray, Scene,
 };
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
+use std::sync::atomic::{AtomicU64, Ordering};
 use image::{EncodableLayout, ImageBuffer, ImageFormat, RgbaImage};
 use image::codecs::jpeg::JpegEncoder;
+use rand::distributions::uniform::SampleBorrow;
 
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
@@ -33,7 +36,7 @@ fn get_color(pixel_color: &Color, samples_per_pixel: u32) -> Vec<u8> {
     let b = (256.0 * clamp(b, 0.0, 0.999)) as u8;
 
     // Compose a bgra int
-    vec![255, r, g, b]
+    vec![r, g, b, 255]
 }
 
 /// # Antialiasing
@@ -62,9 +65,11 @@ where
         background_color,
     } = scene;
     let bvh_world = Arc::new(BVHNode::new(&world, 0.0, 0.0).unwrap());
+    let mut progress_counter = Arc::new(AtomicU64::new(0));
 
     // Render
     let iters :u32 = settings.width * settings.height;
+    eprintln!("Total iters: {}", &iters);
 
     let buffer: Vec<u8> = (0..iters).into_par_iter().flat_map(|i|{
         let x = i / settings.width;
@@ -76,8 +81,8 @@ where
             let r = camera.get_ray(u, v);
             pixel_color += ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
         }
-
-        progress_callback(i as f64 / iters as f64 * 100.0);
+        let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
+        progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
 
         get_color(&pixel_color, settings.samples_per_pixel)
     })

@@ -2,13 +2,13 @@ use crate::materials::Material;
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::utils::PI;
 use crate::{Point, Ray, Vec3};
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct MovingSphere {
     center0: Point,
     center1: Point,
     radius: f64,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
     time0: f64,
     time1: f64,
 }
@@ -82,7 +82,7 @@ impl MovingSphere {
         center0: Point,
         center1: Point,
         radius: f64,
-        material: Rc<dyn Material>,
+        material: Arc<dyn Material>,
         time0: f64,
         time1: f64,
     ) -> Result<MovingSphere, String> {

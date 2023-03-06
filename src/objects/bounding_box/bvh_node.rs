@@ -4,7 +4,6 @@ use crate::utils::random_int;
 use crate::Ray;
 use embed_doc_image::embed_doc_image;
 use std::cmp::Ordering;
-use std::rc::Rc;
 use std::sync::Arc;
 
 /// # Bounding Volume Hierarchies
