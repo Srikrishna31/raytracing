@@ -1,13 +1,13 @@
-use raytracing::materials::{Dielectric, LambertianMaterial, Metal};
-use raytracing::objects::{
+use raytracer::materials::{Dielectric, LambertianMaterial, Metal};
+use raytracer::objects::{
     Hittable, MovingSphere, RotateY, Sphere, Translate, World, XYRect, XZRect, YZRect,
 };
-use raytracing::utils::{random, random_in_unit_interval, PI};
-use raytracing::{objects, Camera, Color, ImageSettings, Point, Scene, Vec3};
+use raytracer::utils::{random, random_in_unit_interval, PI};
+use raytracer::{objects, Camera, Color, ImageSettings, Point, Scene, Vec3};
 
-use raytracing::materials::lights::DiffuseLight;
-use raytracing::objects::volumes::ConstantMedium;
-use raytracing::textures::{
+use raytracer::materials::lights::DiffuseLight;
+use raytracer::objects::volumes::ConstantMedium;
+use raytracer::textures::{
     CheckerTexture, ImageTexture, PerlinNoiseOptions, PerlinNoiseTexture, SolidColor, Texture,
 };
 use std::path::Path;

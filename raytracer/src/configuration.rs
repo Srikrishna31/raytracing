@@ -52,7 +52,8 @@ impl ImageSettings {
 
 pub fn load_configuration() -> Result<ImageSettings, ConfigError> {
     let base_path = std::env::current_dir().expect("Failed to determine the current directory");
-    let configuration_directory = base_path.join("configuration");
+    eprintln!("{}", base_path.to_str().unwrap());
+    let configuration_directory = base_path.join("/configuration");
 
     let f = config::File::from(configuration_directory.join("base.yaml"));
     let settings = config::Config::builder().add_source(f).build()?;

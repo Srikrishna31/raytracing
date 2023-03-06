@@ -1,9 +1,8 @@
-extern crate raytracing;
-
-mod scenes;
+extern crate raytracer;
+extern crate scenes;
 
 use indicatif::{ProgressBar, ProgressStyle};
-use raytracing::{load_configuration, render};
+use raytracer::{load_configuration, render};
 use std::path::Path;
 use timeit::timeit_loops;
 
@@ -23,12 +22,12 @@ fn main() {
 
         settings.path = std::env::current_dir()
             .unwrap()
-            .join(Path::new("image_alternate_viewpoint_rel_3.jpg"))
+            .join(Path::new("rtnextweek_parallel_1"))
             .into_os_string()
             .into_string()
             .expect("Couldnot build path to file");
         // let scene = scenes::rtweekend_one_final_scene(&settings);
-        let scene = scenes::scene_with_alternate_viewpoint();
+        // let scene = scenes::scene_with_alternate_viewpoint();
         // let scene =
         //     scenes::rtweekend_one_final_scene_with_moving_spheres_checkered_texture(&settings);
         // let scene = scenes::perlin_textured_spheres(&settings);
@@ -39,7 +38,7 @@ fn main() {
         // let scene = scenes::empty_cornell_box(&settings);
         // let scene = scenes::cornell_box_with_two_boxes(&settings);
         // let scene = scenes::cornell_smoke(&settings);
-        // let scene = scenes::rtnextweek_final_scene(&settings);
+        let scene = scenes::rtnextweek_final_scene(&settings);
 
         render(settings, scene, |i: f64| {
             pb.set_position(i as u64);
