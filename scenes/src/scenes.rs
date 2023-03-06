@@ -654,7 +654,7 @@ pub fn marble_spheres(settings: &ImageSettings) -> Scene {
 fn earth() -> World {
     let path = std::env::current_dir()
         .unwrap()
-        .join(Path::new("./examples/rtweekendone/earthmap.jpg"));
+        .join(Path::new("scenes/earthmap.jpg"));
 
     let earth_texture = Arc::new(ImageTexture::new(&path));
     let earth_surface = Arc::new(LambertianMaterial::new_with_texture(earth_texture));
@@ -978,7 +978,7 @@ pub fn rtnextweek_final_scene(settings: &ImageSettings) -> Scene {
 
     let path = std::env::current_dir()
         .unwrap()
-        .join(Path::new("./examples/rtweekendone/earthmap.jpg"));
+        .join(Path::new("./scenes/earthmap.jpg"));
     let emat = Arc::new(LambertianMaterial::new_with_texture(Arc::new(
         ImageTexture::new(&path),
     )));
