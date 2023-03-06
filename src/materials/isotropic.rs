@@ -3,10 +3,10 @@ use crate::objects::HitRecord;
 use crate::textures::{SolidColor, Texture};
 use crate::Vec3;
 use crate::{Color, Ray};
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct Isotropic {
-    albedo: Rc<dyn Texture>,
+    albedo: Arc<dyn Texture>,
 }
 
 impl Material for Isotropic {
@@ -20,13 +20,13 @@ impl Material for Isotropic {
 }
 
 impl Isotropic {
-    pub fn new(a: Rc<dyn Texture>) -> Isotropic {
+    pub fn new(a: Arc<dyn Texture>) -> Isotropic {
         Isotropic { albedo: a }
     }
 
     pub fn new_with_color(c: Color) -> Isotropic {
         Isotropic {
-            albedo: Rc::new(SolidColor::new(c)),
+            albedo: Arc::new(SolidColor::new(c)),
         }
     }
 }

@@ -1,6 +1,5 @@
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::ray::Ray;
-use std::rc::Rc;
 use std::sync::Arc;
 use std::vec::Vec;
 

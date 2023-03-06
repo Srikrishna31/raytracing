@@ -1,6 +1,6 @@
 use super::{HitRecord, Hittable, AABB};
 use crate::{materials::Material, Point, Ray, Vec3};
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct XZRect {
     x0: f64,
@@ -8,7 +8,7 @@ pub struct XZRect {
     z0: f64,
     z1: f64,
     k: f64,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
 }
 
 impl Hittable for XZRect {
@@ -49,7 +49,7 @@ impl Hittable for XZRect {
 }
 
 impl XZRect {
-    pub fn new(x0: f64, x1: f64, z0: f64, z1: f64, k: f64, material: Rc<dyn Material>) -> XZRect {
+    pub fn new(x0: f64, x1: f64, z0: f64, z1: f64, k: f64, material: Arc<dyn Material>) -> XZRect {
         XZRect {
             x0,
             x1,

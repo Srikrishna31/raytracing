@@ -3,13 +3,13 @@ use crate::objects::{HitRecord, Hittable, AABB};
 use crate::utils::PI;
 use crate::{Point, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct Sphere {
     center: Point,
     radius: f64,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
 }
 
 impl Hittable for Sphere {
@@ -103,7 +103,7 @@ impl Hittable for Sphere {
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64, material: Rc<dyn Material>) -> Sphere {
+    pub fn new(center: Point, radius: f64, material: Arc<dyn Material>) -> Sphere {
         Sphere {
             center,
             radius,
@@ -180,7 +180,7 @@ impl Default for Sphere {
         Sphere {
             center: Point::new(0.0, 0.0, 0.0),
             radius: 1.0,
-            material: Rc::new(Dielectric::new(1.5)),
+            material: Arc::new(Dielectric::new(1.5)),
         }
     }
 }

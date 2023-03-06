@@ -1,7 +1,7 @@
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::{Ray, Vec3};
 use embed_doc_image::embed_doc_image;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// # Instance Translation
 ///
@@ -17,7 +17,7 @@ use std::rc::Rc;
     "doc_images/ray_box_intersection_with_moved_ray_vs_box.jpg"
 )]
 pub struct Translate {
-    obj: Rc<dyn Hittable>,
+    obj: Arc<dyn Hittable>,
     offset: Vec3,
 }
 
@@ -43,7 +43,7 @@ impl Hittable for Translate {
 }
 
 impl Translate {
-    pub fn new(obj: Rc<dyn Hittable>, offset: Vec3) -> Translate {
+    pub fn new(obj: Arc<dyn Hittable>, offset: Vec3) -> Translate {
         Translate { obj, offset }
     }
 }

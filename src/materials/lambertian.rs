@@ -3,14 +3,14 @@ use crate::objects::HitRecord;
 use crate::textures::{SolidColor, Texture};
 use crate::{Color, Ray, Vec3};
 use material::Material;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// The Lambertian material, it can either scatter always and attenuate by its reflectance **R**, or
 /// it can scatter with no attenuation but absorb the fraction **1 - R** of the rays, or it could be
 /// a mixture of those strategies.
 #[derive(Clone)]
 pub struct LambertianMaterial {
-    albedo: Rc<dyn Texture>,
+    albedo: Arc<dyn Texture>,
 }
 
 impl Material for LambertianMaterial {
@@ -32,11 +32,11 @@ impl Material for LambertianMaterial {
 impl LambertianMaterial {
     pub fn new(a: Color) -> LambertianMaterial {
         LambertianMaterial {
-            albedo: Rc::new(SolidColor::new(a)),
+            albedo: Arc::new(SolidColor::new(a)),
         }
     }
 
-    pub fn new_with_texture(a: Rc<dyn Texture>) -> LambertianMaterial {
+    pub fn new_with_texture(a: Arc<dyn Texture>) -> LambertianMaterial {
         LambertianMaterial { albedo: a }
     }
 }

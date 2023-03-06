@@ -1,14 +1,14 @@
 use super::Texture;
 use crate::textures::SolidColor;
 use crate::{Color, Point};
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// We can create a checker texture by noting that the sign of sine and cosine just alternates in α
 /// regular way, and if we multiply trig functions in all three dimensions, the sign of that product
 /// forms a 3D checker pattern.
 pub struct CheckerTexture {
-    odd: Rc<dyn Texture>,
-    even: Rc<dyn Texture>,
+    odd: Arc<dyn Texture>,
+    even: Arc<dyn Texture>,
 }
 
 impl Texture for CheckerTexture {
@@ -24,7 +24,7 @@ impl Texture for CheckerTexture {
 }
 
 impl CheckerTexture {
-    pub fn new(odd: Rc<dyn Texture>, even: Rc<dyn Texture>) -> CheckerTexture {
+    pub fn new(odd: Arc<dyn Texture>, even: Arc<dyn Texture>) -> CheckerTexture {
         CheckerTexture { odd, even }
     }
 }
@@ -33,8 +33,8 @@ impl Default for CheckerTexture {
     /// Returns a checker pattern of white and black colors.
     fn default() -> Self {
         CheckerTexture::new(
-            Rc::new(SolidColor::new(Color::new(0.0, 0.0, 0.0))),
-            Rc::new(SolidColor::new(Color::new(1.0, 1.0, 1.0))),
+            Arc::new(SolidColor::new(Color::new(0.0, 0.0, 0.0))),
+            Arc::new(SolidColor::new(Color::new(1.0, 1.0, 1.0))),
         )
     }
 }

@@ -2,7 +2,7 @@ use crate::objects::{HitRecord, Hittable, AABB};
 use crate::utils::{degrees_to_radians, INFINITY};
 use crate::{Point, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// # Instance Rotation
 /// A common graphics tactic is to apply all rotations about the x, y and z axes. These rotations are
@@ -44,7 +44,7 @@ pub struct RotateY {
     sin_theta: f64,
     cos_theta: f64,
     bbox: Option<AABB>,
-    obj: Rc<dyn Hittable>,
+    obj: Arc<dyn Hittable>,
 }
 
 impl Hittable for RotateY {
@@ -83,7 +83,7 @@ impl Hittable for RotateY {
 }
 
 impl RotateY {
-    pub fn new(obj: Rc<dyn Hittable>, angle_degrees: f64) -> RotateY {
+    pub fn new(obj: Arc<dyn Hittable>, angle_degrees: f64) -> RotateY {
         let radians = degrees_to_radians(angle_degrees);
         let sin_theta = radians.sin();
         let cos_theta = radians.cos();

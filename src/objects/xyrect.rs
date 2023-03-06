@@ -2,7 +2,7 @@ use super::{HitRecord, Hittable, AABB};
 use crate::materials::Material;
 use crate::{Point, Ray, Vec3};
 use embed_doc_image::embed_doc_image;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// # Creating Rectangle Objects
 /// Rectangles are often convenient for modeling man-made environments. First, below is a rectangle
@@ -41,7 +41,7 @@ pub struct XYRect {
     y0: f64,
     y1: f64,
     k: f64,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
 }
 
 impl Hittable for XYRect {
@@ -82,7 +82,7 @@ impl Hittable for XYRect {
 }
 
 impl XYRect {
-    pub fn new(x0: f64, x1: f64, y0: f64, y1: f64, k: f64, material: Rc<dyn Material>) -> XYRect {
+    pub fn new(x0: f64, x1: f64, y0: f64, y1: f64, k: f64, material: Arc<dyn Material>) -> XYRect {
         XYRect {
             x0,
             x1,
