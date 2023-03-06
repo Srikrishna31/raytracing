@@ -4,24 +4,29 @@
 # height: 800
 # samples_per_pixel: 500
 # max_depth: 50
+# format: jpg
+# path: ""
 
-# aspect_ratio: 1.77778
-# height: 225
-# samples_per_pixel: 100
-# max_depth: 50
+aspect_ratio: 1.77778
+height: 225
+samples_per_pixel: 100
+max_depth: 50
+format: jpg
+path: ""
 
 # Cornell Box settings
 # aspect_ratio: 1.0
 # height: 600
 # samples_per_pixel: 200
 # max_depth: 50
-
+# format: jpg
+# path: ""
 
 # RTNextWeek Settings
-aspect_ratio: 1.0
-height: 800
-#samples_per_pixel: 10000
-samples_per_pixel: 100
-max_depth: 50
-format: jpg
-path: ""
+# aspect_ratio: 1.0
+# height: 800
+# #samples_per_pixel: 10000
+# samples_per_pixel: 100
+# max_depth: 50
+# format: jpg
+# path: ""

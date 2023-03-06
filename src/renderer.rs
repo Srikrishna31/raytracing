@@ -68,8 +68,10 @@ where
     let buffer: Vec<u8> = (0..iters)
         .into_par_iter()
         .flat_map(|i| {
-            let x = i / settings.width;
-            let y = i % settings.width;
+            let x = i % settings.width;
+            // Starting y from the beginning results in an inverted image, so start from the bottom
+            // and work the way up.
+            let y = settings.height - 1 - i / settings.width;
             let mut pixel_color = Color::new(0.0, 0.0, 0.0);
             for _ in 0..settings.samples_per_pixel {
                 let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;

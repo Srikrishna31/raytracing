@@ -27,7 +27,7 @@ fn main() {
             .into_os_string()
             .into_string()
             .expect("Couldnot build path to file");
-        // let scene = scenes::rtweekend_one_final_scene();
+        // let scene = scenes::rtweekend_one_final_scene(&settings);
         let scene = scenes::scene_with_alternate_viewpoint();
         // let scene =
         //     scenes::rtweekend_one_final_scene_with_moving_spheres_checkered_texture(&settings);
