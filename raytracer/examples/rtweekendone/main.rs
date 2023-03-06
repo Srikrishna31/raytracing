@@ -1,51 +1,10 @@
-extern crate raytracer;
 extern crate scenes;
 
-use indicatif::{ProgressBar, ProgressStyle};
-use raytracer::{load_configuration, render};
-use std::path::Path;
 use timeit::timeit_loops;
 
 fn main() {
     let time = timeit_loops!(1, {
-        let mut settings = load_configuration().expect("Couldnot read settings");
-
-        let total = 100;
-        let pb = ProgressBar::new(total);
-        pb.set_style(
-            ProgressStyle::with_template(
-                "{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {msg}",
-            )
-            .unwrap()
-            .progress_chars("#>-"),
-        );
-
-        settings.path = std::env::current_dir()
-            .unwrap()
-            .join(Path::new("rtnextweek_parallel_1.jpg"))
-            .into_os_string()
-            .into_string()
-            .expect("Couldnot build path to file");
-        // let scene = scenes::rtweekend_one_final_scene(&settings);
-        let scene = scenes::scene_with_alternate_viewpoint();
-        // let scene =
-        //     scenes::rtweekend_one_final_scene_with_moving_spheres_checkered_texture(&settings);
-        // let scene = scenes::perlin_textured_spheres(&settings);
-        // let scene = scenes::marble_spheres(&settings);
-        // let scene = scenes::earth_scene(&settings);
-        // let scene = scenes::scene_with_alternate_viewpoint();
-        // let scene = scenes::rectangle_light_scene(&settings);
-        // let scene = scenes::empty_cornell_box(&settings);
-        // let scene = scenes::cornell_box_with_two_boxes(&settings);
-        // let scene = scenes::cornell_smoke(&settings);
-        // let scene = scenes::rtnextweek_final_scene(&settings);
-
-        render(settings, scene, |i: f64| {
-            pb.set_position(i as u64);
-            pb.set_message(format!("{i:.2}%"));
-        });
-
-        pb.finish_with_message("Done!");
+        scenes::render_scene("rtnextweek_parallel.jpg", "render");
     });
     eprintln!("{time} seconds to render the image");
 }
