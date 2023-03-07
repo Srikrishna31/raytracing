@@ -6,7 +6,6 @@ edition = "2021"
 
 [lib]
 path = "src/lib.rs"
-#name = "rtweekendone"; this means we would have to import by this name.
 
 [package.metadata.docs.rs]
 rustdoc-args = [

@@ -23,7 +23,7 @@ pub(in crate::textures::perlin) trait Perlin {
         if self.use_turbulence() {
             self.turbulence(p)
         } else {
-            self.actual_noise(&p)
+            self.actual_noise(p)
         }
     }
 
@@ -159,9 +159,9 @@ impl PerlinNoiseVectors {
         let ww = w * w * (3.0 - 2.0 * w);
         let mut accum = 0.0;
 
-        for i in 0..2 {
-            for j in 0..2 {
-                for k in 0..2 {
+        for (i, ci) in c.iter().enumerate() {
+            for (j, cij) in ci.iter().enumerate() {
+                for (k, cijk) in cij.iter().enumerate() {
                     let ii = i as f64;
                     let jj = j as f64;
                     let kk = k as f64;
@@ -171,7 +171,7 @@ impl PerlinNoiseVectors {
                     accum += (ii * uu + (1.0 - ii) * (1.0 - uu))
                         * (jj * vv + (1.0 - jj) * (1.0 - vv))
                         * (kk * ww + (1.0 - kk) * (1.0 - ww))
-                        * c[i][j][k].dot(&weight);
+                        * cijk.dot(&weight);
                 }
             }
         }
@@ -195,13 +195,13 @@ impl PerlinNoiseFloat {
     fn trilinear_interp(c: [[[f64; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
         let mut accum = 0.0;
 
-        for i in 0..2 {
-            for j in 0..2 {
-                for k in 0..2 {
+        for (i, ci) in c.iter().enumerate() {
+            for (j, cij) in ci.iter().enumerate() {
+                for (k, cijk) in cij.iter().enumerate() {
                     accum += (i as f64 * u + (1 - i) as f64 * (1.0 - u))
                         * (j as f64 * v + (1 - j) as f64 * (1.0 - v))
                         * (k as f64 * w + (1 - k) as f64 * (1.0 - w))
-                        * c[i][j][k];
+                        * cijk;
                 }
             }
         }
@@ -220,7 +220,7 @@ impl PerlinNoiseFloat {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum PerlinNoiseOptions {
     Default,
     TrilinearSmoothing,
