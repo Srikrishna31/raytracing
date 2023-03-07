@@ -28,6 +28,8 @@ pub enum Scenes {
     RTNextWeekFinalScene,
 }
 
+/// This is the common code required for all the examples, which is why it is abstracted into a function,
+/// so that the examples code can be minimal.
 pub fn render_scene(filename: String, function: Scenes) {
     let mut settings = load_configuration().expect("Couldnot read settings");
 

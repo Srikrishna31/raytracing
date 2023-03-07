@@ -8,12 +8,6 @@ edition = "2021"
 path = "src/lib.rs"
 #name = "rtweekendone"; this means we would have to import by this name.
 
-[[example]]
-name = "rtweekendone"
-
-[[example]]
-name = "rtnextweek"
-
 [package.metadata.docs.rs]
 rustdoc-args = [
     "--html-in-header",
