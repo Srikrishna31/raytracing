@@ -2,6 +2,8 @@
 This library is implemented by reading the book: [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
 It is a rust implementation of the concepts explained.
 
+[![License](https://img.shields.io/github/license/Srikrishna31/raytracing?style=for-the-badge)](https://github.com/Srikrishna31/raytracing/main/LICENSE)
+
 Below is the image rendered after finishing the book:
 
 ![](./generated_images/image_rtweekend_one_final_scene.jpg)
