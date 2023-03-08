@@ -15,7 +15,7 @@ use std::sync::Arc;
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
 /// then perform a single divide at the end (by the number of samples) when writing out the color.
-fn get_color(pixel_color: &Color, samples_per_pixel: u32) -> Vec<u8> {
+fn write_color(pixel: &mut[u8], pixel_color: &Color, samples_per_pixel: u32) {
     let mut r = pixel_color.x();
     let mut g = pixel_color.y();
     let mut b = pixel_color.z();
@@ -27,12 +27,10 @@ fn get_color(pixel_color: &Color, samples_per_pixel: u32) -> Vec<u8> {
     b = f64::sqrt(scale * b);
 
     // Write the translated [0,255] value of each color component
-    let r = (256.0 * clamp(r, 0.0, 0.999)) as u8;
-    let g = (256.0 * clamp(g, 0.0, 0.999)) as u8;
-    let b = (256.0 * clamp(b, 0.0, 0.999)) as u8;
-
-    // Compose an rgba vec
-    vec![r, g, b, 255]
+    pixel[0] = (256.0 * clamp(r, 0.0, 0.999)) as u8;
+    pixel[1] = (256.0 * clamp(g, 0.0, 0.999)) as u8;
+    pixel[2] = (256.0 * clamp(b, 0.0, 0.999)) as u8;
+    pixel[3] = 255;
 }
 
 /// # Antialiasing
@@ -87,7 +85,7 @@ where
             progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
         }
 
-        chk.clone_from_slice(&*get_color(&pixel_color, settings.samples_per_pixel));
+        write_color(chk, &pixel_color, settings.samples_per_pixel);
     });
 
     imout
