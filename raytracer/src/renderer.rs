@@ -16,7 +16,7 @@ use std::sync::Arc;
 /// each time we accumulate more light to the color, just add the full color each iteration, and
 /// then perform a single divide at the end (by the number of samples) when writing out the color.
 #[inline]
-fn write_color(pixel: &mut[u8], pixel_color: &Color, samples_per_pixel: u32) {
+fn write_color(pixel: &mut [u8], pixel_color: &Color, samples_per_pixel: u32) {
     // Divide the color by the number of samples and gamma correct for gamma = 2.0.
     let scale = 1.0 / samples_per_pixel as f64;
     let r = f64::sqrt(scale * pixel_color.x());
@@ -62,28 +62,32 @@ where
     let iters: u32 = settings.width * settings.height;
     let mut imout = RgbaImage::new(settings.width, settings.height);
     // Since it's an rgba image, iterate in chunks of 4 (RGBA).
-    imout.par_chunks_mut(4).enumerate().into_par_iter().for_each(|(i, chk)| {
-        let x = i % settings.width as usize;
-        // Starting y from the beginning results in an inverted image, so start from the bottom
-        // and work the way up.
-        let y = settings.height as usize - 1 - i / settings.width as usize;
-        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-        for _ in 0..settings.samples_per_pixel {
-            let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
-            let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
-            let r = camera.get_ray(u, v);
-            pixel_color +=
-                ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
-        }
+    imout
+        .par_chunks_mut(4)
+        .enumerate()
+        .into_par_iter()
+        .for_each(|(i, chk)| {
+            let x = i % settings.width as usize;
+            // Starting y from the beginning results in an inverted image, so start from the bottom
+            // and work the way up.
+            let y = settings.height as usize - 1 - i / settings.width as usize;
+            let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+            for _ in 0..settings.samples_per_pixel {
+                let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
+                let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
+                let r = camera.get_ray(u, v);
+                pixel_color +=
+                    ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
+            }
 
-        let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
-        // Call the callback only on the boundaries of 10 pixels to avoid insignificant updates.
-        if prev_value % 10 == 0 || iters < 10 {
-            progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
-        }
+            let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
+            // Call the callback only on the boundaries of 10 pixels to avoid insignificant updates.
+            if prev_value % 10 == 0 || iters < 10 {
+                progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
+            }
 
-        write_color(chk, &pixel_color, settings.samples_per_pixel);
-    });
+            write_color(chk, &pixel_color, settings.samples_per_pixel);
+        });
 
     imout
         .save_with_format(
