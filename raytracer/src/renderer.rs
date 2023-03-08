@@ -65,34 +65,30 @@ where
 
     // Render
     let iters: u32 = settings.width * settings.height;
-    let buffer: Vec<u8> = (0..iters)
-        .into_par_iter()
-        .flat_map(|i| {
-            let x = i % settings.width;
-            // Starting y from the beginning results in an inverted image, so start from the bottom
-            // and work the way up.
-            let y = settings.height - 1 - i / settings.width;
-            let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-            for _ in 0..settings.samples_per_pixel {
-                let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
-                let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
-                let r = camera.get_ray(u, v);
-                pixel_color +=
-                    ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
-            }
+    let mut imout = RgbaImage::new(settings.width, settings.height);
+    // Since it's an rgba image, iterate in chunks of 4 (RGBA).
+    imout.par_chunks_mut(4).enumerate().into_par_iter().for_each(|(i, chk)| {
+        let x = i % settings.width as usize;
+        // Starting y from the beginning results in an inverted image, so start from the bottom
+        // and work the way up.
+        let y = settings.height as usize - 1 - i / settings.width as usize;
+        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+        for _ in 0..settings.samples_per_pixel {
+            let u = (x as f64 + random_in_unit_interval()) / (settings.width - 1) as f64;
+            let v = (y as f64 + random_in_unit_interval()) / (settings.height - 1) as f64;
+            let r = camera.get_ray(u, v);
+            pixel_color +=
+                ray_color(&r, &background_color, bvh_world.clone(), settings.max_depth);
+        }
 
-            let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
-            // Call the callback only on the boundaries of 10 pixels to avoid insignificant updates.
-            if prev_value % 10 == 0 || iters < 10 {
-                progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
-            }
+        let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
+        // Call the callback only on the boundaries of 10 pixels to avoid insignificant updates.
+        if prev_value % 10 == 0 || iters < 10 {
+            progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
+        }
 
-            get_color(&pixel_color, settings.samples_per_pixel)
-        })
-        .collect();
-
-    let imout: RgbaImage = image::ImageBuffer::from_vec(settings.width, settings.height, buffer)
-        .expect("Unable to construct image");
+        chk.clone_from_slice(&*get_color(&pixel_color, settings.samples_per_pixel));
+    });
 
     imout
         .save_with_format(
