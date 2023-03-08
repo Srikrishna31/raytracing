@@ -23,6 +23,11 @@ impl Material for DiffuseLight {
     }
 }
 
+pub enum Options {
+    Texture(Arc<dyn Texture>),
+    Clr(Color)
+}
+
 //TODO: Figure out a way to overload new to take an argument of texture or a color
 impl DiffuseLight {
     pub fn new(c: Color) -> DiffuseLight {
@@ -33,5 +38,12 @@ impl DiffuseLight {
 
     pub fn new_with_texture(emit: Arc<dyn Texture>) -> DiffuseLight {
         DiffuseLight { emit }
+    }
+
+    pub fn new_tex(opt: Options) -> DiffuseLight {
+        match opt {
+            Options::Texture(emit) => DiffuseLight{ emit },
+            Options::Clr(c) => DiffuseLight { emit: Arc::new(SolidColor::new(c))}
+        }
     }
 }
