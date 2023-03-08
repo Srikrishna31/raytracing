@@ -15,16 +15,13 @@ use std::sync::Arc;
 /// To handle the multi-sampled color computation - rather than adding in a fractional contribution
 /// each time we accumulate more light to the color, just add the full color each iteration, and
 /// then perform a single divide at the end (by the number of samples) when writing out the color.
+#[inline]
 fn write_color(pixel: &mut[u8], pixel_color: &Color, samples_per_pixel: u32) {
-    let mut r = pixel_color.x();
-    let mut g = pixel_color.y();
-    let mut b = pixel_color.z();
-
     // Divide the color by the number of samples and gamma correct for gamma = 2.0.
     let scale = 1.0 / samples_per_pixel as f64;
-    r = f64::sqrt(scale * r);
-    g = f64::sqrt(scale * g);
-    b = f64::sqrt(scale * b);
+    let r = f64::sqrt(scale * pixel_color.x());
+    let g = f64::sqrt(scale * pixel_color.y());
+    let b = f64::sqrt(scale * pixel_color.z());
 
     // Write the translated [0,255] value of each color component
     pixel[0] = (256.0 * clamp(r, 0.0, 0.999)) as u8;
