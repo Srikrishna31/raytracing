@@ -18,7 +18,7 @@ cargo run --release --example rtweekendone
 
 Below is the image rendered after finishing the second book:
 
-![](./generated_images/image_rectangle_light_scene.jpg)
+![](./generated_images/image_rtnextweek.jpg)
 
 To generate the image run the following command:
 
