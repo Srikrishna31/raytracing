@@ -5,7 +5,10 @@ use timeit::timeit_loops;
 
 fn main() {
     let time = timeit_loops!(1, {
-        scenes::render_scene("rtweekendone.jpg", Scenes::RTWeekendOneFinalScene);
+        scenes::render_scene(
+            "rtweekendone.jpg".to_string(),
+            Scenes::RTWeekendOneFinalScene,
+        );
     });
     eprintln!("{time} seconds to render the image");
 }

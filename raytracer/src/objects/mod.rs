@@ -22,4 +22,3 @@ pub use xyrect::XYRect;
 pub use xzrect::XZRect;
 pub use yzrect::YZRect;
 pub mod volumes;
-
