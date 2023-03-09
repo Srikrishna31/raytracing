@@ -1,3 +1,4 @@
+use super::common;
 use crate::materials::Material;
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::{Point, Ray, Vec3};
@@ -38,7 +39,7 @@ impl Hittable for MovingSphere {
 
         let p = r.at(root);
         let outward_normal = (p - self.center(r.time())) / self.radius;
-        let (u, v) = MovingSphere::get_sphere_uv(&outward_normal);
+        let (u, v) = common::get_sphere_uv(&outward_normal);
 
         let mut hit_rec = HitRecord {
             t: root,
@@ -57,14 +58,16 @@ impl Hittable for MovingSphere {
     /// For `MovingSphere`, we can take the box of the sphere at t<sub>0</sub>, and the box of the
     /// sphere at t<sub>1</sub>, and compute the box of those two boxes
     fn bounding_box(&self, time0: f64, time1: f64) -> Option<AABB> {
+        let radius_dir = Vec3::new(self.radius, self.radius, self.radius);
+
         let box1 = AABB::new(
-            self.center(time0) - Vec3::new(self.radius, self.radius, self.radius),
-            self.center(time0) + Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time0) - radius_dir,
+            self.center(time0) + radius_dir,
         );
 
         let box2 = AABB::new(
-            self.center(time1) - Vec3::new(self.radius, self.radius, self.radius),
-            self.center(time1) + Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time1) - radius_dir,
+            self.center(time1) + radius_dir,
         );
 
         Some(AABB::surrounding_box(&box1, &box2))
@@ -103,10 +106,5 @@ impl MovingSphere {
             time0,
             time1,
         })
-    }
-
-    //TODO: Move the common functions for Sphere and MovingSphere into a different module and share them.
-    fn get_sphere_uv(p: &Point) -> (f64, f64) {
-        super::common::get_sphere_uv(p)
     }
 }

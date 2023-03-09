@@ -1,3 +1,4 @@
+use super::common;
 use crate::materials::{Dielectric, Material};
 use crate::objects::{HitRecord, Hittable, AABB};
 use crate::{Point, Ray, Vec3};
@@ -78,7 +79,7 @@ impl Hittable for Sphere {
 
         let p = r.at(root);
         let outward_normal = (p - self.center) / self.radius;
-        let (u, v) = Sphere::get_sphere_uv(&outward_normal);
+        let (u, v) = common::get_sphere_uv(&outward_normal);
         let mut hit_rec = HitRecord {
             t: root,
             p,
@@ -94,9 +95,10 @@ impl Hittable for Sphere {
     }
 
     fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<AABB> {
+        let radius_dir = Vec3::new(self.radius, self.radius, self.radius);
         Some(AABB::new(
-            self.center - Vec3::new(self.radius, self.radius, self.radius),
-            self.center + Vec3::new(self.radius, self.radius, self.radius),
+            self.center - radius_dir,
+            self.center + radius_dir,
         ))
     }
 }
@@ -108,10 +110,6 @@ impl Sphere {
             radius,
             material,
         }
-    }
-
-    fn get_sphere_uv(p: &Point) -> (f64, f64) {
-        super::common::get_sphere_uv(p)
     }
 }
 

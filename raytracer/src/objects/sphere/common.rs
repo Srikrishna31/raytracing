@@ -1,5 +1,5 @@
-use crate::Point;
 use crate::utils::PI;
+use crate::Point;
 
 /// # Texture Coordinates for Spheres
 /// For spheres, texture coordinates are usually based on some form of longitude and latitude, i.e.,
