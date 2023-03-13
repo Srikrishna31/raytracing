@@ -15,7 +15,14 @@ pub struct MovingSphere {
 
 impl Hittable for MovingSphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        common::hit(r, t_min, t_max, &|pt| pt - self.center(r.time()), &|t|self.center(t), self.radius, self.material.clone())
+        common::hit(
+            r,
+            t_min,
+            t_max,
+            &|t| self.center(t),
+            self.radius,
+            self.material.clone(),
+        )
     }
 
     /// For `MovingSphere`, we can take the box of the sphere at t<sub>0</sub>, and the box of the
