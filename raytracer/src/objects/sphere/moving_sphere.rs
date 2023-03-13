@@ -21,7 +21,7 @@ impl Hittable for MovingSphere {
             t_max,
             &|t| self.center(t),
             self.radius,
-            self.material.clone(),
+            &self.material,
         )
     }
 

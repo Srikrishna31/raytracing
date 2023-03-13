@@ -62,7 +62,7 @@ impl Hittable for Sphere {
             t_max,
             &|_| self.center,
             self.radius,
-            self.material.clone(),
+            &self.material,
         )
     }
 

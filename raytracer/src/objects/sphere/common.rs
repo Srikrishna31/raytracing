@@ -10,7 +10,7 @@ pub(in crate::objects::sphere) fn hit(
     t_max: f64,
     center_func: &dyn Fn(f64) -> Point,
     radius: f64,
-    material: Arc<dyn Material>,
+    material: &Arc<dyn Material>,
 ) -> Option<HitRecord> {
     let oc = r.origin() - center_func(r.time());
     let a = r.direction().length_squared();
@@ -42,7 +42,7 @@ pub(in crate::objects::sphere) fn hit(
         p,
         normal: Vec3::new(0.0, 0.0, 0.0),
         front_face: false,
-        mat: material,
+        mat: material.clone(),
         u,
         v,
     };
