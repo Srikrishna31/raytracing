@@ -15,44 +15,7 @@ pub struct MovingSphere {
 
 impl Hittable for MovingSphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        //TODO: Figure out a way to unify this common code between Sphere and MovingSphere
-        let oc = r.origin() - self.center(r.time());
-        let a = r.direction().length_squared();
-        let half_b = oc.dot(&r.direction());
-        let c = oc.length_squared() - self.radius * self.radius;
-
-        let discriminant = half_b * half_b - a * c;
-        if discriminant < 0.0 {
-            return None;
-        }
-
-        let sqrtd = f64::sqrt(discriminant);
-
-        // Find the nearest root that lies in the acceptable range
-        let mut root = (-half_b - sqrtd) / a;
-        if root < t_min || root > t_max {
-            root = (-half_b + sqrtd) / a;
-            if root < t_min || root > t_max {
-                return None;
-            }
-        }
-
-        let p = r.at(root);
-        let outward_normal = (p - self.center(r.time())) / self.radius;
-        let (u, v) = common::get_sphere_uv(&outward_normal);
-
-        let mut hit_rec = HitRecord {
-            t: root,
-            p,
-            normal: Vec3::new(0.0, 0.0, 0.0),
-            front_face: false,
-            mat: self.material.clone(),
-            u,
-            v,
-        };
-        hit_rec.set_face_normal(r, &outward_normal);
-
-        Some(hit_rec)
+        common::hit(r, t_min, t_max, &|pt| pt - self.center(r.time()), &|t|self.center(t), self.radius, self.material.clone())
     }
 
     /// For `MovingSphere`, we can take the box of the sphere at t<sub>0</sub>, and the box of the

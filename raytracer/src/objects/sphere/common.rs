@@ -1,5 +1,48 @@
 use crate::utils::PI;
-use crate::Point;
+use crate::{Point, Ray, Vec3};
+use crate::objects::HitRecord;
+use crate::materials::Material;
+use std::sync::Arc;
+
+pub(in crate::objects::sphere) fn hit(r:&Ray, t_min:f64, t_max: f64, oc_func: &dyn Fn(Point) -> Vec3, center_func: &dyn Fn(f64) -> Point, radius: f64, material: Arc<dyn Material>) -> Option<HitRecord>{
+    let oc = oc_func(r.origin());
+    let a = r.direction().length_squared();
+    let half_b = oc.dot(&r.direction());
+    let c = oc.length_squared() - radius * radius;
+
+    let discriminant = half_b * half_b - a * c;
+    if discriminant < 0.0 {
+        return None;
+    }
+
+    let sqrtd = f64::sqrt(discriminant);
+
+    // Find the nearest root that lies in the acceptable range
+    let mut root = (-half_b - sqrtd) / a;
+    if root <= t_min || root >= t_max {
+        root = (-half_b + sqrtd) / a;
+        if root <= t_min || root >= t_max {
+            return None;
+        }
+    }
+
+    let p = r.at(root);
+    let outward_normal = (p - center_func(r.time())) / radius;
+    let (u, v) = get_sphere_uv(&outward_normal);
+
+    let mut hit_rec = HitRecord {
+        t: root,
+        p,
+        normal: Vec3::new(0.0, 0.0, 0.0),
+        front_face: false,
+        mat: material,
+        u,
+        v,
+    };
+    hit_rec.set_face_normal(r, &outward_normal);
+
+    Some(hit_rec)
+}
 
 /// # Texture Coordinates for Spheres
 /// For spheres, texture coordinates are usually based on some form of longitude and latitude, i.e.,
@@ -51,7 +94,7 @@ use crate::Point;
 ///     θ = cos^-1(-y)
 /// ```
 #[inline]
-pub(in crate::objects::sphere) fn get_sphere_uv(p: &Point) -> (f64, f64) {
+fn get_sphere_uv(p: &Point) -> (f64, f64) {
     // p: a given point on the sphere of radius one, centered at the origin.
     // u: returned value [0,1] of angle around the Y axis from X=-1.
     // v: returned value [0,1] of angle from Y=-1 to Y=+1.
