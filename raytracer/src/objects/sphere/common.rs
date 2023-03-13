@@ -1,11 +1,18 @@
+use crate::materials::Material;
+use crate::objects::HitRecord;
 use crate::utils::PI;
 use crate::{Point, Ray, Vec3};
-use crate::objects::HitRecord;
-use crate::materials::Material;
 use std::sync::Arc;
 
-pub(in crate::objects::sphere) fn hit(r:&Ray, t_min:f64, t_max: f64, oc_func: &dyn Fn(Point) -> Vec3, center_func: &dyn Fn(f64) -> Point, radius: f64, material: Arc<dyn Material>) -> Option<HitRecord>{
-    let oc = oc_func(r.origin());
+pub(in crate::objects::sphere) fn hit(
+    r: &Ray,
+    t_min: f64,
+    t_max: f64,
+    center_func: &dyn Fn(f64) -> Point,
+    radius: f64,
+    material: Arc<dyn Material>,
+) -> Option<HitRecord> {
+    let oc = r.origin() - center_func(r.time());
     let a = r.direction().length_squared();
     let half_b = oc.dot(&r.direction());
     let c = oc.length_squared() - radius * radius;

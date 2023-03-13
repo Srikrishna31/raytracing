@@ -56,7 +56,14 @@ impl Hittable for Sphere {
     /// ![Ray-Sphere intersection results][raysphere]
     #[embed_doc_image("raysphere", "doc_images/ray_sphere_intersection_results.jpg")]
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        common::hit(r, t_min, t_max, &|pt| pt - self.center, &|_|self.center, self.radius, self.material.clone())
+        common::hit(
+            r,
+            t_min,
+            t_max,
+            &|_| self.center,
+            self.radius,
+            self.material.clone(),
+        )
     }
 
     fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<AABB> {
