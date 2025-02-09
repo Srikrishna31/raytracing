@@ -11,6 +11,7 @@ mod vec3;
 // Export all the functions structs and constants for use in other crates.
 pub mod materials;
 pub mod objects;
+
 pub mod textures;
 
 pub use camera::Camera;
