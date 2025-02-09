@@ -1,6 +1,41 @@
+
+import {ListView, ComboBox, ProgressIndicator, Button} from "std-widgets.slint";
+//import {Text} from "std-widgets.slint";
+//import "std" for ListBox, Text, Column;
+
+component MemoryTile inherits Rectangle {
+    width: 64px;
+    height: 64px;
+    background: #3960D5;
+
+    Image {
+        source: @image-url("icons/bus.png");
+        width: parent.width;
+        height: parent.height;
+    }
+}
+
+
 export component MainWindow inherits Window {
- Text {
-    text: "Hello world";
-    color: green;
- }
+    in property <[string]> items;
+    in property <int> selected_index: 0;
+    in property <string> progress: "0.0";
+
+    width: 400px;
+    height: 400px;
+
+//    MemoryTile {}
+    VerticalLayout {
+        ComboBox {
+            model: items;
+    //            selected: selected_index;
+        }
+        Button {
+            accessible-placeholder-text: "Render";
+        }
+        ProgressIndicator {
+    //            visible: false;
+            accessible-value: progress;
+        }
+    }
 }

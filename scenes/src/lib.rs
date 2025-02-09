@@ -2,7 +2,7 @@ extern crate raytracer;
 mod scenes;
 
 use indicatif::{ProgressBar, ProgressStyle};
-use raytracer::{load_configuration, render};
+use raytracer::{load_configuration, render, ImageSettings, Scene};
 use std::path::Path;
 
 pub use scenes::*;
@@ -28,6 +28,27 @@ pub enum Scenes {
     RTNextWeekFinalScene,
 }
 
+pub fn get_scenes() -> Vec<&'static str> {
+    vec![
+        "DielectricShinySphere",
+        "SceneWithHollowGlassSphere",
+        "WideAngleCameraScene",
+        "SceneWithAlternativeViewPoint",
+        "RTWeekendOneFinalScene",
+        "RTWeekendOneFinalSceneWithMovingSpheres",
+        "RTWeekendOneFinalSceneWithMovingSpheresCheckeredTexture",
+        "TwoCheckeredSpheres",
+        "PerlinTexturedSpheres",
+        "PerlinSmoothedTexturedSpheres",
+        "MarbleSpheres",
+        "EarthScene",
+        "RectangleLightScene",
+        "EmptyCornellBox",
+        "CornellBoxWithTwoBoxes",
+        "CornellBoxWithSmoke",
+        "RTNextWeekFinalScene"
+    ]
+}
 /// This is the common code required for all the examples, which is why it is abstracted into a function,
 /// so that the examples code can be minimal.
 pub fn render_scene(filename: String, function: Scenes) {
@@ -50,7 +71,19 @@ pub fn render_scene(filename: String, function: Scenes) {
         .into_string()
         .expect("Couldnot build path to file");
 
-    let scene = match function {
+    let scene =scene(function, &settings);
+
+    render(settings, scene, |i: f64| {
+        pb.set_position(i as u64);
+        pb.set_message(format!("{i:.2}%"));
+    });
+
+    pb.finish_with_message("Done!");
+}
+
+
+fn scene(scn: Scenes, settings: &ImageSettings) -> Scene {
+    match scn {
         Scenes::EarthScene => earth_scene(&settings),
         Scenes::CornellBoxWithSmoke => cornell_smoke(&settings),
         Scenes::CornellBoxWithTwoBoxes => cornell_box_with_two_boxes(&settings),
@@ -73,12 +106,5 @@ pub fn render_scene(filename: String, function: Scenes) {
         Scenes::WideAngleCameraScene => scene_for_wide_angle_camera(),
         Scenes::SceneWithDepthofFieldCamera => scene_with_depth_of_field_camera(),
         Scenes::TwoCheckeredSpheres => two_checkered_spheres(&settings),
-    };
-
-    render(settings, scene, |i: f64| {
-        pb.set_position(i as u64);
-        pb.set_message(format!("{i:.2}%"));
-    });
-
-    pb.finish_with_message("Done!");
+    }
 }
