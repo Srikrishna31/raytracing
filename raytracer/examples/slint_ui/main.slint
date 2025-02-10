@@ -1,41 +1,76 @@
 
-import {ListView, ComboBox, ProgressIndicator, Button} from "std-widgets.slint";
-//import {Text} from "std-widgets.slint";
-//import "std" for ListBox, Text, Column;
+import {ListView, ComboBox, Button, ProgressIndicator} from "std-widgets.slint";
 
-component MemoryTile inherits Rectangle {
-    width: 64px;
-    height: 64px;
-    background: #3960D5;
+export component ProgressBar {
+    in property <float> value: 0.0;
 
-    Image {
-        source: @image-url("icons/bus.png");
-        width: parent.width;
-        height: parent.height;
+    Rectangle {
+        width: 200px;
+        height: 20px;
+        border-width: 2px;
+        border-color: black;
+        visible: root.visible;
+
+        Rectangle {
+            width: parent.width* value; // Fill based on progress value;
+            height: parent.height;
+            background: green;
+        }
     }
 }
-
-
 export component MainWindow inherits Window {
     in property <[string]> items;
     in property <int> selected_index: 0;
-    in property <string> progress: "0.0";
+    in property <float> progress: 50.0;
+    in property <image> my_image;
+    in property <bool> is_enabled: true;
 
-    width: 400px;
-    height: 400px;
+    callback render_clicked();
+    callback selection_changed(string);
 
-//    MemoryTile {}
+    width: 2048px;
+    height: 1024px;
+
     VerticalLayout {
-        ComboBox {
-            model: items;
-    //            selected: selected_index;
+        Image {
+            source: my_image;
+            width: parent.width;
+            height: parent.height / 2;
         }
-        Button {
-            accessible-placeholder-text: "Render";
-        }
+        spacing:10px;
+        
         ProgressIndicator {
-    //            visible: false;
-            accessible-value: progress;
+            width: 90%;
+            height: 20px;
+            progress: 90%;
+        }
+        ProgressBar {
+            value: progress;
+        }
+
+        HorizontalLayout {
+            spacing: 10px;
+            ComboBox {
+                model: items;
+        //            selected: selected_index;
+                width: 1024px;
+                height: 100px;
+                enabled: is_enabled;
+                selected(value) => {
+                    selection_changed(value);
+                }
+            }
+            Button {
+                text: "Render";
+                width: 500px;
+                height: 100px;
+                enabled: is_enabled;
+
+                clicked => {
+                    render_clicked();
+                }
+
+            }
         }
     }
 }

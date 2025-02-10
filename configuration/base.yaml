@@ -8,7 +8,7 @@
 # path: ""
 
 aspect_ratio: 1.77778
-height: 2160
+height: 1024
 samples_per_pixel: 100
 max_depth: 50
 format: jpg

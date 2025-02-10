@@ -6,6 +6,7 @@ use raytracer::{load_configuration, render, ImageSettings, Scene};
 use std::path::Path;
 
 pub use scenes::*;
+use crate::Scenes::{SceneWithAlternateViewPoint, SceneWithHollowGlassSphere};
 
 pub enum Scenes {
     DielectricShinySphere,
@@ -49,10 +50,44 @@ pub fn get_scenes() -> Vec<&'static str> {
         "RTNextWeekFinalScene"
     ]
 }
+
+pub fn name_to_scene(name: &str) -> Scenes {
+    match name {
+        "DielectricShinySphere" => Scenes::DielectricShinySphere,
+        "SceneWithHollowGlassSphere" => SceneWithHollowGlassSphere,
+        "WideAngleCameraScene" => Scenes::WideAngleCameraScene,
+        "SceneWithAlternativeViewPoint" => SceneWithAlternateViewPoint,
+        "RTWeekendOneFinalScene" => Scenes::RTWeekendOneFinalScene,
+        "RTWeekendOneFinalSceneWithMovingSpheres" => Scenes::RTWeekendOneFinalSceneWithMovingSpheres,
+        "RTWeekendOneFinalSceneWithMovingSpheresCheckeredTexture" => Scenes::RTWeekendOneFinalSceneWithMovingSpheresCheckeredTexture,
+        "TwoCheckeredSpheres" => Scenes::RTWeekendOneFinalSceneWithMovingSpheres,
+        "PerlinTexturedSpheres" => Scenes::PerlinTexturedSpheres,
+        "PerlinSmoothedTexturedSpheres" => Scenes::PerlinSmoothedTexturedSpheres,
+        "MarbleSpheres" => Scenes::MarbleSpheres,
+        "EarthScene" => Scenes::EarthScene,
+        "RectangleLightScene" => Scenes::RectangleLightScene,
+        "EmptyCornellBox" => Scenes::EmptyCornellBox,
+        "CornellBoxWithTwoBoxes" => Scenes::CornellBoxWithTwoBoxes,
+        "CornellBoxWithSmoke"  => Scenes::CornellBoxWithSmoke,
+        "RTNextWeekFinalScene" => Scenes::RTNextWeekFinalScene,
+        _ => Scenes::EarthScene
+    }
+}
 /// This is the common code required for all the examples, which is why it is abstracted into a function,
 /// so that the examples code can be minimal.
 pub fn render_scene(filename: String, function: Scenes) {
-    let mut settings = load_configuration().expect("Couldnot read settings");
+    let settings = {
+        let mut settings = load_configuration().expect("Couldnot read settings");
+
+        settings.path = std::env::current_dir()
+            .unwrap()
+            .join(Path::new(filename.as_str()))
+            .into_os_string()
+            .into_string()
+            .expect("Couldnot build path to file");
+
+        settings
+    };
 
     let total = 100;
     let pb = ProgressBar::new(total);
@@ -64,16 +99,9 @@ pub fn render_scene(filename: String, function: Scenes) {
         .progress_chars("#>-"),
     );
 
-    settings.path = std::env::current_dir()
-        .unwrap()
-        .join(Path::new(filename.as_str()))
-        .into_os_string()
-        .into_string()
-        .expect("Couldnot build path to file");
-
     let scene =scene(function, &settings);
 
-    render(settings, scene, |i: f64| {
+    render(settings, scene, |i: f32| {
         pb.set_position(i as u64);
         pb.set_message(format!("{i:.2}%"));
     });
@@ -81,6 +109,15 @@ pub fn render_scene(filename: String, function: Scenes) {
     pb.finish_with_message("Done!");
 }
 
+pub fn render_scene_buffer<F>(function: Scenes, progress_callback: F)
+    where F: Fn(f32) + Sync + Send
+{
+    let settings = load_configuration().expect("Couldnot read settings");
+
+    let scene = scene(function, &settings);
+
+    render(settings, scene, progress_callback);
+}
 
 fn scene(scn: Scenes, settings: &ImageSettings) -> Scene {
     match scn {

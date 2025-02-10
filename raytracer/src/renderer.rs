@@ -47,7 +47,7 @@ fn write_color(pixel: &mut [u8], pixel_color: &Color, samples_per_pixel: u32) {
 #[embed_doc_image("pixelsamples", "doc_images/pixel_samples.jpg")]
 pub fn render<F>(settings: ImageSettings, scene: Scene, progress_callback: F)
 where
-    F: Fn(f64) + Sync + Send,
+    F: Fn(f32) + Sync + Send,
 {
     // World and Camera
     let Scene {
@@ -83,7 +83,7 @@ where
             let prev_value = progress_counter.fetch_add(1, Ordering::SeqCst);
             // Call the callback only on the boundaries of 10 pixels to avoid insignificant updates.
             if prev_value % 10 == 0 || iters < 10 {
-                progress_callback((prev_value + 1) as f64 / iters as f64 * 100.0);
+                progress_callback((prev_value + 1) as f32 / iters as f32 * 100.0);
             }
 
             write_color(chk, &pixel_color, settings.samples_per_pixel);
