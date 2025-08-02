@@ -1,0 +1,19 @@
+# Simplified BUILD file that doesn't rely on complex Rust rules
+
+filegroup(
+    name = "scenes_srcs",
+    srcs = glob(["src/**/*.rs"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "all",
+    srcs = [
+        ":scenes_srcs",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# This configuration simply makes all the files available to Bazel
+# For actual building, please use Cargo with:
+# cargo build --release
