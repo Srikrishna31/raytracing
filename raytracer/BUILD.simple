@@ -1,0 +1,26 @@
+# Simplified BUILD file that doesn't rely on complex Rust rules
+
+filegroup(
+    name = "raytracer_srcs",
+    srcs = glob(["src/**/*.rs"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "examples",
+    srcs = glob(["examples/**/*.rs"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "all",
+    srcs = [
+        ":raytracer_srcs",
+        ":examples",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# This configuration simply makes all the files available to Bazel
+# For actual building, please use Cargo with:
+# cargo build --release

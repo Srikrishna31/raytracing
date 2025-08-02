@@ -1,6 +1,7 @@
 [workspace]
 members = ["raytracer", "scenes"]
 default-members = ["raytracer", "scenes"]
+authors = ["Krishna Addepalli <coolkrishna31@gmail.com>"]
 
 [profile.release]
 debug = false

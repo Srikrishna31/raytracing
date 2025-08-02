@@ -1,0 +1,62 @@
+# Global build options
+build --enable_platform_specific_config
+build --incompatible_strict_action_env
+
+# Provide Cargo package metadata to crates that expect Cargo's env at runtime (e.g., built)
+build --action_env=CARGO_PKG_NAME=raytracer
+build --action_env=CARGO_PKG_VERSION=0.2.0
+build --action_env=CARGO_PKG_AUTHORS=Krishna\ Addepalli\ <coolkrishna31@gmail.com>
+build --action_env=CARGO_PKG_DESCRIPTION=Raytracing\ in\ Rust
+build --action_env=CARGO_PKG_EDITION=2021
+# Optionally set homepage/repository/license if used:
+build --action_env=CARGO_PKG_HOMEPAGE=https://github.com/Srikrishna31/raytracing
+build --action_env=CARGO_PKG_REPOSITORY=https://github.com/Srikrishna31/raytracing
+build --action_env=CARGO_PKG_LICENSE=MIT
+
+# Default Rust compiler settings are configured in WORKSPACE or MODULE.bazel
+
+# Debug build settings (default)
+build:debug --compilation_mode=dbg
+build:debug --strip=never
+build:debug --copt=-g
+
+# Release build settings
+build:release --compilation_mode=opt
+build:release --strip=always
+build:release --lto=true
+build:release --features=lto
+build:release --copt=-O3
+
+# Production build settings
+build:production --config=release
+build:production --compilation_mode=opt
+build:production --strip=always
+build:production --lto=true
+build:production --features=lto,panic_abort
+build:production --copt=-O3
+build:production --linkopt=-O3
+build:production --features=codegen_units_1
+build:production --nocache_test_results
+build:production --disk_cache=
+
+# Test settings
+test --test_output=errors
+test --test_verbose_timeout_warnings=true
+
+# Performance settings
+build --jobs=auto
+build --loading_phase_threads=auto
+build --local_resources=cpu=HOST_CPUS
+build --local_resources=memory=HOST_RAM
+
+# Cache settings
+build --disk_cache=~/.cache/bazel-disk-cache
+build --repository_cache=~/.cache/bazel-repository-cache
+
+# Output settings
+build --show_timestamps
+build --color=yes
+build --show_progress_rate_limit=5
+
+# Rust-specific optimizations
+# Configuration moved to WORKSPACE or MODULE.bazel file

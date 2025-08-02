@@ -1,5 +1,27 @@
 # .cargo/config.toml
+# This file overrides any user-level Cargo configuration
+# to ensure reproducible builds with Bazel
 
+[build]
+# These settings will be used by Bazel's cargo_build_script rule
+rustc-wrapper = ""
+
+[registry]
+default = "crates-io"
+
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
+
+[net]
+git-fetch-with-cli = true
+offline = false
+
+# Disable any potential .cargo/credentials from the user's home directory
+[registry.token]
+crates-io = ""
 # On Windows
 # ```
 # cargo install -f cargo-binutils

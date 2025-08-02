@@ -1,0 +1,40 @@
+###############################################################################
+# Bazel now uses Bzlmod by default to manage external dependencies.
+# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
+#
+# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+###############################################################################
+
+module(name = "raytracing")
+
+# Bring in rules_rust via Bzlmod
+bazel_dep(name = "rules_rust", version = "0.63.0")
+
+# Register Rust toolchains via the rules_rust module extension
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(
+    edition = "2021",
+    versions = ["1.88.0"],
+)
+use_repo(rust, "rust_toolchains")
+
+# crate_universe via rules_rust extension (extension name is "crate")
+crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
+crate.from_cargo(
+    name = "crate_index",
+    cargo_lockfile = "@//:Cargo.lock",
+    generate_binaries = True,
+    isolated = True,
+    manifests = [
+        "@//:Cargo.toml",
+        "@//raytracer:Cargo.toml",
+        "@//scenes:Cargo.toml",
+    ],
+    supported_platform_triples = [
+        "x86_64-unknown-linux-gnu",
+        "x86_64-apple-darwin",
+        "x86_64-pc-windows-msvc",
+        "aarch64-apple-darwin",
+    ],
+)
+use_repo(crate, "crate_index")
