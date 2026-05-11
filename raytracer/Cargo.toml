@@ -20,14 +20,10 @@ embed-doc-image = "0.1.4"
 config = "0.15.7"
 serde = {version = "1", features = ["derive"]}
 serde-aux = "4"
-image = "0.25.5"
+image = { version = "=0.25.5", default-features = false, features = ["jpeg", "png", "pnm", "tiff"] }
 rayon = "1.6"
-slint = "1.9.2"
 
 [dev-dependencies]
 timeit = "0.1"
 indicatif = "0.17"
 scenes = {path= "../scenes" }
-
-[build-dependencies]
-slint-build="1.9.2"

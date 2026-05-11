@@ -1,0 +1,23 @@
+load("@crates//:defs.bzl", "aliases")
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "Cargo.toml",
+    "earthmap.jpg",
+])
+
+rust_library(
+    name = "scenes",
+    srcs = glob(["src/**/*.rs"]),
+    aliases = aliases(),
+    crate_name = "scenes",
+    crate_root = "src/lib.rs",
+    data = ["earthmap.jpg"],
+    edition = "2021",
+    deps = [
+        "//raytracer",
+        "@crates//:indicatif",
+    ],
+)

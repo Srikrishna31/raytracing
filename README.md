@@ -13,7 +13,7 @@ Images in the doc_images folder are extracted from the booksite.
 To generate the image run the following command:
 
 ```
-cargo run --release --example rtweekendone
+bazel run -c opt //raytracer:rtweekendone
 ```
 
 Below is the image rendered after finishing the second book:
@@ -23,7 +23,13 @@ Below is the image rendered after finishing the second book:
 To generate the image run the following command:
 
 ```
-cargo run --release --example rtnextweek
+bazel run -c opt //raytracer:rtnextweek
+```
+
+To build all migrated targets:
+
+```
+bazel build //...
 ```
 
 Most of the images rendered in the book are available as examples

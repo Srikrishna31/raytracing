@@ -1,0 +1,55 @@
+load("@crates//:defs.bzl", "aliases")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "raytracer",
+    srcs = glob(["src/**/*.rs"]),
+    aliases = aliases(),
+    compile_data = glob(["doc_images/*"]),
+    crate_name = "raytracer",
+    crate_root = "src/lib.rs",
+    edition = "2021",
+    proc_macro_deps = ["@crates//:embed-doc-image"],
+    deps = [
+        "@crates//:config",
+        "@crates//:image",
+        "@crates//:once_cell",
+        "@crates//:rand",
+        "@crates//:rayon",
+        "@crates//:serde",
+        "@crates//:serde-aux",
+    ],
+)
+
+[
+    rust_binary(
+        name = name,
+        srcs = [src],
+        crate_root = src,
+        edition = "2021",
+        data = ["//configuration:base_yaml"],
+        deps = [
+            "//scenes",
+            "@crates//:timeit",
+        ],
+    )
+    for name, src in {
+        "checkered_spheres": "examples/checkered_spheres.rs",
+        "cornellbox": "examples/cornellbox.rs",
+        "cornellbox_with_smoke": "examples/cornellbox_with_smoke.rs",
+        "cornellbox_with_two_boxes": "examples/cornellbox_with_two_boxes.rs",
+        "depth_of_field_camera": "examples/depth_of_field_camera.rs",
+        "earth_scene": "examples/earth_scene.rs",
+        "marble_spheres": "examples/marble_spheres.rs",
+        "rectangle_light_scene": "examples/rectangle_light_scene.rs",
+        "rtnextweek": "examples/rtnextweek.rs",
+        "rtweekendone": "examples/rtweekendone/main.rs",
+        "rtweekendone_moving_spheres_checkered_texture": "examples/rtweekendone_moving_spheres_checkered_texture.rs",
+        "uislint": "examples/uislint.rs",
+        "wide_angle_camera_scene": "examples/wide_angle_camera_scene.rs",
+    }.items()
+]
